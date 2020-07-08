@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    {% block head-meta %}
+    <meta charset="utf-8">
+
+    <meta name="keywords" content="REPLACE WITH YOUR OWN KEYWORDS HERE, AND HERE, AND HERE">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% endblock %}
+
+    {% block head-css %}
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+  <link type="text/css" rel="stylesheet" href="{% static '/css/materialize.min.css' %}"  media="screen,projection"/>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>    
+  <script type="text/javascript" src="{% static '/js/materialize.min.js' %}"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+  <link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    {% endblock %}
+
+  </head>
+<header>
+
+  <nav>
+    <div class="nav-wrapper">
+      <a href="#" data-activates="slide-out" class="brand-logo" style="margin-left: 10px"><i class="material-icons prefix">dehaze</i><span class="Menu_label">Menu</span></a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="" id="user"></a></li>
+      </ul>
+    </div>
+  </nav>
+   <ul id="slide-out" class="side-nav">
+       <li><a onclick="downloadprofile()"><i class="material-icons prefix">file_download</i><span class="download_profile_label">Download Profile</span></a></li>
+        <li><a onclick="logout()"><span class="logout_label">Logout</span></a></li>
+    </ul>
+
+<script>
+ $(".brand-logo").sideNav();
+ jQuery(document).ready(function($)
+ {
+    // alert(localStorage.getItem("User"))
+    
+    $('#user').text(localStorage.getItem("User"));
+    var language_id = localStorage.getItem('language')
+    $.ajax({
+        type: 'POST',
+        url: '/v2s/get_labels/',
+        data : {
+        	'page_name' : 'Nav_bar',
+        	'language_id' : language_id,
+		    },
+        success: function (jsondata) {
+            console.log(jsondata)
+            for (const [key, value] of Object.entries(jsondata)) {
+                console.log(key, value);
+                $('.'+value.page_label_class_name).text(value.page_label_text);
+              }
+        },
+        error: function(data){
+            obj = JSON.parse(data.responseText)
+            M.toast({html: obj.error, classes: 'red rounded'})
+        }
+    });
+});
+</script>  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script type="text/javascript" src="{% static '/js/logout.js' %}"></script>
+</header>  
+</html>          
