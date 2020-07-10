@@ -5,7 +5,7 @@ from django.contrib.auth import views as auth_views
 
 from .views import (LoginView, CustomTokenObtainPairView,
                     CustomTokenRefreshView, Dashboard,
-                    NewPasswordView, CustomPasswordChangeView,
+                    NewPasswordView, ChangePasswordView,
                     LogoutView)
 
 urlpatterns = [
@@ -16,11 +16,11 @@ urlpatterns = [
     path('refresh_token/', CustomTokenRefreshView.as_view()),
     path('dashboard/', Dashboard.as_view(), name="dashboard"),
     path('forgot_password/', NewPasswordView.as_view(), name="forgot_password"),
-    url(r'^dashboard/password/change/$', 
-        CustomPasswordChangeView.as_view(), 
+    url(r'^dashboard/change_password/$', 
+        ChangePasswordView.as_view(), 
         name='password_change'),
-    url(r'^dashboard/password/change/done/$',
-        CustomPasswordChangeView.as_view(), 
-        name='password_change_done'),
+    # url(r'^dashboard/password/change/done/$',
+    #     CustomPasswordChangeView.as_view(), 
+    #     name='password_change_done'),
     # path('dashboard/password/', login_required(ChangePassword.as_view()), name='change_password'),
 ]

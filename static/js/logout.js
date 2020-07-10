@@ -3,7 +3,7 @@ function getaccessToken(){
 
    $.ajax({
         type: 'POST',
-        url: '/v2s/refresh_token/',
+        url: '/refresh_token/',
         data : {
           'refresh' : localStorage.getItem("Refresh"),
         },
@@ -47,7 +47,7 @@ function logout() {
   function downloadprofile() {
   $.ajax({
       type: 'GET',
-      url: '/v2s/download/',
+      url: '/download/',
       headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
       success: function (data) {
         window.location.href = data.url
@@ -61,12 +61,13 @@ function logout() {
   };
 
 function changepassword(){
+  var token = localStorage.getItem("Token");
   $.ajax({
     type: 'GET',
-    url: '/dashboard/password/change/',
+    url: '/dashboard/change_password/',
     headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
     success: function (data) {
-      window.location.href = '/dashboard/password/change/'
+      window.location.href = '/dashboard/change_password/?token='+ token
     },
       error: function(data){
       if (data.status == 401) {

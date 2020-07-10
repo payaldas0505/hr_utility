@@ -92,6 +92,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['password'] = self.user.password
         # user=authenticate(username=self.user.username,
         #                   password='payal@1997')
+        print("data in validation", data)
+        # my_view(self, data)
+        return data 
+
         # if user is not None:
         #     if user.is_active:
         #         login(self, user)
@@ -99,8 +103,17 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         # role = UserRegisterationModel.objects.filter(user_id=self.user.id).values('role')
         # data['role_id'] = role[0]["role"]
 
-        return data   
-
+          
+def my_view(self, request):
+        username = request['username']
+        password = 'payal@1997'
+        
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            print("logged in")
+        else:
+            print("not login")
 
 class CustomJWTAuthentication(JWTAuthentication):
 
@@ -113,10 +126,10 @@ class CustomJWTAuthentication(JWTAuthentication):
         raw_token = self.get_raw_token(header)
         if raw_token is None:
             return None
-    
+
         validated_token = self.get_validated_token(raw_token)
         payload = token_backend.decode(raw_token, verify=True)
-
+        
 
         if payload['token_value'] in cache.keys("*"):
             return cache.get(payload['token_value']), validated_token
@@ -134,8 +147,8 @@ class CustomJWTAuthentication(JWTAuthentication):
         if isinstance(header, str):
             # Work around django test client oddness
             header = header.encode(HTTP_HEADER_ENCODING)
-        return header    
-
+        return header   
+         
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -239,10 +252,54 @@ class NewPasswordView(APIView):
             return Response({"success": False, "error": str(info_message)})
 
 
-class CustomPasswordChangeView(auth_views.PasswordChangeView):
+# class CustomPasswordChangeView(auth_views.PasswordChangeView):
+#     authentication_classes = [CustomJWTAuthentication]
+#     permission_classes = (IsAuthenticated,)
+#     renderer_classes = [TemplateHTMLRenderer]
+#     # def get(self, request):
+#     #     print("user ==================", request.user)
+#     success_url = '/login/' # <- choose your URL
+
+class ChangePasswordView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
-    # def get(self, request):
-    #     print("user ==================", request.user)
-    success_url = '/login/' # <- choose your URL
+
+    def get(self, request):
+        # get_language = set_session_language(request)
+        try:
+            return render(request, 'user_authentication/password_change_form.html')
+        except Exception as e:
+            # info_message = get_info_messages(get_language, 'password_page_error')
+
+            info_message = "Cannot get reset password page"
+            print("exception while getting page", e)
+            print(info_message)
+            return Response({"success": False, "error": str(info_message)})
+    
+    def post(self, request):
+        
+        try:
+            username = request.user
+            old_password = request.data['old_password']
+            new_password = request.data['new_password']
+            new_password_confirm = request.data['new_password_confirm']
+
+            user = User.objects.get(username=username)
+        
+            if new_password == new_password_confirm and user.check_password(old_password):
+                user.set_password(new_password)
+                user.save()
+                print("success")
+                info_message = "Password is successfully reset"
+                return JsonResponse({'data': str(info_message)}, status=204)
+            
+            else:
+                info_message = "Unable to set password"
+                return JsonResponse({"success": False, "error": str(info_message)}, status=500)
+
+        except Exception as e:
+            info_message = "Internal server error"
+            print(info_message, e)
+            return JsonResponse({"success": False, "error": str(info_message)}, status=500) 
+       
