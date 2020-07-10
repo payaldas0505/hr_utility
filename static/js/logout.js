@@ -22,7 +22,7 @@ function getaccessToken(){
 function logout() {
   $.ajax({
       type: 'GET',
-      url: '/v2s/logout/',
+      url: '/logout/',
       headers: { Authorization: 'Bearer '+ localStorage.getItem("Token")},
       success: function (result) {
         localStorage.removeItem("Token");
@@ -32,7 +32,7 @@ function logout() {
         localStorage.removeItem("add_user")
         localStorage.removeItem("edit_user")
         localStorage.removeItem("delete_user")
-        window.location.href = "/v2s/login/"
+        window.location.href = "/login/"
       },
         error: function(data){
           if (data.status == 401) {
@@ -60,4 +60,18 @@ function logout() {
     })
   };
 
-  
+function changepassword(){
+  $.ajax({
+    type: 'GET',
+    url: '/dashboard/password/change/',
+    headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+    success: function (data) {
+      window.location.href = '/dashboard/password/change/'
+    },
+      error: function(data){
+      if (data.status == 401) {
+          getaccessToken();
+      }
+    }
+  })
+};

@@ -3,7 +3,7 @@ import uuid
 from django.contrib.auth.models import User
 
 from django.shortcuts import render
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, JsonResponse
 
 from django.core.cache import cache
 from django.conf import settings
@@ -25,6 +25,13 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.state import token_backend
 from rest_framework_simplejwt.exceptions import InvalidToken
 
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import views as auth_views
+from django.contrib.auth import authenticate, login
 
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
@@ -75,7 +82,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         cache.set(token['token_value'], user, timeout=CACHE_TTL)
         return token
 
-
     def validate(self, attrs):
         data = super().validate(attrs)
         refresh = self.get_token(self.user)
@@ -83,6 +89,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['access'] = str(refresh.access_token)
         data['username'] = self.user.username
         data['id'] = self.user.id
+        data['password'] = self.user.password
+        # user=authenticate(username=self.user.username,
+        #                   password='payal@1997')
+        # if user is not None:
+        #     if user.is_active:
+        #         login(self, user)
+        # print("data in validation", data)
         # role = UserRegisterationModel.objects.filter(user_id=self.user.id).values('role')
         # data['role_id'] = role[0]["role"]
 
@@ -149,7 +162,30 @@ class LoginView(APIView):
             info_message = "cannot get login page"
             print(info_message)
             return Response({"success": False, "error": str(info_message)})
-             
+
+class LogoutView(APIView):
+    """ Logout class """
+    authentication_classes = [JWTAuthentication]
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = [TemplateHTMLRenderer]
+
+    def get(self, request):
+        """ get login page """
+
+        # get_language = set_session_language(request)
+        
+        try:
+            # info_message = get_info_messages(get_language, 'logout_success')
+            info_message = 'You have successfully logged out'
+            print(info_message)
+            return Response({'data': str(info_message)}, status=204, template_name="user_authentication/login.html")
+        except Exception as e:
+            print("exception while showing login page", e)
+            # info_message = get_info_messages(get_language, 'logout_error')
+            info_message = "User Cannot logoutUser Cannot logout"
+            print(info_message)
+            return Response({"success": False, "error": str(info_message)})
+
 class Dashboard(APIView):
     """shhow active users and inactive users count on dashboard"""
     authentication_classes = [CustomJWTAuthentication]
@@ -161,6 +197,11 @@ class Dashboard(APIView):
         
         # get_language = set_session_language(request)
         try:
+            print("user in request +++++++++++", request.user)
+            # request.session['user'] = request.user
+            request.session['user'] = request.user.id
+            request.session.modified = True
+            print("user in request +++++++++++", request.session['user'])
             print(request.GET['token'],"dashboard")
             today = datetime.date.today() + datetime.timedelta(days=1)
             last_week = datetime.date.today() - datetime.timedelta(days=7)
@@ -196,3 +237,12 @@ class NewPasswordView(APIView):
             print("exception while getting page", e)
             print(info_message)
             return Response({"success": False, "error": str(info_message)})
+
+
+class CustomPasswordChangeView(auth_views.PasswordChangeView):
+    authentication_classes = [CustomJWTAuthentication]
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = [TemplateHTMLRenderer]
+    # def get(self, request):
+    #     print("user ==================", request.user)
+    success_url = '/login/' # <- choose your URL
