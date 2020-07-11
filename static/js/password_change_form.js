@@ -78,7 +78,7 @@ function submit() {
             // localStorage.removeItem("User");
             alert(data.error)
             obj = JSON.parse(data.responseText)
-            M.toast({ html: obj.detail, classes: 'red rounded' })
+            M.toast({ html: obj.error, classes: 'red rounded' })
             return false;
         }
     })
@@ -119,7 +119,7 @@ function changepassword(){
         M.toast({ html: 'New password and confirm password fields do not match', classes: 'red rounded' })
         return false;
      }
-    // else {
-    //     submit();
-    // }
+    else {
+        submit();
+    }
 }
