@@ -1,0 +1,23 @@
+.form-border{
+    border:2px solid #2bbbad;
+    margin-top:10px;
+    padding: 30px 0px 30px 0px;
+}
+#back_button{
+    margin-top:35px;
+    margin-left: 30px;
+}
+#toast-container {
+    position: fixed !important;
+    min-width: 10%;
+    top: 25%;
+    right: 50%;
+    transform: translateX(50%) translateY(50%);
+}
+/* #toast-container {
+    position: fixed !important;
+    min-width: 10%;
+    bottom: 0px !important;
+    left: 0px !important;
+    transform: translateX(50%) translateY(50%);
+} */

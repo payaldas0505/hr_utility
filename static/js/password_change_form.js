@@ -43,15 +43,15 @@ function GetAccessTokenForBackButton(){
 }
 
 // submit changed password 
-function submit() {
-    
-    old_password = $('#old_password').val()
-    new_password = $('#new_password').val()
-    new_password_confirm = $('#new_password_confirm').val()
+function save_password() {
+    $('#password_change_btn').attr("disabled", true);
+    var old_password = $('#old_password').val()
+    var new_password = $('#new_password').val()
+    var new_password_confirm = $('#new_password_confirm').val()
     // localStorage.setItem("User", username)
     $.ajax({
         type: 'POST',
-        url: '/dashboard/change_password/',
+        url: '/dashboard/save_password/',
         headers: { Authorization: 'Bearer '+ localStorage.getItem("Token")},
         data: {
             'old_password': old_password,
@@ -76,7 +76,7 @@ function submit() {
         },
         error: function (data) {
             // localStorage.removeItem("User");
-            alert(data.error)
+            $('#password_change_btn').attr("disabled", false);
             obj = JSON.parse(data.responseText)
             M.toast({ html: obj.error, classes: 'red rounded' })
             return false;
@@ -86,40 +86,48 @@ function submit() {
 
 // validation check
 function changepassword(){
-    if (!$('#old_password').val() && !$('#new_password').val() && !$('#new_password_confirm').val()) {
+    var old_password = $('#old_password').val()
+    var new_password = $('#new_password').val()
+    var new_password_confirm = $('#new_password_confirm').val()
+
+    $('#password_change_btn').attr("disabled", true);
+    if (!old_password || !new_password || !new_password_confirm) {
 
         // get_toast('username_password_toast');
-
+        $('#password_change_btn').attr("disabled", false);
         M.toast({ html: 'Please enter all the fields', classes: 'red rounded' })
         return false;
     }
-    else if (!$('#old_password').val()) {
+    else if (!old_password) {
 
         // get_toast('user_name_toast');
-
+        $('#password_change_btn').attr("disabled", false);
         M.toast({ html: 'Please enter old password', classes: 'red rounded' })
         return false;
     }
-    else if (!$('#new_password').val()) {
+    else if (!new_password) {
 
         // get_toast('password_toast');
-
+        $('#password_change_btn').attr("disabled", false);
         M.toast({ html: 'Please enter new password', classes: 'red rounded' })
         return false;
     }
-    else if (!$('#new_password_confirm').val()) {
+    else if (!new_password_confirm) {
 
         // get_toast('password_toast');
-
+        $('#password_change_btn').attr("disabled", false);
         M.toast({ html: 'Please enter new password confirmation', classes: 'red rounded' })
         return false;
     }
-    else if ($('#new_password').val() !== $('#new_password_confirm').val()){
-        alert('sad')
+    else if (new_password != new_password_confirm){
+        // alert("check match condition")
+        $('#password_change_btn').attr("disabled", false);
         M.toast({ html: 'New password and confirm password fields do not match', classes: 'red rounded' })
+        
         return false;
-     }
+    }
+
     else {
-        submit();
+        save_password();
     }
 }

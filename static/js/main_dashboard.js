@@ -49,7 +49,7 @@ $(document).ready(function(){
     var language_id = localStorage.getItem('language')
     $.ajax({
         type: 'POST',
-        url: '/v2s/get_labels/',
+        url: '/get_labels/',
         data : {
         	'page_name' : 'Add_user',
         	'language_id' : language_id,
@@ -70,7 +70,7 @@ $(document).ready(function(){
    // Get and set all the labels from backend
     $.ajax({
         type: 'POST',
-        url: '/v2s/get_labels/',
+        url: '/get_labels/',
         data : {
             'page_name' : 'Dashboard',
             'language_id' : language_id,
@@ -120,6 +120,7 @@ $("#profile_picture_edit").change(function() {
     });
 
 
+
 function DeleteReport(id){
     url = '/usermanagement/edituserform/'+id
     
@@ -135,7 +136,7 @@ function DeleteReport(id){
             M.toast({html: parsed_jsondata.message, classes: 'green rounded'})
             setTimeout(function() {
                 
-                window.location.href = "/v2s/dashboard/?token="+token 
+                window.location.href = "/dashboard/?token="+token 
               }, 2000);
         },
         error: function(xhr, status, error) {
@@ -170,7 +171,7 @@ function getDeleteReport(id){
 function GetAccessTokenForBackButton(){
     $.ajax({
         type: 'POST',
-        url: '/v2s/refresh_token/',
+        url: '/refresh_token/',
         data : {
           'refresh' : localStorage.getItem("Refresh"),
         },
@@ -180,9 +181,9 @@ function GetAccessTokenForBackButton(){
            // location.reload();
         //    RegisterUserForm()
            // return false
-        //    window.location.href = "/v2s/dashboard/?token="+token
+        //    window.location.href = "/dashboard/?token="+token
         setTimeout(function() {
-            window.location.href = "/v2s/dashboard/?token="+token;
+            window.location.href = "/dashboard/?token="+token;
           }, 500);
 
         },
@@ -198,9 +199,9 @@ function getDashboardDatatable(){
     var token = localStorage.getItem("Token");
     $.ajax({
         method : 'GET',
-        url : "/v2s/dashboard/?token="+token,
+        url : "/dashboard/?token="+token,
         success: function(data){
-            window.location.href = "/v2s/dashboard/?token="+token
+            window.location.href = "/dashboard/?token="+token
         },
         error : function(xhr){
             if(xhr.status == 401){
@@ -574,7 +575,7 @@ var user_id = localStorage.getItem('UserId')
 function getaccessTokenDashboard(){
     $.ajax({
          type: 'POST',
-         url: '/v2s/refresh_token/',
+         url: '/refresh_token/',
          data : {
            'refresh' : localStorage.getItem("Refresh"),
          },
@@ -582,7 +583,7 @@ function getaccessTokenDashboard(){
             localStorage.setItem("Token", result.access);
             // location.reload();
             var token = localStorage.getItem("Token");
-            window.location.href = "/v2s/dashboard/?token="+token;
+            window.location.href = "/dashboard/?token="+token;
 
          },
          error: function(data){
@@ -597,7 +598,7 @@ function getaccessTokenDashboard(){
  function getaccessTokenViewUser(){
     $.ajax({
          type: 'POST',
-         url: '/v2s/refresh_token/',
+         url: '/refresh_token/',
          data : {
            'refresh' : localStorage.getItem("Refresh"),
          },
@@ -605,7 +606,7 @@ function getaccessTokenDashboard(){
             localStorage.setItem("Token", result.access);
             // location.reload();
             var token = localStorage.getItem("Token");
-            // window.location.href = "/v2s/dashboard/?token="+token;
+            // window.location.href = "/dashboard/?token="+token;
             id = window.localStorage.getItem("editedUserId")
             getViewReport(id)
          },
@@ -622,7 +623,7 @@ function getaccessTokenDashboard(){
  function getaccessTokenEditUser(){
     $.ajax({
          type: 'POST',
-         url: '/v2s/refresh_token/',
+         url: '/refresh_token/',
          data : {
            'refresh' : localStorage.getItem("Refresh"),
          },
@@ -630,7 +631,7 @@ function getaccessTokenDashboard(){
             localStorage.setItem("Token", result.access);
             // location.reload();
             var token = localStorage.getItem("Token");
-            // window.location.href = "/v2s/dashboard/?token="+token;
+            // window.location.href = "/dashboard/?token="+token;
             id = window.localStorage.getItem("editedUserId")
             getEditReport(id)
          },
@@ -646,7 +647,7 @@ function getaccessTokenDashboard(){
  function getaccessTokenDeleteUser(){
     $.ajax({
          type: 'POST',
-         url: '/v2s/refresh_token/',
+         url: '/refresh_token/',
          data : {
            'refresh' : localStorage.getItem("Refresh"),
          },
@@ -654,7 +655,7 @@ function getaccessTokenDashboard(){
             localStorage.setItem("Token", result.access);
             // location.reload();
             var token = localStorage.getItem("Token");
-            // window.location.href = "/v2s/dashboard/?token="+token;
+            // window.location.href = "/dashboard/?token="+token;
             id = window.localStorage.getItem("editedUserId")
             DeleteReport(id)
          },
@@ -668,7 +669,7 @@ function getaccessTokenDashboard(){
  function getaccessTokenDatatable(){
     $.ajax({
         type: 'POST',
-        url: '/v2s/refresh_token/',
+        url: '/refresh_token/',
         data : {
           'refresh' : localStorage.getItem("Refresh"),
         },
@@ -676,7 +677,7 @@ function getaccessTokenDashboard(){
            localStorage.setItem("Token", result.access);
            // location.reload();
            var token = localStorage.getItem("Token");
-           // window.location.href = "/v2s/dashboard/?token="+token;
+           // window.location.href = "/dashboard/?token="+token;
         //    id = window.localStorage.getItem("editedUserId")
            EditUserValidation()
         },

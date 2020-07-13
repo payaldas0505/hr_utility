@@ -64,15 +64,103 @@ function changepassword(){
   var token = localStorage.getItem("Token");
   $.ajax({
     type: 'GET',
-    url: '/dashboard/change_password/',
+    url: '/dashboard/get_change_password/',
     headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
     success: function (data) {
-      window.location.href = '/dashboard/change_password/?token='+ token
+      window.location.href = '/dashboard/get_change_password/?token='+ token
     },
-      error: function(data){
+    error: function(data){
       if (data.status == 401) {
           getaccessToken();
       }
     }
   })
 };
+
+function getUserDashboard(){
+  var token = localStorage.getItem("Token");
+  $.ajax({
+      type: 'GET',
+      url: '/dashboard/user_management/',
+      headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+      success: function (data) {
+      window.location.href = '/dashboard/user_management/?token='+ token
+      },
+      error: function(data){
+      if (data.status == 401) {
+          getaccessTokenForUserDashboard();
+      }
+      }
+  })
+};
+
+function getaccessTokenForUserDashboard(){
+  $.ajax({
+      type: 'POST',
+      url: '/refresh_token/',
+      data : {
+        'refresh' : localStorage.getItem("Refresh"),
+      },
+      success: function (result) {
+         localStorage.setItem("Token", result.access);
+         token = localStorage.getItem("Token")
+         // location.reload();
+      //    RegisterUserForm()
+         // return false
+      //    window.location.href = "/dashboard/?token="+token
+      setTimeout(function() {
+          window.location.href = "/dashboard/user_management/?token="+token;
+        }, 500);
+
+      },
+      error: function(data){
+         obj = JSON.parse(data.responseText)
+         M.toast({html: obj.detail})
+      }
+})
+
+}
+
+function getTemplateDashboard(){
+  var token = localStorage.getItem("Token");
+  $.ajax({
+      type: 'GET',
+      url: '/dashboard/template_management/',
+      headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+      success: function (data) {
+      window.location.href = '/dashboard/template_management/?token='+ token
+      },
+      error: function(data){
+      if (data.status == 401) {
+          getaccessTokenForTemplateDashboard();
+      }
+      }
+  })
+};
+
+function getaccessTokenForTemplateDashboard(){
+  $.ajax({
+      type: 'POST',
+      url: '/refresh_token/',
+      data : {
+        'refresh' : localStorage.getItem("Refresh"),
+      },
+      success: function (result) {
+         localStorage.setItem("Token", result.access);
+         token = localStorage.getItem("Token")
+         // location.reload();
+      //    RegisterUserForm()
+         // return false
+      //    window.location.href = "/dashboard/?token="+token
+      setTimeout(function() {
+          window.location.href = "/dashboard/template_management/?token="+token;
+        }, 500);
+
+      },
+      error: function(data){
+         obj = JSON.parse(data.responseText)
+         M.toast({html: obj.detail})
+      }
+})
+
+}

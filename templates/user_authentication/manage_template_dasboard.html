@@ -1,37 +1,28 @@
-{% extends 'user_authentication/base.html' %}
-
-
-{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add User Page</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="{% static '/css/materialize.min.css' %}"  media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{% static '/user_registration/css/user_registration_form.css' %}"  media="screen,projection"/> 
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<header>
+    <nav>
+        <div class="nav-wrapper">
+            <a id="back_button" onclick="getdashboard()" data-activates="slide-out" class="brand-logo" style="margin-left: 10px; margin-top: 1px;"><i class="material-icons prefix">arrow_back</i><span class="Menu_label">Back</span></a>
+        </div>
+    </nav>
+</header>
+<div class="container">
+	<div class="card-content">
 	<div id="Dashboard_main">
-	<h3 class="dashboard_label header">Dashboard</h2>
-	<div class="row">	
-	  <div class="col s6 m4">
-	    <div class="card horizontal">
-	      <div class="card-image">
-	      </div>
-	      <div class="card-stacked">
-	        <div class="card-content">
-	        	<span class="active_user_label">Active Users</span>
-	          <h2>{{ active }} </h2>
-	        </div>
-	      </div>
-	    </div>
-      </div>
-      <div class="col s6 m4">
-	    <div class="card horizontal">
-	      <div class="card-image">
-	      </div>
-	      <div class="card-stacked">
-	        <div class="card-content">
-	          <span class="inactive_user_label">Inactive Users</span>
-	          <h2>{{ inactive }}</h2>
-	        </div>
-	      </div>
-	    </div>
-      </div>
-    </div>        
-    
-	  <a href="/usermanagement/add_user_page/" class="add_user waves-effect waves-light btn" style="margin-bottom: 20px;"><i class="material-icons left">person_add</i><span class="add_user_button">Add user</span></a>
+	<h3 class="dashboard_label header">Template Management</h2>
+    <br>
+    <a href="/usermanagement/add_user_page/" class="add_user waves-effect waves-light btn" style="margin-bottom: 20px;"><i class="material-icons left">add_circle</i><span class="add_user_button">Add Template</span></a>
 
 	  <table id="example" class="display" style="width:auto;">
 		<thead>
@@ -233,13 +224,19 @@
             </div>      
         </form>   
     </div>
-	</div>
-<script src="/static/js/dashboard.js"></script>
+    </div>
+</div>
+</div>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="{% static '/js/materialize.min.js' %}"></script>
+<script src="/static/js/user_dashboard.js"></script>
 <script src="/static/js/datatable.js"></script>
 <script>
-        $(document).ready(function(){
-            $('select').formSelect();
-             // Check username avaliable in database
+    $(".brand-logo").sideNav();
+
+    $(document).ready(function(){
+        $('select').formSelect();
+            // Check username avaliable in database
     $('#user_name_edit').on('blur', function(){
         var user_name = $('#user_name_edit').val();
         if (user_name == '') {
@@ -310,4 +307,3 @@
 });
  </script>
     
-{% endblock %}

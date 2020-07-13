@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Registration Form</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="{% static '/css/materialize.min.css' %}"  media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{% static '/user_registration/css/user_registration_form.css' %}"  media="screen,projection"/> 
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<header>
+    <nav>
+        <div class="nav-wrapper">
+            <a id="back_button" onclick="getUserDashboardDatatable()" data-activates="slide-out" class="brand-logo" style="margin-left: 10px; margin-top: 1px;"><i class="material-icons prefix">arrow_back</i><span class="Menu_label">Back</span></a>
+        </div>
+    </nav>
+</header>
+<body>
+    
+    <div class="container">
+        <div class="form-border row">
+            <form id="registration_form" class="col s8 push-s2" onSubmit="return false;" >
+                {% csrf_token %}
+               
+                <div class="row">
+                    <div class="input-field col s6">
+                        <i class="material-icons prefix">account_circle</i>
+                        <input id="user_name" type="text" class="validate" required="" aria-required="true">
+                        <label class="user_name_label" for="user_name">Username</label>
+                        <span class="helper-text" data-error="Sorry... Username already taken" data-success="Username available"></span>
+                    </div>
+                    <div class="input-field col s6">
+                        <i class="material-icons prefix">edit</i>
+                        <input id="first_name" type="text" class="validate" required="" aria-required="true">
+                        <label class="first_name_label" for="first_name">First Name</label>
+                    </div>
+                </div>
+                <div class="input-field col s6">
+                    <i class="material-icons prefix">edit</i>
+                    <input id="last_name" type="text" class="validate" required="" aria-required="true">
+                    <label class="last_name_label" for="last_name">Last Name</label>
+                </div>
+                <div class="row">
+                    <div class="input-field col s6">
+                        <i class="material-icons prefix">mail</i>
+                        <input id="email" type="email" class="validate" required="" aria-required="true">
+                        <label class="email_label" for="email" >Email</label>
+                        <span class="helper-text" data-error="Invalid Email Id" data-success="check once again whether email address is correct."></span>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div style="margin-top: 1.5rem;" class="input-field col s6">
+                        <i class="material-icons prefix">vpn_key</i>
+                        <input id="password" type="password" class="validate" required="" aria-required="true">
+                        <label class="password_label" for="password">Password</label>
+                    </div>
+               
+                    <div style="margin-top: 1.5rem;" class="input-field col s6">
+                        <i class="material-icons prefix">vpn_key</i>
+                        <input id="confirm_password" type="password" class="validate" required="" aria-required="true">
+                        <label class="confirm_password_label" for="password">Confirm Password</label>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="input-field col s12 m6">
+                        
+                        <select id="role_drop_down" class="validate">
+                            <option class="select_one_label" value="" disabled selected><span class="select_one_label"></span></option>
+                        </select>
+                        <label class="role_label" id="role_label" data-error="Select an option">Assign Role</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col push-s3">
+                        <button id="submit_form" class="btn waves-effect waves-light" type="submit" name="submit" onclick="RegisterUser();"><span class="submit_label">Sumbit</span>
+                        <i class="material-icons right">send</i>
+                        </button>
+                    </div>
+                </div>      
+            </form>
+        </div>
+    </div>
+<!--Import jQuery before materialize.js-->
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="{% static '/js/materialize.min.js' %}"></script>
+<script type="text/javascript" src="{% static '/user_registration/js/user_registration_form.js' %}"></script>
+</body>
+</html>
