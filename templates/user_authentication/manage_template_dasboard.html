@@ -22,7 +22,7 @@
 	<div id="Dashboard_main">
 	<h3 class="dashboard_label header">Template Management</h2>
     <br>
-    <a href="/usermanagement/add_user_page/" class="add_user waves-effect waves-light btn" style="margin-bottom: 20px;"><i class="material-icons left">add_circle</i><span class="add_user_button">Add Template</span></a>
+    <a onclick="GetAddTemplatePage()" class="add_user waves-effect waves-light btn" style="margin-bottom: 20px;"><i class="material-icons left">add_circle</i><span class="add_user_button">Add Template</span></a>
 
 	  <table id="example" class="display" style="width:auto;">
 		<thead>
@@ -229,8 +229,8 @@
 </div>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 <script type="text/javascript" src="{% static '/js/materialize.min.js' %}"></script>
-<script src="/static/js/user_dashboard.js"></script>
-<script src="/static/js/datatable.js"></script>
+<script src="/static/js/manage_template_dashboard.js"></script>
+<!-- <script src="/static/js/manage_template_datatable.js"></script> -->
 <script>
     $(".brand-logo").sideNav();
 

@@ -7,6 +7,7 @@ var tableLoad = $(document).ready(function() {
         localStorage.removeItem("Superuser");
     }
     $('#example').DataTable({
+        dom: 'frtlip'  ,
         "processing": true,
         "serverSide": true,
         "scrollX": true,
@@ -25,6 +26,7 @@ var tableLoad = $(document).ready(function() {
                 }                
             }
         },
+        
         "columns" : [   
                         {"data" : null,
                         render: function (data, type, row, meta) {
@@ -70,8 +72,20 @@ var tableLoad = $(document).ready(function() {
                         }},
                         
             ],
+            columnDefs: [
+                {
+                    targets: ['_all'],
+                    className: 'mdc-data-table__cell'
+                }
+            ]
     });
+        //lengthmenu -> add a margin to the right and reset clear 
+    $(".dataTables_length").css('clear', 'none');
+    $(".dataTables_length").css('margin-right', '20px');
 
+    //info -> reset clear and padding
+    $(".dataTables_info").css('clear', 'none');
+    $(".dataTables_info").css('padding', '0');
     // Call datatables, and return the API to the variable for use in our code
     // Binds datatables to all elements with a class of datatable
     var table = $("#example").dataTable().api();

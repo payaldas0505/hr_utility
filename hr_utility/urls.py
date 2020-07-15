@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("hr_application.urls")),
     path('', include('django.contrib.auth.urls')),
+    path('_nested_admin/', include('nested_admin.urls')),
     
 ]+ staticfiles_urlpatterns()
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

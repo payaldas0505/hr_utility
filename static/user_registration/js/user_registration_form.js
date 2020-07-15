@@ -3,52 +3,9 @@ jQuery(document).ready(function($) {
     $('select').not('.disabled').formSelect();
     $('textarea#textarea1').characterCounter();
     $('input#telephone').characterCounter();
-    var $crf_token = $('[name="csrfmiddlewaretoken"]').attr('value');
     
-     //Get the role dropdown
-     $.ajax({
-        url: '/dashboard/user_management/add_user/get_roles/',
-        type: 'GET',
-
-        success:function(response){
-            console.log(response)
-
-            var next_id = $("#role_drop_down");
-            $.each(response, function(key, value) {
-                role = '<span class="role_option_'+value.role_no+'">'+value.role_name+'</span>'
-                $(next_id).append($("<option></option>").attr("value", value.role_no).html(role));
-            });
-            $(next_id).not('.disabled').formSelect();           
-        },
-        error: function(data){
-            obj = JSON.parse(data.responseText)
-            M.toast({html: obj.error, classes: 'red rounded'})
-        }
-
-    });
-    // Get and set all the labels from backend
-    var language_id = localStorage.getItem('language')
-    // alert(language_id)
-    $.ajax({
-        type: 'POST',
-        url: '/v2s/get_labels/',
-        data : {
-        	'page_name' : 'User_registration',
-        	'language_id' : language_id,
-		    },
-        success: function (jsondata) {
-            console.log(jsondata)
-            for (const [key, value] of Object.entries(jsondata)) {
-                console.log(key, value);
-                $('.'+value.page_label_class_name).text(value.page_label_text);
-              }
-        },
-        error: function(data){
-            obj = JSON.parse(data.responseText)
-            M.toast({html: obj.error, classes: 'red rounded'})
-        }
-    });
-
+    getUserRoleDropDown();
+     
 
     // Check username avaliable in database
     $('#user_name').on('blur', function(){
@@ -58,7 +15,8 @@ jQuery(document).ready(function($) {
             return;
         }
         $.ajax({
-          url: '/user/check_username/',
+          url: 'check_username/',
+          headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
           type: 'post',
           data: {
               'user_name_check' : 1,
@@ -78,6 +36,7 @@ jQuery(document).ready(function($) {
             }
           },
           error: function(xhr) {
+            
             parsed_jsondata = JSON.parse(xhr.responseText)
             // alert(parsed_jsondata.error)
             M.toast({html: parsed_jsondata.error, classes: 'red rounded'})
@@ -88,12 +47,14 @@ jQuery(document).ready(function($) {
     // Check emailid avaliable in database
     $('#email').on('blur', function(){
         var email = $('#email').val();
+        
         if (email == '') {
             email_state = false;
             return;
         }
         $.ajax({
-        url: '/user/check_email/',
+        url: 'check_email/',
+        headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
         type: 'post',
         data: {
             'email_check' : 1,
@@ -120,6 +81,58 @@ jQuery(document).ready(function($) {
     });
 });
 
+
+function getUserRoleDropDown(){
+
+    //Get the role dropdown
+    $.ajax({
+        url: 'get_roles/',
+        headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+        type: 'GET',
+
+        success:function(response){
+            console.log(response)
+
+            var next_id = $("#role_drop_down");
+            $.each(response, function(key, value) {
+                role = '<span class="role_option_'+value.role_no+'">'+value.role_name+'</span>'
+                $(next_id).append($("<option></option>").attr("value", value.role_no).html(role));
+            });
+            $(next_id).not('.disabled').formSelect();           
+        },
+        error: function(data){
+            if (data.status == 401) {
+                getaccessTokenForGetRoles();
+            }
+            obj = JSON.parse(data.responseText)
+            M.toast({html: obj.error, classes: 'red rounded'})
+        }
+
+    });
+}
+
+function getaccessTokenForGetRoles(){
+    $.ajax({
+        type: 'POST',
+        url: '/refresh_token/',
+        data : {
+          'refresh' : localStorage.getItem("Refresh"),
+        },
+        success: function (result) {
+           localStorage.setItem("Token", result.access);
+           token = localStorage.getItem("Token")
+        
+        setTimeout(function() {
+            getUserRoleDropDown()
+          }, 500);
+
+        },
+        error: function(data){
+           obj = JSON.parse(data.responseText)
+           M.toast({html: obj.detail})
+        }
+  })
+}
 // Get toast messages from backend 
 function get_toast(label){
     $("#submit_form").attr("disabled", false);
@@ -163,26 +176,17 @@ function readURL(input) {
 
 // Save data into database
 function RegisterUserForm(){
-    // option = $("#dropdownid option:selected").text();
-    // role = $("#role_drop_down option:selected").text();
+
     var formData = new FormData();
-    formData.append('profile_picture', $('#profile_picture')[0].files[0]);
+    
     formData.append('user_name', user_name);
     formData.append('first_name', first_name);
-    formData.append('middle_name', middle_name);
     formData.append('last_name', last_name);
-    formData.append('password', password);
-    formData.append('dob', dob);
     formData.append('email',email );
-    formData.append('telephone', telephone);
-    formData.append('address', address);
-    formData.append('gender', gender);
-    formData.append('indian', indian);
-    formData.append('option', option);
-    formData.append('role', "Customer");
-    formData.append('resume', $('#resume')[0].files[0]);
-    formData.append('pan_card', $('#pan_card')[0].files[0]);
-    formData.append('adhar_card', $('#adhar_card')[0].files[0]);
+    formData.append('password', password);
+    formData.append('confirm_password', confirm_password);
+    formData.append('role', role);
+    formData.append('user_status', user_status);
     $.ajax({
         url : "",
         method : "POST",
@@ -193,12 +197,16 @@ function RegisterUserForm(){
         async : false,
         success : function(jsonData){
             M.toast({html: jsonData['message'], outDuration: 2000, classes: 'green rounded'})
-         
+            var token = localStorage.getItem("Token");
             setTimeout(function() {
-                window.location.href = '/v2s/login/';
+                window.location.href = "/dashboard/user_management/?token="+token;
               }, 3000);
         },
         error: function(xhr) {
+            if (xhr.status == 401) {
+
+                getaccessAddUser();
+            }
             parsed_jsondata = JSON.parse(xhr.responseText)
             // alert(parsed_jsondata.error)
             M.toast({html: parsed_jsondata.error, classes: 'red rounded'})
@@ -212,141 +220,82 @@ function RegisterUserForm(){
 
 // Validation of fields
 function RegisterUser(){
+
     $("#submit_form").attr("disabled", true);
+
     user_name = $('#user_name').val()
     first_name = $('#first_name').val();
     last_name = $('#last_name').val();
-    middle_name = $('#middle_name').val();
-    password = $('#password').val();
-    dob = $('#dob').val();
     email = $('#email').val();
-    telephone = $('#telephone').val();
-    address = $('#textarea1').val();
-    gender = $("input[name='gender']:checked", '#registration_form').val();
-    indian = $("input[name='indian']:checked", '#registration_form').val();
-    option = $("#dropdownid option:selected").val();
-    // role = $("#role_drop_down option:selected").val();
-    
-    if (indian){
-        indian = true
+    password = $('#password').val();
+    confirm_password = $('#confirm_password').val();
+    role = $("#role_drop_down option:selected").val();
+    user_status = $("input[name='user_status']:checked", '#registration_form').val();
+    if (user_status){
+        user_status = true
     }
     else{
-        indian = false
+        user_status = false
     }
-    if ($('#profile_picture').get(0).files.length === 0) {
-       
-        get_toast('profile_picture_toast');
-
-        // M.toast({html: 'Please upload your profile picture!', classes: 'red rounded'})
-    }
-    else if (user_name == "") {
+    if (user_name == "") {
         
-        get_toast('user_name_toast');
-
-        // M.toast({html: 'Username must be filled out!', classes: 'red rounded'})
-        // return false;
+        // get_toast('user_name_toast');
+        $("#submit_form").attr("disabled", false);
+        M.toast({html: 'Username must be filled out!', classes: 'red rounded'})
+        return false;
     }
     else if (first_name == "") {
         
-        get_toast('first_name_toast');
-
-        // M.toast({html: 'First name must be filled out!', classes: 'red rounded'})
-        // return false;
+        // get_toast('first_name_toast');
+        $("#submit_form").attr("disabled", false);
+        M.toast({html: 'First name must be filled out!', classes: 'red rounded'})
+        return false;
     }
-    else if (middle_name == "") {
-        
-        get_toast('middle_name_toast');
-
-        // M.toast({html: 'Middle name must be filled out!', classes: 'red rounded'})
-        // return false;
-    }
+ 
     else if (last_name == "") {
-        
-        get_toast('last_name_toast');
 
-        // M.toast({html: 'Last name must be filled out!', classes: 'red rounded'})
-        // return false;
-    }
-    else if (password == "") {
-        
-        get_toast('password_toast');
+        $("#submit_form").attr("disabled", false);
+        // get_toast('last_name_toast');
 
-        // M.toast({html: 'Password must be filled out!', classes: 'red rounded'})
-        // return false;
-    }
-    else if (dob == "") {
-        
-        get_toast('dob_toast');
-
-        // M.toast({html: 'Date of Birth must be filled out!', classes: 'red rounded'})
-        // return false;
+        M.toast({html: 'Last name must be filled out!', classes: 'red rounded'})
+        return false;
     }
     else if (email == "") {
         
-        get_toast('email_toast');
-
-        // M.toast({html: 'Email address must be filled out!', classes: 'red rounded'})
-        // return false;
+        // get_toast('email_toast');
+        $("#submit_form").attr("disabled", false);
+        M.toast({html: 'Email address must be filled out!', classes: 'red rounded'})
+        return false;
     }
-    else if (telephone == "") {
+    else if (password == "") {
         
-        get_toast('telephone_toast');
-
-        // M.toast({html: 'telephone must be filled out and should be valid number!', classes: 'red rounded'})
-        // return false;
+        // get_toast('password_toast');
+        $("#submit_form").attr("disabled", false);
+        M.toast({html: 'Password must be filled out!', classes: 'red rounded'})
+        return false;
     }
-    else if (isNaN(telephone)){
+    else if (confirm_password == "") {
+        
+        // get_toast('confirm_password_toast');
+        $("#submit_form").attr("disabled", false);
+        M.toast({html: 'Password must be filled out!', classes: 'red rounded'})
+        return false;
+    }
+    else if (password != confirm_password){
+        // alert("check match condition")
+        $("#submit_form").attr("disabled", false);
+        M.toast({ html: 'Password and confirm password fields do not match', classes: 'red rounded' })
+        return false;
+    }
+
+    else if (role == "") {
+        
+        // get_toast('role_toast');
+        $("#submit_form").attr("disabled", false);
+        M.toast({html: 'Please assign role for the user from the dropdown!', classes: 'red rounded'})
+        return false;
+    }
     
-        $("#telephone").css("color", "red");
-        get_toast('num_telephone_toast');
-
-        // M.toast({html: 'Telephone should be number!', classes: 'red rounded'})
-       
-        // return false;
-    }
-    else if (address == "") {
-        
-        get_toast('address_toast');
-
-        // M.toast({html: 'Address must be filled out!', classes: 'red rounded'})
-        // return false;
-    }
-    else if (gender == "") {
-        
-        get_toast('gender_toast');
-
-        // M.toast({html: 'Gender must be filled out!', classes: 'red rounded'})
-        // return false;
-    }
-    else if (option == "") {
-        
-        get_toast('option_toast');
-
-        // M.toast({html: 'Please select your qualification from the dropdown!', classes: 'red rounded'})
-        // return false;
-    }
- 
-    else if ($('#resume').get(0).files.length === 0) {
-        
-        get_toast('resume_toast');
-
-        // M.toast({html: 'Please upload your resume!', classes: 'red rounded'})
-        // return false;
-    }
-    else if ($('#pan_card').get(0).files.length === 0) {
-        
-        get_toast('pan_card_toast');
-
-        // M.toast({html: 'Please upload your Pan Card!', classes: 'red rounded'})
-        // return false;
-    }
-    else if ($('#adhar_card').get(0).files.length === 0) {
-        
-        get_toast('adhar_card_toast');
-
-        // M.toast({html: 'Please upload your Aadhar Card!', classes: 'red rounded'})
-        // return false;
-    }
     else{
         RegisterUserForm()
     }
@@ -354,7 +303,7 @@ function RegisterUser(){
     
 function getUserDashboardDatatable(){
     var token = localStorage.getItem("Token");
-$.ajax({
+    $.ajax({
     method : 'GET',
     url : "/dashboard/user_management/?token="+token,
     success: function(data){
@@ -368,3 +317,23 @@ $.ajax({
 })  
 }
 
+function getaccessAddUser(){
+    $.ajax({
+         type: 'POST',
+         url: '/refresh_token/',
+         data : {
+           'refresh' : localStorage.getItem("Refresh"),
+         },
+         success: function (result) {
+            localStorage.setItem("Token", result.access);
+            // location.reload();
+            RegisterUserForm()
+            // return false
+
+         },
+         error: function(data){
+            obj = JSON.parse(data.responseText)
+            M.toast({html: obj.detail})
+         }
+   })
+ }

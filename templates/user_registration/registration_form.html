@@ -52,16 +52,16 @@
                 </div>
                 
                 <div class="row">
-                    <div style="margin-top: 1.5rem;" class="input-field col s6">
+                    <div class="input-field col s6">
                         <i class="material-icons prefix">vpn_key</i>
                         <input id="password" type="password" class="validate" required="" aria-required="true">
                         <label class="password_label" for="password">Password</label>
                     </div>
                
-                    <div style="margin-top: 1.5rem;" class="input-field col s6">
+                    <div class="input-field col s6">
                         <i class="material-icons prefix">vpn_key</i>
                         <input id="confirm_password" type="password" class="validate" required="" aria-required="true">
-                        <label class="confirm_password_label" for="password">Confirm Password</label>
+                        <label class="confirm_password_label" for="confirm_password">Confirm Password</label>
                     </div>
                 </div>
                 <br>
@@ -69,11 +69,23 @@
                     <div class="input-field col s12 m6">
                         
                         <select id="role_drop_down" class="validate">
-                            <option class="select_one_label" value="" disabled selected><span class="select_one_label"></span></option>
+                            <option class="select_one_label" value="" disabled selected><span class="select_one_label">Select Role</span></option>
                         </select>
                         <label class="role_label" id="role_label" data-error="Select an option">Assign Role</label>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="switch col s6">
+                        <label class="user_status_label" for="user_status">User Status ?</label>
+                        <label><br>
+                        <span class="user_status_off_label">Off</span>
+                        <input type="checkbox" name="user_status" id="user_status" required class="validate">
+                        <span class="lever"></span>
+                        <span class="user_status_on_label">On</span>
+                        </label>
+                    </div>
+                </div>
+                <br>
                 <div class="row">
                     <div class="col push-s3">
                         <button id="submit_form" class="btn waves-effect waves-light" type="submit" name="submit" onclick="RegisterUser();"><span class="submit_label">Sumbit</span>

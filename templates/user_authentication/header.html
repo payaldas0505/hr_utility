@@ -15,14 +15,15 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
   <link type="text/css" rel="stylesheet" href="{% static '/css/materialize.min.css' %}"  media="screen,projection"/>
+  <link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>    
   <script type="text/javascript" src="{% static '/js/materialize.min.js' %}"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-  <link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
-    <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+  <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     
-      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     {% endblock %}
 
@@ -33,18 +34,19 @@
     <div class="nav-wrapper">
       <a href="#" data-activates="slide-out" class="brand-logo" style="margin-left: 10px"><i class="material-icons prefix">dehaze</i><span class="Menu_label">Menu</span></a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li>
-          <a onclick="getUserDashboard()" class="user_management " style="margin-bottom: 20px;"><i class="material-icons left">people</i><span class="add_user_button">User Management</span></a>
-        </li>
-        <li>
-          <a onclick="getTemplateDashboard()" class="template_management" style="margin-bottom: 20px;"><i class="material-icons left">web</i><span class="add_user_button">Template Management</span></a>
-        </li>
+
         <li><a href="" id="user"></a></li>
         
       </ul>
     </div>
   </nav>
    <ul id="slide-out" class="side-nav">
+      <li>
+        <a onclick="getUserDashboard()" class="user_management " style="margin-bottom: 20px;"><i class="material-icons left">people</i><span class="add_user_button">User Management</span></a>
+      </li>
+      <li>
+        <a onclick="getTemplateDashboard()" class="template_management" style="margin-bottom: 20px;"><i class="material-icons left">web</i><span class="add_user_button">Template Management</span></a>
+      </li>
       <li><a onclick="changepassword()"><i class="material-icons prefix">vpn_key</i><span class="download_profile_label">Change Password</span></a></li>
       <li><a onclick="logout()"><i class="material-icons prefix">lock_open</i><span class="logout_label">Logout</span></a></li>
     </ul>

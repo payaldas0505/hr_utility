@@ -25,22 +25,38 @@ function logout() {
       url: '/logout/',
       headers: { Authorization: 'Bearer '+ localStorage.getItem("Token")},
       success: function (result) {
-        localStorage.removeItem("Token");
-        localStorage.removeItem("Role");
-        localStorage.removeItem("User");
-        localStorage.removeItem("view_user")
-        localStorage.removeItem("add_user")
-        localStorage.removeItem("edit_user")
-        localStorage.removeItem("delete_user")
+  
+        window.localStorage.clear();
         window.location.href = "/login/"
       },
         error: function(data){
           if (data.status == 401) {
-            getaccessToken();
+            getaccessTokenlogout();
+            
          }
       }
     })
   }
+
+// get access token when expired
+function getaccessTokenlogout(){
+
+  $.ajax({
+       type: 'POST',
+       url: '/refresh_token/',
+       data : {
+         'refresh' : localStorage.getItem("Refresh"),
+       },
+       success: function (result) {
+         localStorage.setItem("Token", result.access);
+         logout();
+       },
+       error: function(data){
+          obj = JSON.parse(data.responseText)
+          M.toast({html: obj.detail})
+       }
+ })
+}
 
 
 // download profile 
@@ -55,6 +71,7 @@ function logout() {
         error: function(data){
          if (data.status == 401) {
             getaccessToken();
+            
          }
       }
     })

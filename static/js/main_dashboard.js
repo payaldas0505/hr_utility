@@ -3,49 +3,9 @@ $(document).ready(function(){
     //     GetPermissions()
     //   }, 2000);
 
-    //Get the qualification dropdown
-    $.ajax({
-        url: '/user/get_qualification/',
-        type: 'GET',
-      
-        success:function(response){
-            console.log(response)
+ 
 
-            var next_id = $("#dropdownid");
-            $.each(response, function(key, value) {
-                qualification = '<span class="qualification_option_'+value.qualification_no+'">'+value.qualification_name+'</span>'
-                $(next_id).append($("<option></option>").attr("value", value.qualification_no).html(qualification));
-            });
-            $(next_id).not('.disabled').formSelect();           
-        },
-        error: function(data){
-            obj = JSON.parse(data.responseText)
-            M.toast({html: obj.error, classes: 'red rounded'})
-        }
 
-    });
-
-    //Get the Roles dropdown
-    $.ajax({
-        url: '/user/get_roles/',
-        type: 'GET',
-
-        success:function(response){
-            console.log(response)
-
-            var next_id = $("#role_drop_down");
-            $.each(response, function(key, value) {
-                role = '<span class="role_option_'+value.role_no+'">'+value.role_name+'</span>'
-                $(next_id).append($("<option></option>").attr("value", value.role_no).html(role));
-            });
-            $(next_id).not('.disabled').formSelect();           
-        },
-        error: function(data){
-            obj = JSON.parse(data.responseText)
-            M.toast({html: obj.error, classes: 'red rounded'})
-        }
-
-    });
     var language_id = localStorage.getItem('language')
     $.ajax({
         type: 'POST',
@@ -530,47 +490,36 @@ function EditUserValidation(){
 }
 
 function GetPermissions(){
-window.localStorage.setItem('add_user', 'true')
-window.localStorage.setItem('edit_user', 'true')
-window.localStorage.setItem('view_user', 'true')
-window.localStorage.setItem('delete_user', 'true')
-var user_role_id = localStorage.getItem('RoleId')
-var user_id = localStorage.getItem('UserId')
-    content = {
-        user_role_id : user_role_id,
-        user_id : user_id
-    }
-    $.ajax({
-        url: '/usermanagement/permission',
-        type: 'post',
-        data: JSON.stringify(content),
-        success: function(response){
-            // localStorage.setItem("Role", response.level)
-            
-            window.localStorage.setItem('add_user', response.add_user)
-            window.localStorage.setItem('edit_user', response.edit_user)
-            window.localStorage.setItem('view_user', response.view_user)
-            window.localStorage.setItem('delete_user', response.delete_user)
-
-            if (response.add_user == false){
-                $( ".add_user" ).hide();
-            }
-            if (response.edit_user == false){
-                $( ".edit_btn" ).hide();
-            }
-            if (response.delete_user == false){
-                $( ".delete_btn" ).hide();
-            }
-            if (response.view_user == false){
-                $( ".view_btn" ).hide();
-            }
-        },
-        error: function(xhr) {
-            parsed_json = JSON.parse(xhr.responseText)
-            M.toast({html: parsed_json.message, classes: 'red rounded'})
+    var user_role_id = localStorage.getItem('RoleId')
+        content = {
+            user_role_id : user_role_id,
         }
-      });
-}
+        $.ajax({
+            url: 'permission',
+            headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+            type: 'post',
+            data: content,
+            success: function(response){
+                // localStorage.setItem("Role", response.level)
+                
+                window.localStorage.setItem('add_user', response.add_user)
+                window.localStorage.setItem('add_template', response.add_template)
+ 
+    
+                if (response.add_user == false){
+                    $( ".user_management" ).hide();
+                }
+                if (response.add_template == false){
+                    $( ".template_management" ).hide();
+                }
+
+            },
+            error: function(xhr) {
+                parsed_json = JSON.parse(xhr.responseText)
+                M.toast({html: parsed_json.message, classes: 'red rounded'})
+            }
+          });
+    }
 
 function getaccessTokenDashboard(){
     $.ajax({

@@ -134,15 +134,18 @@ function submit() {
         },
         success: function (result) {
             //  alert(result.role_id)
-        
+            if (result.error){
+                M.toast({ html: result.error, classes: 'red rounded' })
+                return false
+            }
             localStorage.setItem("Token", result.access);
             localStorage.setItem("Refresh", result.refresh);
             localStorage.setItem("UserId", result.id);
-            // localStorage.setItem("RoleId", result.role_id);
+            localStorage.setItem("RoleId", result.role_id);
             window.location.href = "/dashboard/?token=" + result.access;
          
             
-            // GetPermissions()
+            GetPermissions()
         },
         error: function (data) {
             localStorage.removeItem("User");
@@ -162,3 +165,35 @@ function getpasswordresetpage() {
     window.location.href = "/v2s/forgot_password/"
 };
 
+function GetPermissions(){
+    var user_role_id = localStorage.getItem('RoleId')
+        content = {
+            user_role_id : user_role_id
+        }
+        $.ajax({
+            url: 'permission',
+            headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+            type: 'post',
+            data: JSON.stringify(content),
+            success: function(response){
+                // localStorage.setItem("Role", response.level)
+                
+                window.localStorage.setItem('add_user', response.add_user)
+                window.localStorage.setItem('add_template', response.add_template)
+ 
+    
+                if (response.add_user == false){
+                    $( ".user_management" ).hide();
+                }
+                if (response.add_template == false){
+                    $( ".template_management" ).hide();
+                }
+
+            },
+            error: function(xhr) {
+                parsed_json = JSON.parse(xhr.responseText)
+                M.toast({html: parsed_json.message, classes: 'red rounded'})
+            }
+          });
+    }
+    
