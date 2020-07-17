@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.db import transaction
 
 from ..import generate, generateNew
-from .check_permission import check_permission
+from .check_permission import has_permission
 from django.core.files.storage import FileSystemStorage
 import json
 from ..serializer import WordTemplateNewSerializer
@@ -30,17 +30,12 @@ class NewGenDocxView(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
+    @has_permission('add_template')
     def get(self, request):
         """Renders Registration form."""  
         try:
-            permission_for = "add_template"
-            user_id = request.user.id
-            permission = check_permission(permission_for, user_id)
-            if permission == "granted":
-                return render(request, 'template_management/add_template.html')
-            return permission                                     
-
             
+            return render(request, 'template_management/add_template.html')
         
         except Exception as e:
             print("Error in getting registeration page:", e)
@@ -48,17 +43,10 @@ class NewGenDocxView(APIView):
             print(info_message)
             return  JsonResponse({"error": str(info_message)}, status=5)
     
+    @has_permission('add_template')
     def post(self,request):
 
         try:
-            permission_for = "add_template"
-            user_id = request.user.id
-            permission = check_permission(permission_for, user_id)
-            if permission == "granted":
-                pass
-            else:
-                return permission
-
             word_serializer = WordTemplateNewSerializer(data=request.data)
             print(request.data['word_template'])
             if word_serializer.is_valid():

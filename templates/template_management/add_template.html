@@ -30,7 +30,7 @@
             <div class="card" style="margin-top: 40px;border: none;"></div>
             <div class="form-border row">
                 <div class="card col-sm-6" style="margin: auto;border: none;" id="uploadTemplateDiv">
-                    <form action="" method="post" class="col s8 push-s2" enctype="multipart/form-data">
+                    <form id="uploadtemplateform" onSubmit="return false;">
                         {% csrf_token %}
                         <center>
                         <h4>Upload Word Template</h4>
@@ -56,11 +56,11 @@
                         </div>
                         <!-- <input type="file" name="word_template" id="word_template"><br><br> -->
                         
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col push-s3">
                                 <button class="btn btn-primary" id="UploadTemplate" type="submit" onclick="UploadWordTemplate()">Upload<i class="material-icons right">file_upload</i></button>
                             </div>
-                        </div> 
+                        </div>  -->
                         
                     </form>
                 </div> 

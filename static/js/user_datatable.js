@@ -44,8 +44,28 @@ var tableLoad = $(document).ready(function() {
                         }},
                         {"data" : "user_id",
                         "render" : function(data){
-                            var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditReport(id)><i class="material-icons prefix">mode_edit</i></button> <button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button><button class="delete_btn" id='+data+' onclick=getDeleteReport(id)><i class="material-icons prefix">delete</i></button> '
-                            return all_perms
+                            var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditReport(id)><i class="material-icons prefix">mode_edit</i></button> <button class="delete_btn" id='+data+' onclick=getDeleteReport(id)><i class="material-icons prefix">delete</i></button> <button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button>'
+                            var edit_view = '<button class="edit_btn" id='+data+' onclick=getEditReport(id)><i class="material-icons prefix">mode_edit</i></button> <button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button>'
+                            var only_view = '<button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button>'
+
+                            var retrievedData = localStorage.getItem("UserPermissions");
+                            var userPermissions = JSON.parse(retrievedData);
+
+                            var delete_user_flag = userPermissions.delete_user
+                            var edit_user_flag = userPermissions.edit_user
+                            var view_user_flag = userPermissions.view_user
+
+                            if(delete_user_flag == true && edit_user_flag == true && view_user_flag == true){
+                                return all_perms
+                            }
+                            else if(delete_user_flag == false && edit_user_flag == true && view_user_flag == true){
+                                return edit_view
+                            }
+                            else if(delete_user_flag == false && edit_user_flag == false && view_user_flag == true ){
+                                return only_view
+                            }
+                            // var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditReport(id)><i class="material-icons prefix">mode_edit</i></button> <button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button><button class="delete_btn" id='+data+' onclick=getDeleteReport(id)><i class="material-icons prefix">delete</i></button> '
+                            // return all_perms
                         }},
                         
             ],
@@ -96,7 +116,7 @@ function getaccessTokenDatatable(){
     // alert('unauthorize')
     $.ajax({
          type: 'POST',
-         url: '/v2s/refresh_token/',
+         url: '/refresh_token/',
          data : {
            'refresh' : localStorage.getItem("Refresh"),
          },

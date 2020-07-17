@@ -24,7 +24,14 @@
   <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
+  <style>
+    a.sidenav-close > i.material-icons {
+      position: absolute;
+      right:20px;
+      top: 20px;
+      color:black  
+  }
+  </style>
     {% endblock %}
 
   </head>
@@ -34,53 +41,31 @@
     <div class="nav-wrapper">
       <a href="#" data-activates="slide-out" class="brand-logo" style="margin-left: 10px"><i class="material-icons prefix">dehaze</i><span class="Menu_label">Menu</span></a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
-
-        <li><a href="" id="user"></a></li>
+        <li style="margin-right: 50px;" id="user"></li>
         
       </ul>
     </div>
   </nav>
    <ul id="slide-out" class="side-nav">
+    <div>
+      <a onclick="closeSideBar()" class="sidenav-close"><i class="material-icons">close</i></a>
+    </div>
       <li>
-        <a onclick="getUserDashboard()" class="user_management " style="margin-bottom: 20px;"><i class="material-icons left">people</i><span class="add_user_button">User Management</span></a>
+        <a onclick="getUserDashboard()" class="user_management"><i class="material-icons left">people</i><span class="add_user_button">User Management</span></a>
       </li>
       <li>
-        <a onclick="getTemplateDashboard()" class="template_management" style="margin-bottom: 20px;"><i class="material-icons left">web</i><span class="add_user_button">Template Management</span></a>
+        <a onclick="getTemplateDashboard()" class="template_management"><i class="material-icons left">web</i><span class="add_user_button">Template Management</span></a>
       </li>
-      <li><a onclick="changepassword()"><i class="material-icons prefix">vpn_key</i><span class="download_profile_label">Change Password</span></a></li>
-      <li><a onclick="logout()"><i class="material-icons prefix">lock_open</i><span class="logout_label">Logout</span></a></li>
+      <li>
+        <a onclick="changepassword()"><i class="material-icons prefix">vpn_key</i><span class="download_profile_label">Change Password</span></a>
+      </li>
+      <li>
+        <a onclick="logout()"><i class="material-icons prefix">lock_open</i><span class="logout_label">Logout</span></a>
+      </li>
     </ul>
-
-<script>
- $(".brand-logo").sideNav();
- jQuery(document).ready(function($)
- {
-    // alert(localStorage.getItem("User"))
     
-    $('#user').text(localStorage.getItem("User"));
-    var language_id = localStorage.getItem('language')
-    $.ajax({
-        type: 'POST',
-        url: '/v2s/get_labels/',
-        data : {
-        	'page_name' : 'Nav_bar',
-        	'language_id' : language_id,
-		    },
-        success: function (jsondata) {
-            console.log(jsondata)
-            for (const [key, value] of Object.entries(jsondata)) {
-                console.log(key, value);
-                $('.'+value.page_label_class_name).text(value.page_label_text);
-              }
-        },
-        error: function(data){
-            obj = JSON.parse(data.responseText)
-            M.toast({html: obj.error, classes: 'red rounded'})
-        }
-    });
-});
-</script>  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <script type="text/javascript" src="{% static '/js/logout.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script type="text/javascript" src="{% static '/js/logout.js' %}"></script>
+<script type="text/javascript" src="{% static '/js/header.js' %}"></script>
 </header>  
 </html>          

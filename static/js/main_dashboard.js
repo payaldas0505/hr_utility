@@ -4,7 +4,7 @@ $(document).ready(function(){
     //   }, 2000);
 
  
-
+    GetPermissions()
 
     var language_id = localStorage.getItem('language')
     $.ajax({
@@ -47,7 +47,7 @@ $(document).ready(function(){
             M.toast({html: obj.error, classes: 'red rounded'})
         }
     });
-    GetPermissions()
+    
 
 })
 
@@ -497,21 +497,18 @@ function GetPermissions(){
         $.ajax({
             url: 'permission',
             headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
-            type: 'post',
+            type: 'post',   
             data: content,
             success: function(response){
-                // localStorage.setItem("Role", response.level)
                 
-                window.localStorage.setItem('add_user', response.add_user)
-                window.localStorage.setItem('add_template', response.add_template)
- 
+                localStorage.setItem("UserPermissions", JSON.stringify(response));
     
-                if (response.add_user == false){
-                    $( ".user_management" ).hide();
-                }
-                if (response.add_template == false){
-                    $( ".template_management" ).hide();
-                }
+                // if (response.user_management_page == false){
+                //     $( ".user_management" ).hide();
+                // }
+                // if (response.template_management_page == false){
+                //     $( ".template_management" ).hide();
+                // }
 
             },
             error: function(xhr) {

@@ -23,17 +23,25 @@ class UserRole(models.Model):
     role_no = models.IntegerField(null=False)
     role_name = models.CharField(max_length=100)
     class Meta:
-        verbose_name_plural = "2. Role Permissions"
+        verbose_name_plural = "2. Roles and Permissions"
     def __str__(self):
         return '{}' .format(self.role_name) 
 
-class LevelModel(models.Model):
-    level = models.ForeignKey(UserRole, on_delete=models.CASCADE, null=False)
+class Permission(models.Model):
+    permission = models.ForeignKey(UserRole, on_delete=models.CASCADE, null=False)
+    user_management_page = models.BooleanField(null=False)
     add_user = models.BooleanField(null=False)
+    edit_user = models.BooleanField(null=False)
+    view_user = models.BooleanField(null=False)
+    delete_user = models.BooleanField(null=False)
+    template_management_page = models.BooleanField(null=False)
     add_template = models.BooleanField(null=False)
+    edit_template = models.BooleanField(null=False)
+    view_template = models.BooleanField(null=False)
+    delete_template = models.BooleanField(null=False)
 
     def __str__(self):
-        return '{}' .format(self.level)
+        return '{}' .format(self.permission)
 
 ORDER_COLUMN_CHOICES = Choices(
     ('0', 'user_name'),

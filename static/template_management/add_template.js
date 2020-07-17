@@ -1,3 +1,6 @@
+// $(document).ready(function (){
+//     sessionStorage.clear()
+// }),
 
 function SubmitUploadWordTemplate(){
     $('#UploadTemplate').prop('disabled', true);
@@ -16,7 +19,8 @@ function SubmitUploadWordTemplate(){
         processData: false,
         success: function(response){
             // console.log(response)
-            $('#uploadTemplateDiv').hide();
+            // $('#uploadTemplateDiv').hide();
+            var id = []
             for(i=0;i<response[0].placeholder_list.length;i++){
                 console.log(response[0].placeholder_list[i])
                 console.log(response[0].placeholder_list[i].length)
@@ -26,13 +30,21 @@ function SubmitUploadWordTemplate(){
                 else{
                     input_type = 'text'
                 }
-                temp = '<p>'+response[0].placeholder_list[i]+'</p>'
-                input = '<input id='+response[0].placeholder_list[i]+' type='+input_type+'></input>'
-                console.log(temp)
-                $('#templateFormAppend').append(temp)
+                div_class_start = '<div class="row"><div class="input-field col s12"><i class="material-icons prefix">edit</i>'
+                // temp = '<p>'+response[0].placeholder_list[i]+'</p>'
+                input = '<input id='+response[0].placeholder_list[i]+' type='+input_type+' class="validate" required="" aria-required="true">'
+                label = '<label for='+response[0].placeholder_list[i]+'>'+response[0].placeholder_list[i]+'</label>'
+                div_class_end = '</div></div>'
+                $('#templateFormAppend').append(div_class_start)
                 $('#templateFormAppend').append(input)
+                $('#templateFormAppend').append(label)
+                $('#templateFormAppend').append(div_class_end)
+                id.push(response[0].placeholder_list[i])
             }
+            submit_button = '<div class="row"><div class="col push-s3"><button class="btn btn-primary" id="UploadTemplate" type="submit" onclick="FieldUploadWordTemplate()">Upload<i class="material-icons right">send</i></button></div></div>'
+            $('#templateFormAppend').append(submit_button)
             $('#templateForm').show();
+            sessionStorage.setItem("Id", JSON.stringify(id));
         },
         error: function(xhr) {
             if (xhr.status == 401) {
@@ -53,7 +65,10 @@ function SubmitUploadWordTemplate(){
 }
 
 // Validation of fields
-function UploadWordTemplate(){
+
+$('#word_template').change(function(){    
+    sessionStorage.clear()
+    $("#templateFormAppend").empty();
 
     $("#UploadTemplate").attr("disabled", true);
 
@@ -72,25 +87,25 @@ function UploadWordTemplate(){
     }
     
     else{
-        SubmitUploadWordTemplate(word_name)
+        SubmitUploadWordTemplate()
     }
-}
+})
 
 
 function getTemplateDashboard(){
     var token = localStorage.getItem("Token");
-$.ajax({
-    method : 'GET',
-    url : "/dashboard/template_management/?token="+token,
-    success: function(data){
-        window.location.href = "/dashboard/template_management/?token="+token
-    },
-    error : function(xhr){
-        if(xhr.status == 401){
-            GetAccessTokenForBackButton()
+    $.ajax({
+        method : 'GET',
+        url : "/dashboard/template_management/?token="+token,
+        success: function(data){
+            window.location.href = "/dashboard/template_management/?token="+token
+        },
+        error : function(xhr){
+            if(xhr.status == 401){
+                GetAccessTokenForBackButton()
+            }
         }
-    }
-})  
+    })  
 }
 
 function GetAccessTokenForBackButton(){
@@ -140,3 +155,24 @@ function getaccessUploadWordTemplate(){
          }
    })
  }
+ 
+function FieldUploadWordTemplate(){
+    // retrieving our data and converting it back into an array
+    var retrievedData = sessionStorage.getItem("Id");
+    var id = JSON.parse(retrievedData);
+
+    values = []
+    $.each(id, function( i, l ){
+        var l = $($.trim('#')+$.trim(l)).val()
+        
+      });
+      alert(values)
+
+    if ( l == ""){
+        M.toast({html: "Please fill the " +l+ "field", classes: 'red rounded' })
+    }
+    else{
+        SaveFields();
+    }
+
+}

@@ -25,10 +25,7 @@ function GetAccessTokenForBackButton(){
         success: function (result) {
            localStorage.setItem("Token", result.access);
            token = localStorage.getItem("Token")
-           // location.reload();
-        //    RegisterUserForm()
-           // return false
-        //    window.location.href = "/v2s/dashboard/?token="+token
+        
         setTimeout(function() {
             window.location.href = "/dashboard/?token="+token;
           }, 500);
@@ -59,15 +56,7 @@ function save_password() {
             'new_password_confirm' : new_password_confirm,
         },
         success: function (result) {
-            //  alert(result.role_id)
-            localStorage.removeItem("Token");
-            localStorage.removeItem("Role");
-            localStorage.removeItem("User");
-            localStorage.removeItem("view_user")
-            localStorage.removeItem("add_user")
-            localStorage.removeItem("edit_user")
-            localStorage.removeItem("delete_user")
-            // localStorage.setItem("RoleId", result.role_id);
+            window.localStorage.clear();
             M.toast({ html: result.data, classes: 'Dark green rounded' })
             setTimeout(function() {
                 window.location.href = "/login/"
@@ -76,6 +65,10 @@ function save_password() {
         },
         error: function (data) {
             // localStorage.removeItem("User");
+            if (xhr.status == 401) {
+
+                getaccessChangePassword();
+            }
             $('#password_change_btn').attr("disabled", false);
             obj = JSON.parse(data.responseText)
             M.toast({ html: obj.error, classes: 'red rounded' })
@@ -131,3 +124,24 @@ function changepassword(){
         save_password();
     }
 }
+
+function getaccessChangePassword(){
+    $.ajax({
+         type: 'POST',
+         url: '/refresh_token/',
+         data : {
+           'refresh' : localStorage.getItem("Refresh"),
+         },
+         success: function (result) {
+            localStorage.setItem("Token", result.access);
+            // location.reload();
+            save_password()
+            // return false
+
+         },
+         error: function(data){
+            obj = JSON.parse(data.responseText)
+            M.toast({html: obj.detail})
+         }
+   })
+ }

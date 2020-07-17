@@ -6,12 +6,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from django.http.response import HttpResponse, JsonResponse
-from ..models import UserRegisterationModel, UserRole, LevelModel
+from ..models import UserRegisterationModel, UserRole, Permission
 from ..forms import UserRegisterationForm, UserForm
 from django.contrib.auth.models import User
 
 from django.db import transaction
-from .check_permission import check_permission
+from .check_permission import has_permission
+
 
 class AddUserFormView(APIView):
     """Registration Form."""
@@ -19,38 +20,27 @@ class AddUserFormView(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    
+    @has_permission('add_user')
     def get(self, request):
         """Renders Registration form."""  
 
         try:
-            permission_for = "add_user"
-            user_id = request.user.id
-            permission = check_permission(permission_for, user_id)
-            if permission == "granted":
-                return render(request, 'user_registration/registration_form.html')
-            return permission
-
+            
+            return render(request, 'user_registration/registration_form.html')
+            
         except Exception as e:
             print("Error in getting registeration page:", e)
-            # info_message = get_info_messages(get_language, "registration_exception")
             info_message = 'Cannot get the registeration page.'
             print(info_message)
             return  JsonResponse({"error": str(info_message)}, status=500)
     
+    @has_permission('add_user')
     def post(self, request):
         """Submits and saves user data into the database."""
 
-        # get_language = set_session_language(request)
 
         try:
-            permission_for = "add_user"
-            user_id = request.user.id
-            permission = check_permission(permission_for, user_id)
-            if permission == "granted":
-                pass
-            else:
-                return permission
+           
             user_data = request.POST
             user_file = request.FILES
             print('#'*80)
@@ -161,54 +151,49 @@ class CheckUsername(APIView):
 
     def post(self, request):
 
-        # get_language = set_session_language(request)
         try:
             jsondata = request.POST
             print(jsondata['user_name'])
-            try:
-                if User.objects.filter(username=jsondata['user_name']).exists():
-                    # info_message = get_info_messages(get_language, 'username_exception')
-                    info_message = "Username already taken!"
-                    print(info_message)
-                    return JsonResponse({'message': 'taken', 'toast_msg':str(info_message)})
-            except Exception as e:
-                print("username except", e)
-                info_message = 'Internal server error'
+
+            if User.objects.filter(username=jsondata['user_name']).exists():
+                info_message = "Username already taken!"
                 print(info_message)
-                return JsonResponse({'error' : str(info_message)}, status=500)
+                return JsonResponse({'message': 'taken', 'toast_msg':str(info_message)})
+        
+
             else:
-                # info_message = get_info_messages(get_language, "username_success")
                 info_message = "Username Available...!!!"
                 print(info_message)
                 return JsonResponse({'message': 'not_taken', 'toast_msg':str(info_message)})
+
         except Exception as e:
             print("exception in check username", e)
-            # info_message = get_info_messages(get_language, 'internal_server_error')
             info_message = 'Internal server error'
             print(info_message)
             return JsonResponse({'error' : str(info_message)}, status=500)
 
 class CheckEmail(APIView):
     """Checks whether email id is already registered or not."""
+    authentication_classes = [CustomJWTAuthentication]
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = [TemplateHTMLRenderer]
 
     def post(self, request):
 
-        # get_language = set_session_language(request)
         try:
             jsondata = request.POST
 
             if User.objects.filter(email=jsondata['email']).exists():
                 info_message = "Email Id  already registered!"
-                # info_message = get_info_messages(get_language, "email_exception")
                 print(info_message)
                 return JsonResponse({'message': 'taken', 'toast_msg': str(info_message)})
+
             else:
-                # info_message = get_info_messages(get_language, 'email_success')
                 info_message = "Email Id not registered"
                 print(info_message)
                 return JsonResponse({'message': 'not_taken', 'toast_msg': str(info_message)})
+
         except Exception as e:
-            # info_message = get_info_messages(get_language, 'internal_server_error')
             info_message = "Internal server error"
             print(info_message, e)
             return JsonResponse({'error' : str(info_message)}, status=500)
@@ -218,8 +203,8 @@ class GetPermissions(APIView):
     """Get Permissons of user"""
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
+
     def post(self, request):
-        # get_language = set_session_language(request)
         
         try:
             jsondata = request.data
@@ -228,22 +213,30 @@ class GetPermissions(APIView):
             print(user_role_id)
             print("#"*20)
 
-            if User.objects.filter(id=request.user.id).filter(is_superuser=True):
-                perms = LevelModel.objects.filter(level_id = 1)\
-                        .values('add_user', 'add_template')
-                perms_dict = perms[0]
-                print("2"*20,perms_dict)
-                return JsonResponse(perms_dict)
+            perms = Permission.objects.filter(permission_id = user_role_id)\
+                    .values('user_management_page',
+                            'add_user',
+                            'edit_user',
+                            'view_user',
+                            'delete_user',
+                            'template_management_page',
+                            'add_template',
+                            'edit_template',
+                            'view_template',
+                            'delete_template')
 
-            perms = LevelModel.objects.filter(level_id = user_role_id)\
-                    .values('add_user', 'add_template')
+            # Permissions setting in session        
+            for perm in perms:
+                for key,value in perm.items():
+                    request.session[key] = value
+                    print("storing permissions for users in session", key, request.session[key])
+
             perms_dict = perms[0]
             print("5"*20, perms_dict)
 
             return JsonResponse(perms_dict)
         except Exception as error:
             info_message = "Permission fetching  issue due to Internal Server Error"
-            # info_message = get_info_messages(get_language, 'get_permission_error')
             print( info_message, error)
             return JsonResponse({'message' : str(info_message)},status = 422)
 

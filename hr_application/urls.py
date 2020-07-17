@@ -26,7 +26,7 @@ urlpatterns = [
 
     path('dashboard/', Dashboard.as_view(), name="dashboard"),
 
-    path('dashboard/permission',GetPermissions.as_view()),
+    path('dashboard/permission', GetPermissions.as_view(), name='permission'),
 
     path('forgot_password/', NewPasswordView.as_view(), name="forgot_password"),
 
@@ -38,9 +38,9 @@ urlpatterns = [
 
     path('dashboard/user_management/', UserManagementDashboard.as_view(), name="user_management"),
 
-    path('dashboard/user_management/add_user/', AddUserFormView.as_view(), name="user_management"),
+    path('dashboard/user_management/add_user/', AddUserFormView.as_view(), name="add_user"),
 
-    path('dashboard/user_management/getalluser', GetAllUsersView.as_view(), name="user_management"),
+    path('dashboard/user_management/getalluser', GetAllUsersView.as_view(), name="getalluser"),
 
     path('dashboard/user_management/add_user/get_roles/', GetRoleDropDown.as_view(), name="get_roles"),
 
@@ -53,4 +53,5 @@ urlpatterns = [
     path('dashboard/template_management/', TemplateManagementDashboard.as_view(), name="template_management"),
 
     path('dashboard/template_management/add_template/', NewGenDocxView.as_view(), name='new_generate_docx'),
+
 ]

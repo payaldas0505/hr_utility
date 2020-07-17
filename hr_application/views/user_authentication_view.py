@@ -84,23 +84,28 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
         refresh = self.get_token(self.user)
-        
+        data['refresh'] = str(refresh)
+        data['access'] = str(refresh.access_token)
+        data['id'] = self.user.id
+        data['username'] = self.user.username
+        data['password'] = self.user.password
+
         if User.objects.filter(id=self.user.id).filter(is_superuser=False):
             user_status = UserRegisterationModel.objects.filter(user_id=self.user.id).values('user_status', 'role')
             if user_status[0]['user_status']:
                 print("active", user_status[0]['user_status'])
-                data['refresh'] = str(refresh)
-                data['access'] = str(refresh.access_token)
-                data['username'] = self.user.username
-                data['id'] = self.user.id
-                data['password'] = self.user.password
                 data['role_id'] = user_status[0]['role']
                 
             else:
                 print("inactive", user_status[0]['user_status'])
                 info_message = "Inactive user"
                 data['error'] = info_message
-        return data
+            return data
+    
+        else:
+            data['username'] = self.user.username
+            data['role_id'] = 1
+            return data
         
         # print("data in validation", data)
         

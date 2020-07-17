@@ -1,6 +1,7 @@
 
 $(document).ready(function(){
     getUserRoleDropDown();
+    GetPermissionsUserDashboard();
 })
 
 function getUserRoleDropDown(){
@@ -461,48 +462,23 @@ function EditUserValidation(){
     }
 }
 
-// function GetPermissions(){
-// window.localStorage.setItem('add_user', 'true')
-// window.localStorage.setItem('edit_user', 'true')
-// window.localStorage.setItem('view_user', 'true')
-// window.localStorage.setItem('delete_user', 'true')
-// var user_role_id = localStorage.getItem('RoleId')
-// var user_id = localStorage.getItem('UserId')
-//     content = {
-//         user_role_id : user_role_id,
-//         user_id : user_id
-//     }
-//     $.ajax({
-//         url: '/usermanagement/permission',
-//         type: 'post',
-//         data: JSON.stringify(content),
-//         success: function(response){
-//             // localStorage.setItem("Role", response.level)
-            
-//             window.localStorage.setItem('add_user', response.add_user)
-//             window.localStorage.setItem('edit_user', response.edit_user)
-//             window.localStorage.setItem('view_user', response.view_user)
-//             window.localStorage.setItem('delete_user', response.delete_user)
+function GetPermissionsUserDashboard(){
+    var retrievedData = localStorage.getItem("UserPermissions");
+    var userPermissions = JSON.parse(retrievedData);
 
-//             if (response.add_user == false){
-//                 $( ".add_user" ).hide();
-//             }
-//             if (response.edit_user == false){
-//                 $( ".edit_btn" ).hide();
-//             }
-//             if (response.delete_user == false){
-//                 $( ".delete_btn" ).hide();
-//             }
-//             if (response.view_user == false){
-//                 $( ".view_btn" ).hide();
-//             }
-//         },
-//         error: function(xhr) {
-//             parsed_json = JSON.parse(xhr.responseText)
-//             M.toast({html: parsed_json.message, classes: 'red rounded'})
-//         }
-//       });
-//     }
+    if (userPermissions.add_user == false){
+        $( ".add_user" ).hide();
+    }
+    if (userPermissions.edit_user == false){
+        $( ".edit_btn" ).hide();
+    }
+    if (userPermissions.delete_user == false){
+        $( ".delete_btn" ).hide();
+    }
+    if (userPermissions.view_user == false){
+        $( ".view_btn" ).hide();
+    }   
+}
 
 function getaccessTokenDashboard(){
     $.ajax({
