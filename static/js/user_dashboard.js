@@ -3,13 +3,15 @@ $(document).ready(function(){
     getUserRoleDropDown();
     GetPermissionsUserDashboard();
 })
+var userDetails = getValues('UserDetails')
+var access = userDetails.access
 
 function getUserRoleDropDown(){
 
     //Get the role dropdown
     $.ajax({
         url: 'add_user/get_roles/',
-        headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+        headers: { Authorization: 'Bearer '+ access},
         type: 'GET',
 
         success:function(response){
@@ -17,14 +19,14 @@ function getUserRoleDropDown(){
 
             var next_id = $("#role_drop_down");
             $.each(response, function(key, value) {
-                role = '<span class="role_option_'+value.role_no+'">'+value.role_name+'</span>'
-                $(next_id).append($("<option></option>").attr("value", value.role_no).html(role));
+                role = '<span class="role_option_'+value.id+'">'+value.role_name+'</span>'
+                $(next_id).append($("<option></option>").attr("value", value.id).html(role));
             });
             $(next_id).not('.disabled').formSelect();           
         },
         error: function(data){
             if (data.status == 401) {
-                getaccessTokenForGetRoles();
+                getaccessToken(getUserRoleDropDown);
             }
             obj = JSON.parse(data.responseText)
             M.toast({html: obj.error, classes: 'red rounded'})
@@ -34,147 +36,71 @@ function getUserRoleDropDown(){
 }
 
 function getdashboard(){
-    var token = localStorage.getItem("Token");
+    var token = access;
+    var get_url = "/dashboard/?token="
     $.ajax({
         method : 'GET',
-        url : "/dashboard/?token="+token,
+        url : get_url+token,
         success: function(data){
-            window.location.href = "/dashboard/?token="+token
+            window.location.href = get_url+token
         },
         error : function(xhr){
             if(xhr.status == 401){
-                GetAccessTokenForBackButton()
+                getaccessTokenForUrl(get_url)
             }
         }
     })  
 }
 
-function GetAccessTokenForBackButton(){
-    $.ajax({
-        type: 'POST',
-        url: '/refresh_token/',
-        data : {
-          'refresh' : localStorage.getItem("Refresh"),
-        },
-        success: function (result) {
-           localStorage.setItem("Token", result.access);
-           token = localStorage.getItem("Token")
-           // location.reload();
-        //    RegisterUserForm()
-           // return false
-        //    window.location.href = "/v2s/dashboard/?token="+token
-        setTimeout(function() {
-            window.location.href = "/dashboard/?token="+token;
-          }, 500);
-
-        },
-        error: function(data){
-           obj = JSON.parse(data.responseText)
-           M.toast({html: obj.detail})
-        }
-  })
-
-}
 
 function GetAddUserPage(){
 
-    var token = localStorage.getItem("Token");
+    var token = access;
+    var get_url = '/dashboard/user_management/add_user/?token='
     $.ajax({
         type: 'GET',
         url: '/dashboard/user_management/add_user/',
-        headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+        headers: { Authorization: 'Bearer '+access},
         success: function (data) {
-        window.location.href = '/dashboard/user_management/add_user/?token='+ token
+        window.location.href = get_url + token
         },
         error: function(data){
         if (data.status == 401) {
-            getaccessTokenForAddUSer();
+            getaccessTokenForUrl(get_url);
         }
         }
     })
 };
 
 function getUserDashboardDatatable(){
-        var token = localStorage.getItem("Token");
+    var token = access;
+    var get_url = "/dashboard/user_management/?token="
     $.ajax({
         method : 'GET',
-        url : "/dashboard/user_management/?token="+token,
+        url : get_url + token,
         success: function(data){
-            window.location.href = "/dashboard/user_management/?token="+token
+            window.location.href = get_url + token
         },
         error : function(xhr){
             if(xhr.status == 401){
-                GetAccessTokenForBackButton()
+                getaccessTokenForUrl(get_url);
             }
         }
     })  
 }
 
-function GetAccessTokenForBackButton(){
-    $.ajax({
-        type: 'POST',
-        url: '/refresh_token/',
-        data : {
-          'refresh' : localStorage.getItem("Refresh"),
-        },
-        success: function (result) {
-           localStorage.setItem("Token", result.access);
-           token = localStorage.getItem("Token")
-           // location.reload();
-        //    RegisterUserForm()
-           // return false
-        //    window.location.href = "/dashboard/?token="+token
-        setTimeout(function() {
-            window.location.href = "/dashboard/user_management/?token="+token;
-          }, 500);
-
-        },
-        error: function(data){
-           obj = JSON.parse(data.responseText)
-           M.toast({html: obj.detail})
-        }
-  })
-
-}
-
-function getaccessTokenForAddUSer(){
-    $.ajax({
-        type: 'POST',
-        url: '/refresh_token/',
-        data : {
-          'refresh' : localStorage.getItem("Refresh"),
-        },
-        success: function (result) {
-           localStorage.setItem("Token", result.access);
-           token = localStorage.getItem("Token")
-           // location.reload();
-        //    RegisterUserForm()
-           // return false
-        //    window.location.href = "/dashboard/?token="+token
-        setTimeout(function() {
-            window.location.href = "/dashboard/user_management/add_user/?token="+token;
-          }, 500);
-
-        },
-        error: function(data){
-           obj = JSON.parse(data.responseText)
-           M.toast({html: obj.detail})
-        }
-  })
-
-}
 
 function DeleteReport(id){
-    url = 'edituserform/'+id
-    
+    url = 'edit_user_form/'+id
+    var userDetails = getValues('UserDetails')
+    var token = userDetails.access
     $.ajax({
         url : url,
         method : 'DELETE',
-        headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+        headers: { Authorization: 'Bearer '+ token},
         dataType : 'text',
         async : false,
         success : function(jsonData){
-            var token = localStorage.getItem("Token");
             parsed_jsondata = JSON.parse(jsonData)
             M.toast({html: parsed_jsondata.message, classes: 'green rounded'})
             setTimeout(function() {
@@ -189,7 +115,7 @@ function DeleteReport(id){
             console.log(xhr.status)
             if (xhr.status == 401) {
 
-                getaccessTokenDeleteUser();
+                getaccessTokenUserDashboard(DeleteReport);
             }
             parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({html: parsed_jsondata.message, classes: 'red rounded'})
@@ -211,56 +137,34 @@ function getDeleteReport(id){
     // GetPermissions();
 }
 
-function GetAccessTokenForBackButton(){
-    $.ajax({
-        type: 'POST',
-        url: '/refresh_token/',
-        data : {
-          'refresh' : localStorage.getItem("Refresh"),
-        },
-        success: function (result) {
-           localStorage.setItem("Token", result.access);
-           token = localStorage.getItem("Token")
-           // location.reload();
-        //    RegisterUserForm()
-           // return false
-        //    window.location.href = "/dashboard/?token="+token
-        setTimeout(function() {
-            window.location.href = "/dashboard/?token="+token;
-          }, 500);
 
-        },
-        error: function(data){
-           obj = JSON.parse(data.responseText)
-           M.toast({html: obj.detail})
-        }
-  })
-
-}
 
 function getDashboardDatatable(){
-    var token = localStorage.getItem("Token");
+    var token = access;
+    var get_url = "/dashboard/?token="
     $.ajax({
         method : 'GET',
-        url : "/dashboard/?token="+token,
+        url : get_url+token,
         success: function(data){
-            window.location.href = "/dashboard/?token="+token
+            window.location.href = get_url+token
         },
         error : function(xhr){
             if(xhr.status == 401){
-                GetAccessTokenForBackButton()
+                getaccessTokenForUrl(get_url);
             }
         }
     })  
 }
 
 function getViewReport(id){
-    url = 'edituserform/'+id
+    url = 'edit_user_form/'+id
     window.localStorage.setItem('editedUserId', id)
+    var userDetails = getValues('UserDetails')
+    var token = userDetails.access
     $.ajax({
         url : url,
         method : 'GET',
-        headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+        headers: { Authorization: 'Bearer '+ token},
         dataType : 'text',
         async : false,
         success : function(jsonData){
@@ -274,7 +178,7 @@ function getViewReport(id){
                 last_name = data[i].last_name 
                 email = data[i].email
                 user_status_edit = data[i].user_status
-                role = data[i].role
+                role = data[i].role__id
                 }
             $('#submit_edit_form').hide();
             $("#DisableDiv").find("*").prop('disabled', true);
@@ -295,12 +199,12 @@ function getViewReport(id){
             // if(user_role_id == 1){
             //     $('#role_drop_down').prop("disabled", false);
             // }
-            $('select').not('.disabled').formSelect();
+            $('select').formSelect();
         },
         error: function(xhr, status, error) {
             if (xhr.status == 401) {
 
-                getaccessTokenViewUser();
+                getaccessTokenUserDashboard(getViewReport);
             }
             parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({html: parsed_jsondata.message, classes: 'red rounded'})
@@ -311,12 +215,14 @@ function getViewReport(id){
 }
 
 function getEditReport(id){
-    url = 'edituserform/'+id
+    var userDetails = getValues('UserDetails')
+    var token = userDetails.access
+    url = 'edit_user_form/'+id
     window.localStorage.setItem('editedUserId', id)
     $.ajax({
         url : url,
         method : 'GET',
-        headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+        headers: { Authorization: 'Bearer '+ token},
         dataType : 'text',
         async : false,
         success : function(jsonData){
@@ -330,7 +236,7 @@ function getEditReport(id){
                     last_name = data[i].last_name 
                     email = data[i].email
                     user_status_edit = data[i].user_status
-                    role = data[i].role
+                    role = data[i].role__id
                 }
 
             $('#Dashboard_main').hide();
@@ -342,7 +248,7 @@ function getEditReport(id){
             $('#user_status_edit').val(user_status_edit)
             $('#user_status_edit').prop('checked', user_status_edit);
             $('#role_drop_down').find('option[value='+role+']').prop('selected', true);
-            $('select').not('.disabled').formSelect();
+            $('#role_drop_down').formSelect();
         },
         error: function(xhr, status, error) {
             console.log(xhr)
@@ -351,7 +257,7 @@ function getEditReport(id){
             console.log(xhr.status)
             if (xhr.status == 401) {
 
-                getaccessTokenEditUser();
+                getaccessTokenUserDashboard(getEditReport);
             }
             parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({html: parsed_jsondata.message, classes: 'red rounded'})
@@ -366,7 +272,6 @@ function EditUserSave(user_name,first_name,
                       user_status,role)
     {
         var edituserid = window.localStorage.getItem('editedUserId')
-        option = $("#dropdownid option:selected").val();
         role = $("#role_drop_down option:selected").val();
         var formData = new FormData();
 
@@ -377,11 +282,11 @@ function EditUserSave(user_name,first_name,
         formData.append('user_status', user_status);
         formData.append('role', role);
 
-        url = 'edituserform/'+edituserid
+        url = 'edit_user_form/'+edituserid
         $.ajax({
             url : url,
             method : "PUT",
-            headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+            headers: { Authorization: 'Bearer '+access},
             enctype: 'multipart/form-data',
             data : formData,
             contentType : false,    
@@ -397,7 +302,7 @@ function EditUserSave(user_name,first_name,
             error: function(xhr, status, error) {
                 if (xhr.status == 401) {
 
-                    getaccessTokenDatatable();
+                    getaccessToken(EditUserSave);
                 }
                 $("#submit_edit_form").attr("disabled", false);
                 parsed_jsondata = JSON.parse(xhr.responseText)
@@ -414,7 +319,7 @@ function EditUserValidation(){
 
     user_name = $('#user_name_edit').val()
     first_name = $('#first_name_edit').val();
-    middle_name = $('#middle_name_edit').val();
+    last_name = $('#last_name_edit').val();
     email = $('#email_edit').val();
     user_status = $("input[name='user_status_edit']:checked", '#registration_form').val();
     role = $("#role_drop_down option:selected").val();
@@ -463,135 +368,12 @@ function EditUserValidation(){
 }
 
 function GetPermissionsUserDashboard(){
-    var retrievedData = localStorage.getItem("UserPermissions");
-    var userPermissions = JSON.parse(retrievedData);
+    // var retrievedData = localStorage.getItem("UserPermissions");
+    var userPermissions = getValues('UserPermissions')
 
-    if (userPermissions.add_user == false){
+    if (userPermissions.add_user_GET == undefined){
         $( ".add_user" ).hide();
-    }
-    if (userPermissions.edit_user == false){
-        $( ".edit_btn" ).hide();
-    }
-    if (userPermissions.delete_user == false){
-        $( ".delete_btn" ).hide();
-    }
-    if (userPermissions.view_user == false){
-        $( ".view_btn" ).hide();
-    }   
+    }  
 }
 
-function getaccessTokenDashboard(){
-    $.ajax({
-         type: 'POST',
-         url: '/refresh_token/',
-         data : {
-           'refresh' : localStorage.getItem("Refresh"),
-         },
-         success: function (result) {
-            localStorage.setItem("Token", result.access);
-            // location.reload();
-            var token = localStorage.getItem("Token");
-            window.location.href = "/dashboard/?token="+token;
 
-         },
-         error: function(data){
-            obj = JSON.parse(data.responseText)
-            M.toast({html: obj.detail})
-         }
-   })
- }
-
- 
-
- function getaccessTokenViewUser(){
-    $.ajax({
-         type: 'POST',
-         url: '/refresh_token/',
-         data : {
-           'refresh' : localStorage.getItem("Refresh"),
-         },
-         success: function (result) {
-            localStorage.setItem("Token", result.access);
-            // location.reload();
-            var token = localStorage.getItem("Token");
-            // window.location.href = "/dashboard/?token="+token;
-            id = window.localStorage.getItem("editedUserId")
-            getViewReport(id)
-         },
-         error: function(data){
-            obj = JSON.parse(data.responseText)
-            M.toast({html: obj.detail})
-         }
-   })
- }
-
-
- 
-
- function getaccessTokenEditUser(){
-    $.ajax({
-         type: 'POST',
-         url: '/refresh_token/',
-         data : {
-           'refresh' : localStorage.getItem("Refresh"),
-         },
-         success: function (result) {
-            localStorage.setItem("Token", result.access);
-            // location.reload();
-            var token = localStorage.getItem("Token");
-            // window.location.href = "/dashboard/?token="+token;
-            id = window.localStorage.getItem("editedUserId")
-            getEditReport(id)
-         },
-         error: function(data){
-            obj = JSON.parse(data.responseText)
-            M.toast({html: obj.detail})
-         }
-   })
- }
-
- 
-
- function getaccessTokenDeleteUser(){
-    $.ajax({
-         type: 'POST',
-         url: '/refresh_token/',
-         data : {
-           'refresh' : localStorage.getItem("Refresh"),
-         },
-         success: function (result) {
-            localStorage.setItem("Token", result.access);
-            // location.reload();
-            var token = localStorage.getItem("Token");
-            // window.location.href = "/dashboard/?token="+token;
-            id = window.localStorage.getItem("editedUserId")
-            DeleteReport(id)
-         },
-         error: function(data){
-            obj = JSON.parse(data.responseText)
-            M.toast({html: obj.detail})
-         }
-   })
- }
-
- function getaccessTokenDatatable(){
-    $.ajax({
-        type: 'POST',
-        url: '/refresh_token/',
-        data : {
-          'refresh' : localStorage.getItem("Refresh"),
-        },
-        success: function (result) {
-           localStorage.setItem("Token", result.access);
-           // location.reload();
-           var token = localStorage.getItem("Token");
-           // window.location.href = "/dashboard/?token="+token;
-        //    id = window.localStorage.getItem("editedUserId")
-           EditUserValidation()
-        },
-        error: function(data){
-           obj = JSON.parse(data.responseText)
-           M.toast({html: obj.detail})
-        }
-  })
-}

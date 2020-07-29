@@ -1,29 +1,12 @@
-// get access token when expired
-function getaccessToken(){
-
-   $.ajax({
-        type: 'POST',
-        url: '/refresh_token/',
-        data : {
-          'refresh' : localStorage.getItem("Refresh"),
-        },
-        success: function (result) {
-          localStorage.setItem("Token", result.access);
-        },
-        error: function(data){
-           obj = JSON.parse(data.responseText)
-           M.toast({html: obj.detail})
-        }
-  })
-}
-
-
 // log out
+
 function logout() {
+  var userDetails = getValues('UserDetails')
+  var access = userDetails.access
   $.ajax({
       type: 'GET',
       url: '/logout/',
-      headers: { Authorization: 'Bearer '+ localStorage.getItem("Token")},
+      headers: { Authorization: 'Bearer '+ access},
       success: function (result) {
   
         window.localStorage.clear();
@@ -31,31 +14,14 @@ function logout() {
       },
         error: function(data){
           if (data.status == 401) {
-            getaccessTokenlogout();
+            getaccessToken(logout);
             
          }
       }
     })
   }
 
-// get access token when expired
-function getaccessTokenlogout(){
 
-  $.ajax({
-       type: 'POST',
-       url: '/refresh_token/',
-       data : {
-         'refresh' : localStorage.getItem("Refresh"),
-       },
-       success: function (result) {
-         logout();
-       },
-       error: function(data){
-          obj = JSON.parse(data.responseText)
-          M.toast({html: obj.detail})
-       }
- })
-}
 
 
 

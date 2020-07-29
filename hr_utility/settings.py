@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'materializecssform',
     'nested_admin',
+    'tabular_permissions',
     
 ]
 
@@ -124,7 +125,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_ROOT = '/static/'
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static")
 
 STATIC_URL = '/static/'
 
@@ -152,8 +153,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = ""
-EMAIL_HOST_PASSWORD = ""
+EMAIL_HOST_USER = "umesh1996d@gmail.com"
+EMAIL_HOST_PASSWORD = "Umesh@8097"
 
 
 SIMPLE_JWT = {

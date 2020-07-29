@@ -3,20 +3,22 @@ jQuery(document).ready(function($) {
     $('select').not('.disabled').formSelect();
     $('textarea#textarea1').characterCounter();
     $('input#telephone').characterCounter();
+    var userDetails = getValues('UserDetails')
+    var access = userDetails.access
     
     getUserRoleDropDown();
      
-
     // Check username avaliable in database
     $('#user_name').on('blur', function(){
         var user_name = $('#user_name').val();
+        var get_url = '/dashboard/user_management/add_user/?token';
         if (user_name == '') {
             user_name_state = false;
             return;
         }
         $.ajax({
           url: 'check_username/',
-          headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+          headers: { Authorization: 'Bearer '+ access},
           type: 'post',
           data: {
               'user_name_check' : 1,
@@ -36,7 +38,9 @@ jQuery(document).ready(function($) {
             }
           },
           error: function(xhr) {
-            
+            if (xhr.status == 401) {
+                getaccessTokenForUrl(get_url);
+            }
             parsed_jsondata = JSON.parse(xhr.responseText)
             // alert(parsed_jsondata.error)
             M.toast({html: parsed_jsondata.error, classes: 'red rounded'})
@@ -47,14 +51,15 @@ jQuery(document).ready(function($) {
     // Check emailid avaliable in database
     $('#email').on('blur', function(){
         var email = $('#email').val();
-        
+        var get_url = '/dashboard/user_management/add_user/?token';
+
         if (email == '') {
             email_state = false;
             return;
         }
         $.ajax({
         url: 'check_email/',
-        headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+        headers: { Authorization: 'Bearer '+access},
         type: 'post',
         data: {
             'email_check' : 1,
@@ -73,6 +78,9 @@ jQuery(document).ready(function($) {
            
         },
         error: function(xhr) {
+            if (xhr.status == 401) {
+                getaccessTokenForUrl(get_url);
+            }
             parsed_jsondata = JSON.parse(xhr.responseText)
             // alert(parsed_jsondata.error)
             M.toast({html: parsed_jsondata.error, classes: 'red rounded'})
@@ -81,13 +89,15 @@ jQuery(document).ready(function($) {
     });
 });
 
+var userDetails = getValues('UserDetails')
+var access = userDetails.access
 
 function getUserRoleDropDown(){
 
     //Get the role dropdown
     $.ajax({
         url: 'get_roles/',
-        headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+        headers: { Authorization: 'Bearer '+access},
         type: 'GET',
 
         success:function(response){
@@ -102,7 +112,7 @@ function getUserRoleDropDown(){
         },
         error: function(data){
             if (data.status == 401) {
-                getaccessTokenForGetRoles();
+                getaccessToken(getUserRoleDropDown);
             }
             obj = JSON.parse(data.responseText)
             M.toast({html: obj.error, classes: 'red rounded'})
@@ -111,28 +121,28 @@ function getUserRoleDropDown(){
     });
 }
 
-function getaccessTokenForGetRoles(){
-    $.ajax({
-        type: 'POST',
-        url: '/refresh_token/',
-        data : {
-          'refresh' : localStorage.getItem("Refresh"),
-        },
-        success: function (result) {
-           localStorage.setItem("Token", result.access);
-           token = localStorage.getItem("Token")
+// function getaccessTokenForGetRoles(){
+//     $.ajax({
+//         type: 'POST',
+//         url: '/refresh_token/',
+//         data : {
+//           'refresh' : localStorage.getItem("Refresh"),
+//         },
+//         success: function (result) {
+//            localStorage.setItem("Token", result.access);
+//            token = access
         
-        setTimeout(function() {
-            getUserRoleDropDown()
-          }, 500);
+//         setTimeout(function() {
+//             getUserRoleDropDown()
+//           }, 500);
 
-        },
-        error: function(data){
-           obj = JSON.parse(data.responseText)
-           M.toast({html: obj.detail})
-        }
-  })
-}
+//         },
+//         error: function(data){
+//            obj = JSON.parse(data.responseText)
+//            M.toast({html: obj.detail})
+//         }
+//   })
+// }
 // Get toast messages from backend 
 function get_toast(label){
     $("#submit_form").attr("disabled", false);
@@ -189,6 +199,7 @@ function RegisterUserForm(){
     formData.append('user_status', user_status);
     $.ajax({
         url : "",
+        headers: { Authorization: 'Bearer '+access},
         method : "POST",
         enctype: 'multipart/form-data',
         data : formData,
@@ -197,15 +208,16 @@ function RegisterUserForm(){
         async : false,
         success : function(jsonData){
             M.toast({html: jsonData['message'], outDuration: 2000, classes: 'green rounded'})
-            var token = localStorage.getItem("Token");
+            // var userDetails = getValues('UserDetails')
+            // var token = userDetails.access;
             setTimeout(function() {
-                window.location.href = "/dashboard/user_management/?token="+token;
+                window.location.href = "/dashboard/user_management/?token="+access;
               }, 3000);
         },
         error: function(xhr) {
             if (xhr.status == 401) {
 
-                getaccessAddUser();
+                getaccessToken(RegisterUserForm);
             }
             parsed_jsondata = JSON.parse(xhr.responseText)
             // alert(parsed_jsondata.error)
@@ -302,38 +314,41 @@ function RegisterUser(){
 }
     
 function getUserDashboardDatatable(){
-    var token = localStorage.getItem("Token");
+    // var userDetails = getValues('UserDetails')
+    // var token = userDetails.access;
+    var get_url = "/dashboard/user_management/?token="
     $.ajax({
     method : 'GET',
-    url : "/dashboard/user_management/?token="+token,
+    headers: { Authorization: 'Bearer '+access},
+    url : "/dashboard/user_management/?token="+access,
     success: function(data){
-        window.location.href = "/dashboard/user_management/?token="+token
+        window.location.href = get_url+access
     },
     error : function(xhr){
         if(xhr.status == 401){
-            GetAccessTokenForBackButton()
+            getaccessTokenForUrl(get_url);
         }
     }
 })  
 }
 
-function getaccessAddUser(){
-    $.ajax({
-         type: 'POST',
-         url: '/refresh_token/',
-         data : {
-           'refresh' : localStorage.getItem("Refresh"),
-         },
-         success: function (result) {
-            localStorage.setItem("Token", result.access);
-            // location.reload();
-            RegisterUserForm()
-            // return false
+// function getaccessAddUser(){
+//     $.ajax({
+//          type: 'POST',
+//          url: '/refresh_token/',
+//          data : {
+//            'refresh' : localStorage.getItem("Refresh"),
+//          },
+//          success: function (result) {
+//             localStorage.setItem("Token", result.access);
+//             // location.reload();
+//             RegisterUserForm()
+//             // return false
 
-         },
-         error: function(data){
-            obj = JSON.parse(data.responseText)
-            M.toast({html: obj.detail})
-         }
-   })
- }
+//          },
+//          error: function(data){
+//             obj = JSON.parse(data.responseText)
+//             M.toast({html: obj.detail})
+//          }
+//    })
+//  }

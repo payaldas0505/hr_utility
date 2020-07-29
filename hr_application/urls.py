@@ -11,7 +11,8 @@ from .views import (LoginView, CustomTokenObtainPairView,
                     AddUserFormView, GetRoleDropDown,
                     CheckUsername, CheckEmail,
                     GetAllUsersView, EditUserFormView,
-                    NewGenDocxView, GetPermissions)
+                    NewGenDocxView, GetPermissions,
+                    FillDocument)
 
 urlpatterns = [
     path('api/rest-auth/', include('rest_auth.urls')),
@@ -40,7 +41,7 @@ urlpatterns = [
 
     path('dashboard/user_management/add_user/', AddUserFormView.as_view(), name="add_user"),
 
-    path('dashboard/user_management/getalluser', GetAllUsersView.as_view(), name="getalluser"),
+    path('dashboard/user_management/get_all_user', GetAllUsersView.as_view(), name="get_all_user"),
 
     path('dashboard/user_management/add_user/get_roles/', GetRoleDropDown.as_view(), name="get_roles"),
 
@@ -48,10 +49,12 @@ urlpatterns = [
 
     path('dashboard/user_management/add_user/check_email/', CheckEmail.as_view(), name="check_email"),
 
-    path('dashboard/user_management/edituserform/<int:pk>', EditUserFormView.as_view(), name="edituserform"),
+    path('dashboard/user_management/edit_user_form/<int:pk>', EditUserFormView.as_view(), name="edit_user_form"),
 
     path('dashboard/template_management/', TemplateManagementDashboard.as_view(), name="template_management"),
 
     path('dashboard/template_management/add_template/', NewGenDocxView.as_view(), name='new_generate_docx'),
+
+    path('dashboard/template_management/add_template/fill/', FillDocument.as_view(), name='fill_docx'),
 
 ]

@@ -3,7 +3,7 @@ import uuid
 from django.contrib.auth.models import User
 
 from django.shortcuts import render
-from django.http.response import HttpResponse, JsonResponse
+from django.http.response import HttpResponse, JsonResponse, HttpResponseRedirect
 
 from django.core.cache import cache
 from django.conf import settings
@@ -24,6 +24,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.state import token_backend
 from rest_framework_simplejwt.exceptions import InvalidToken
+from rest_framework import exceptions
 
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -32,7 +33,8 @@ from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import views as auth_views
 from django.contrib.auth import authenticate, login
-from ..models import UserRegisterationModel
+from ..models import UserRegisterationModel, UserRole
+import jwt
 
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
@@ -83,49 +85,63 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
         data = super().validate(attrs)
+        print("data above", data)
         refresh = self.get_token(self.user)
         data['refresh'] = str(refresh)
         data['access'] = str(refresh.access_token)
         data['id'] = self.user.id
         data['username'] = self.user.username
-        data['password'] = self.user.password
 
-        if User.objects.filter(id=self.user.id).filter(is_superuser=False):
-            user_status = UserRegisterationModel.objects.filter(user_id=self.user.id).values('user_status', 'role')
-            if user_status[0]['user_status']:
-                print("active", user_status[0]['user_status'])
-                data['role_id'] = user_status[0]['role']
-                
-            else:
-                print("inactive", user_status[0]['user_status'])
-                info_message = "Inactive user"
-                data['error'] = info_message
-            return data
-    
+        if UserRegisterationModel.objects.filter(user_id=data['id']).filter(user_status=True):
+            print("active")
+            
         else:
-            data['username'] = self.user.username
-            data['role_id'] = 1
-            return data
-        
-        # print("data in validation", data)
+            info_message = "Inactive user"
+            print(info_message)
+            data['error'] = info_message
+
+        return data
+    
+
         
 
 
 class CustomJWTAuthentication(JWTAuthentication):
 
     def authenticate(self, request):
-        header = self.get_header(request)
-        if header is None:
-            header = "Bearer "+request.GET['token']
-            header = header.encode(HTTP_HEADER_ENCODING)
+        try:
+            header = self.get_header(request)
+            if header is None:
+                header = "Bearer "+request.GET['token']
+                header = header.encode(HTTP_HEADER_ENCODING)
 
-        raw_token = self.get_raw_token(header)
-        if raw_token is None:
-            return None
+            raw_token = self.get_raw_token(header)
+            if raw_token is None:
+                return None
 
-        validated_token = self.get_validated_token(raw_token)
+            # get user name from jwt
+            decoded = jwt.decode(raw_token, settings.SECRET_KEY)
+            username = decoded['username']
+            id = decoded['user_id']
+            print('username', username, id)
 
-        return self.get_user(validated_token), validated_token
+            # get user object from database
+            user_obj = UserRegisterationModel.objects.filter(user_name=username).values()
+
+            print("#"*20)
+
+            # get user object in the session
+            for obj in user_obj:
+                for key,value in obj.items():
+                    request.session[key] = value
+                    print("storing user object in session", key, request.session[key])
+
+            print("#"*20)
+            validated_token = self.get_validated_token(raw_token)
+        
+            return self.get_user(validated_token), validated_token
+        except Exception as e:
+            print(e)
 
 
     def get_header(self, request):
@@ -138,7 +154,7 @@ class CustomJWTAuthentication(JWTAuthentication):
         if isinstance(header, str):
             # Work around django test client oddness
             header = header.encode(HTTP_HEADER_ENCODING)
-        return header   
+        return header
          
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -169,7 +185,7 @@ class LoginView(APIView):
 
 class LogoutView(APIView):
     """ Logout class """
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
@@ -182,6 +198,7 @@ class LogoutView(APIView):
             # info_message = get_info_messages(get_language, 'logout_success')
             info_message = 'You have successfully logged out'
             print(info_message)
+            request.session.flush()
             return Response({'data': str(info_message)}, status=204, template_name="user_authentication/login.html")
         except Exception as e:
             print("exception while showing login page", e)

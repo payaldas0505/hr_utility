@@ -1,5 +1,7 @@
 var tableLoad = $(document).ready(function() {
     // GetPermissions()
+    var userDetails = getValues('UserDetails')
+    var access = userDetails.access
     $('#dashboardRegisterForm').hide();
     $('#dropdownid').not('.disabled').formSelect();
     
@@ -12,13 +14,15 @@ var tableLoad = $(document).ready(function() {
         "processing": true,
         "serverSide": true,
         "ajax": {
-            "url": "getalluser",
+            "url": "get_all_user",
             "type": "GET",
-            "headers": { Authorization: 'Bearer '+localStorage.getItem("Token")},
+            "headers": { Authorization: 'Bearer '+ access},
             "error" : function(data){
                 // alert(data.status)
                 if (data.status == 401) {
-                    getaccessTokenDatatable();
+                    let get_url = "/dashboard/user_management/?token="
+                    getaccessTokenForUrl(get_url);
+                    
                 }
                 else{
                     M.toast({html:JSON.parse(data.responseText).message, classes: 'red rounded'})
@@ -51,17 +55,19 @@ var tableLoad = $(document).ready(function() {
                             var retrievedData = localStorage.getItem("UserPermissions");
                             var userPermissions = JSON.parse(retrievedData);
 
-                            var delete_user_flag = userPermissions.delete_user
-                            var edit_user_flag = userPermissions.edit_user
-                            var view_user_flag = userPermissions.view_user
+                            var delete_user_flag = userPermissions.delete_user_DELETE
+                            var edit_user_flag = userPermissions.edit_user_GET
+                            var view_user_flag = userPermissions.view_user_GET
+
+                            console.log('perms', delete_user_flag, edit_user_flag, view_user_flag)
 
                             if(delete_user_flag == true && edit_user_flag == true && view_user_flag == true){
                                 return all_perms
                             }
-                            else if(delete_user_flag == false && edit_user_flag == true && view_user_flag == true){
+                            else if(delete_user_flag == undefined && edit_user_flag == true && view_user_flag == true){
                                 return edit_view
                             }
-                            else if(delete_user_flag == false && edit_user_flag == false && view_user_flag == true ){
+                            else if(delete_user_flag == undefined && edit_user_flag == undefined && view_user_flag == true ){
                                 return only_view
                             }
                             // var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditReport(id)><i class="material-icons prefix">mode_edit</i></button> <button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button><button class="delete_btn" id='+data+' onclick=getDeleteReport(id)><i class="material-icons prefix">delete</i></button> '
@@ -112,26 +118,26 @@ $.fn.dataTable.ext.errMode = function ( settings, helpPage, message ) {
 
 
 
-function getaccessTokenDatatable(){
-    // alert('unauthorize')
-    $.ajax({
-         type: 'POST',
-         url: '/refresh_token/',
-         data : {
-           'refresh' : localStorage.getItem("Refresh"),
-         },
-         success: function (result) {
-            localStorage.setItem("Token", result.access);
-            // location.reload();
-            var token = localStorage.getItem("Token");
-            setTimeout(function() {
-                window.location.href = "/dashboard/user_management/?token="+token;
-            }, 200);
-            // tableLoad()
-         },
-         error: function(data){
-            obj = JSON.parse(data.responseText)
-            M.toast({html: obj.detail})
-         }
-   })
- }
+// function getaccessTokenDatatable(){
+//     // alert('unauthorize')
+//     $.ajax({
+//          type: 'POST',
+//          url: '/refresh_token/',
+//          data : {
+//            'refresh' : localStorage.getItem("Refresh"),
+//          },
+//          success: function (result) {
+//             localStorage.setItem("Token", result.access);
+//             // location.reload();
+//             var token = localStorage.getItem("Token");
+//             setTimeout(function() {
+//                 window.location.href = "/dashboard/user_management/?token="+token;
+//             }, 200);
+//             // tableLoad()
+//          },
+//          error: function(data){
+//             obj = JSON.parse(data.responseText)
+//             M.toast({html: obj.detail})
+//          }
+//    })
+//  }

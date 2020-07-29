@@ -1,10 +1,11 @@
 $(".brand-logo").sideNav();
-
+var userDetails = getValues('UserDetails')
  jQuery(document).ready(function($)
  {
     // alert(localStorage.getItem("User"))
     
-    $('#user').html('<i class="material-icons left">account_circle</i>'+localStorage.getItem("User"));
+
+    $('#user').html('<i class="material-icons left">account_circle</i>'+userDetails.username);
     var language_id = localStorage.getItem('language')
     $.ajax({
         type: 'POST',
@@ -28,163 +29,188 @@ $(".brand-logo").sideNav();
 });
 
 function changepassword(){
-    var token = localStorage.getItem("Token");
+    
+    var token = userDetails.access
+    var get_url = '/dashboard/get_change_password/?token='
     $.ajax({
         type: 'GET',
         url: '/dashboard/get_change_password/',
-        headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+        headers: { Authorization: 'Bearer '+ token},
         success: function (data) {
-        window.location.href = '/dashboard/get_change_password/?token='+ token
+        window.location.href = get_url+ token
         },
         error: function(data){
         if (data.status == 401) {
-            getaccessTokenChangePassword();
+            getaccessTokenForUrl(get_url);
         }
         }
     })
 };
   
-function getaccessTokenChangePassword() {
-    $.ajax({
-        type: 'GET',
-        url: '/logout/',
-        headers: { Authorization: 'Bearer '+ localStorage.getItem("Token")},
-        success: function (result) {
+//     $.ajax({
+//         type: 'GET',
+//         url: '/logout/',
+//         headers: { Authorization: 'Bearer '+ localStorage.getItem("Token")},
+//         success: function (result) {
 
-            localStorage.setItem("Token", result.access);
-            token = localStorage.getItem("Token")
+//             localStorage.setItem("Token", result.access);
+//             token = localStorage.getItem("Token")
 
-            setTimeout(function() {
-            window.location.href = "/dashboard/get_change_password/?token="+token;
-            }, 500);
+//             setTimeout(function() {
+//             window.location.href = "/dashboard/get_change_password/?token="+token;
+//             }, 500);
 
-        },
-            error: function(data){
-            if (data.status == 401) {
-                getaccessTokenlogout();
+//         },
+//             error: function(data){
+//             if (data.status == 401) {
+//                 getaccessTokenlogout();
                 
-            }
-        }
-    })
-}
+//             }
+//         }
+//     })
+// }
+// get access token when expired
+// function getaccessTokenChangePassword(){
+
+//     $.ajax({
+//          type: 'POST',
+//          url: '/refresh_token/',
+//          data : {
+//            'refresh' : localStorage.getItem("Refresh"),
+//          },
+//          success: function (result) {
+//           localStorage.setItem("Token", result.access);
+//           changepassword();
+//          },
+//          error: function(data){
+//             obj = JSON.parse(data.responseText)
+//             M.toast({html: obj.detail})
+//          }
+//    })
+//   }
 
 function getUserDashboard(){
-    var token = localStorage.getItem("Token");
+    
+    var token = userDetails.access
+    var get_url = '/dashboard/user_management/?token=' 
     $.ajax({
         type: 'GET',
         url: '/dashboard/user_management/',
-        headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+        headers: { Authorization: 'Bearer '+ token},
         success: function (data) {
-        window.location.href = '/dashboard/user_management/?token='+ token
+        window.location.href = get_url + token
         },
         error: function(data){
         if (data.status == 401) {
-            getaccessTokenForUserDashboard();
+            getaccessTokenForUrl(get_url);
         }
         }
     })
 };
 
-function getaccessTokenForUserDashboard(){
-$.ajax({
-    type: 'POST',
-    url: '/refresh_token/',
-    data : {
-        'refresh' : localStorage.getItem("Refresh"),
-    },
-    success: function (result) {
-        localStorage.setItem("Token", result.access);
-        token = localStorage.getItem("Token")
-       
-        setTimeout(function() {
-            window.location.href = "/dashboard/user_management/?token="+token;
-        }, 500);
+// function getaccessTokenForUserDashboard(){
+//     $.ajax({
+//         type: 'POST',
+//         url: '/refresh_token/',
+//         data : {
+//             'refresh' : localStorage.getItem("Refresh"),
+//         },
+//         success: function (result) {
+//             localStorage.setItem("Token", result.access);
+//             token = localStorage.getItem("Token")
+        
+//             setTimeout(function() {
+//                 window.location.href = "/dashboard/user_management/?token="+token;
+//             }, 500);
 
-    },
-    error: function(data){
-        obj = JSON.parse(data.responseText)
-        M.toast({html: obj.detail})
-    }
-})
-
-}
+//         },
+//         error: function(data){
+//             obj = JSON.parse(data.responseText)
+//             M.toast({html: obj.detail})
+//         }
+//     })
+// }
 
 function getTemplateDashboard(){
-    var token = localStorage.getItem("Token");
+    
+    var token = userDetails.access
+    var get_url = '/dashboard/template_management/?token='
     $.ajax({
         type: 'GET',
         url: '/dashboard/template_management/',
-        headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
+        headers: { Authorization: 'Bearer '+ token},
         success: function (data) {
-        window.location.href = '/dashboard/template_management/?token='+ token
+        window.location.href = get_url + token
         },
         error: function(data){
         if (data.status == 401) {
-            getaccessTokenForTemplateDashboard();
+            getaccessTokenForUrl(get_url);
         }
         }
     })
 };
 
-function getaccessTokenForTemplateDashboard(){
-    $.ajax({
-        type: 'POST',
-        url: '/refresh_token/',
-        data : {
-            'refresh' : localStorage.getItem("Refresh"),
-        },
-        success: function (result) {
-            localStorage.setItem("Token", result.access);
-            token = localStorage.getItem("Token")
+// function getaccessTokenForTemplateDashboard(){
+//     $.ajax({
+//         type: 'POST',
+//         url: '/refresh_token/',
+//         data : {
+//             'refresh' : localStorage.getItem("Refresh"),
+//         },
+//         success: function (result) {
+//             localStorage.setItem("Token", result.access);
+//             token = localStorage.getItem("Token")
     
-            setTimeout(function() {
-                window.location.href = "/dashboard/template_management/?token="+token;
-                }, 500);
+//             setTimeout(function() {
+//                 window.location.href = "/dashboard/template_management/?token="+token;
+//                 }, 500);
 
-        },
-        error: function(data){
-            obj = JSON.parse(data.responseText)
-            M.toast({html: obj.detail})
-        }
-    })  
-}
+//         },
+//         error: function(data){
+//             obj = JSON.parse(data.responseText)
+//             M.toast({html: obj.detail})
+//         }
+//     })  
+// }
 
 function closeSideBar(){
-    var token = localStorage.getItem("Token");
+    
+    var token = userDetails.access
+    var get_url = "/dashboard/?token="
     $.ajax({
         method : 'GET',
         url : "/dashboard/?token="+token,
         success: function(data){
-            window.location.href = "/dashboard/?token="+token
+            window.location.href = get_url + token
         },
         error : function(xhr){
             if(xhr.status == 401){
-                GetAccessTokenForcloseSideBar()
+                getaccessTokenForUrl(get_url);
             }
         }
     })  
 }
 
-function GetAccessTokenForcloseSideBar(){
-    $.ajax({
-        type: 'POST',
-        url: '/refresh_token/',
-        data : {
-          'refresh' : localStorage.getItem("Refresh"),
-        },
-        success: function (result) {
-           localStorage.setItem("Token", result.access);
-           token = localStorage.getItem("Token")
+// function GetAccessTokenForcloseSideBar(){
+//     $.ajax({
+//         type: 'POST',
+//         url: '/refresh_token/',
+//         data : {
+//           'refresh' : localStorage.getItem("Refresh"),
+//         },
+//         success: function (result) {
+//            localStorage.setItem("Token", result.access);
+//            token = localStorage.getItem("Token")
         
-        setTimeout(function() {
-            window.location.href = "/dashboard/?token="+token;
-          }, 500);
+//         setTimeout(function() {
+//             window.location.href = "/dashboard/?token="+token;
+//           }, 500);
 
-        },
-        error: function(data){
-           obj = JSON.parse(data.responseText)
-           M.toast({html: obj.detail})
-        }
-  })
+//         },
+//         error: function(data){
+//            obj = JSON.parse(data.responseText)
+//            M.toast({html: obj.detail})
+//         }
+//   })
 
-}
+// }

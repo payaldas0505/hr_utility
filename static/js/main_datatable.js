@@ -1,5 +1,5 @@
 var tableLoad = $(document).ready(function() {
-    GetPermissions()
+    // GetPermissions()
     $('#dashboardRegisterForm').hide();
     $('#dropdownid').not('.disabled').formSelect();
     

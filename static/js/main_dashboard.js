@@ -1,55 +1,55 @@
 $(document).ready(function(){
-    // setTimeout(function() {
-    //     GetPermissions()
-    //   }, 2000);
+    if (localStorage.getItem("UserPermissions") === null) {
+        GetPermissions()
+    }
+    
 
- 
-    GetPermissions()
-
-    var language_id = localStorage.getItem('language')
-    $.ajax({
-        type: 'POST',
-        url: '/get_labels/',
-        data : {
-        	'page_name' : 'Add_user',
-        	'language_id' : language_id,
-		    },
-        success: function (jsondata) {
-            console.log(jsondata)
-            for (const [key, value] of Object.entries(jsondata)) {
-                console.log(key, value);
-                $('.'+value.page_label_class_name).text(value.page_label_text);
-              }
-        },
-        error: function(data){
-            obj = JSON.parse(data.responseText)
-            M.toast({html: obj.error, classes: 'red rounded'})
-        }
-    });
+    // var language_id = localStorage.getItem('language')
+    // $.ajax({
+    //     type: 'POST',
+    //     url: '/get_labels/',
+    //     data : {
+    //     	'page_name' : 'Add_user',
+    //     	'language_id' : language_id,
+	// 	    },
+    //     success: function (jsondata) {
+    //         console.log(jsondata)
+    //         for (const [key, value] of Object.entries(jsondata)) {
+    //             console.log(key, value);
+    //             $('.'+value.page_label_class_name).text(value.page_label_text);
+    //           }
+    //     },
+    //     error: function(data){
+    //         obj = JSON.parse(data.responseText)
+    //         M.toast({html: obj.error, classes: 'red rounded'})
+    //     }
+    // });
       
    // Get and set all the labels from backend
-    $.ajax({
-        type: 'POST',
-        url: '/get_labels/',
-        data : {
-            'page_name' : 'Dashboard',
-            'language_id' : language_id,
-            },
-        success: function (jsondata) {
-            console.log(jsondata)
-            for (const [key, value] of Object.entries(jsondata)) {
-                console.log(key, value);
-                $('.'+value.page_label_class_name).text(value.page_label_text);
-            }
-        },
-        error: function(data){
-            obj = JSON.parse(data.responseText)
-            M.toast({html: obj.error, classes: 'red rounded'})
-        }
-    });
+    // $.ajax({
+    //     type: 'POST',
+    //     url: '/get_labels/',
+    //     data : {
+    //         'page_name' : 'Dashboard',
+    //         'language_id' : language_id,
+    //         },
+    //     success: function (jsondata) {
+    //         console.log(jsondata)
+    //         for (const [key, value] of Object.entries(jsondata)) {
+    //             console.log(key, value);
+    //             $('.'+value.page_label_class_name).text(value.page_label_text);
+    //         }
+    //     },
+    //     error: function(data){
+    //         obj = JSON.parse(data.responseText)
+    //         M.toast({html: obj.error, classes: 'red rounded'})
+    //     }
+    // });
     
 
 })
+var userDetails = getValues('UserDetails')
+var user_role_id = userDetails.role_id
 
 function DownloadResume(id){
     window.location.href =id
@@ -138,13 +138,10 @@ function GetAccessTokenForBackButton(){
         success: function (result) {
            localStorage.setItem("Token", result.access);
            token = localStorage.getItem("Token")
-           // location.reload();
-        //    RegisterUserForm()
-           // return false
-        //    window.location.href = "/dashboard/?token="+token
-        setTimeout(function() {
-            window.location.href = "/dashboard/?token="+token;
-          }, 500);
+          
+            setTimeout(function() {
+                window.location.href = "/dashboard/?token="+token;
+            }, 500);
 
         },
         error: function(data){
@@ -233,10 +230,7 @@ function getViewReport(id){
             $('#role_drop_down').prop("disabled", true);
             $('#role_drop_down').find('option[value='+role+']').prop('selected', true);
             
-            // var user_role_id = localStorage.getItem('RoleId')
-            // if(user_role_id == 1){
-            //     $('#role_drop_down').prop("disabled", false);
-            // }
+           
             $('select').not('.disabled').formSelect();
         },
         error: function(xhr, status, error) {
@@ -490,25 +484,21 @@ function EditUserValidation(){
 }
 
 function GetPermissions(){
-    var user_role_id = localStorage.getItem('RoleId')
-        content = {
-            user_role_id : user_role_id,
-        }
         $.ajax({
             url: 'permission',
-            headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
-            type: 'post',   
-            data: content,
+            headers: { Authorization: 'Bearer '+ userDetails.access},
+            type: 'GET',   
+
             success: function(response){
                 
                 localStorage.setItem("UserPermissions", JSON.stringify(response));
     
-                // if (response.user_management_page == false){
-                //     $( ".user_management" ).hide();
-                // }
-                // if (response.template_management_page == false){
-                //     $( ".template_management" ).hide();
-                // }
+                if (!response.user_management_page_GET){
+                    $( ".user_management" ).hide();
+                }
+                if (!response.template_management_page_GET){
+                    $( ".template_management" ).hide();
+                }
 
             },
             error: function(xhr) {
@@ -550,9 +540,7 @@ function getaccessTokenDashboard(){
          },
          success: function (result) {
             localStorage.setItem("Token", result.access);
-            // location.reload();
             var token = localStorage.getItem("Token");
-            // window.location.href = "/dashboard/?token="+token;
             id = window.localStorage.getItem("editedUserId")
             getViewReport(id)
          },
@@ -599,9 +587,7 @@ function getaccessTokenDashboard(){
          },
          success: function (result) {
             localStorage.setItem("Token", result.access);
-            // location.reload();
             var token = localStorage.getItem("Token");
-            // window.location.href = "/dashboard/?token="+token;
             id = window.localStorage.getItem("editedUserId")
             DeleteReport(id)
          },
@@ -621,10 +607,8 @@ function getaccessTokenDashboard(){
         },
         success: function (result) {
            localStorage.setItem("Token", result.access);
-           // location.reload();
            var token = localStorage.getItem("Token");
-           // window.location.href = "/dashboard/?token="+token;
-        //    id = window.localStorage.getItem("editedUserId")
+       
            EditUserValidation()
         },
         error: function(data){

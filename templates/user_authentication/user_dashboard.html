@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Add User Page</title>
+    <title>User Dashboard</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
       <!--Import materialize.css-->
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
@@ -14,7 +14,7 @@
 <header>
     <nav>
         <div class="nav-wrapper">
-            <a id="back_button" onclick="getdashboard()" data-activates="slide-out" class="brand-logo" style="margin-left: 10px; margin-top: 1px;"><i class="material-icons prefix">arrow_back</i><span class="Menu_label">Back</span></a>
+            <a id="back_button" onclick="getdashboard()" data-activates="slide-out" class="brand-logo" style="margin-right: 10px; margin-top: 1px;"><i class="material-icons prefix">arrow_back</i><span class="Menu_label">Back</span></a>
         </div>
     </nav>
 </header> 
@@ -65,8 +65,10 @@
 
 
 	<div id='dashboardRegisterForm'>
-	<a id="back_button" onclick="getUserDashboardDatatable()" class="waves-effect waves-light btn"><i class="material-icons prefix">arrow_back</i></a>
-    
+	<!-- <a id="back_button_form" onclick="getUserDashboardDatatable()" class="waves-effect waves-light btn"><i class="material-icons prefix">arrow_back</i>User Management Dashboard</a> -->
+    <button class="btn waves-effect waves-light" onclick="getUserDashboardDatatable();" style="margin-top: 20px;"><span class="submit_label">User Management Dashboard</span>
+        <i class="material-icons left">arrow_back</i>
+    </button>
     <div id="DisableDiv" class="form-border row">
         <form id="registration_form" class="col s8 push-s2" method="post" >
             {% csrf_token %}
@@ -133,16 +135,16 @@
     </div>
 </div>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="{% static '/js/get_refresh_token.js' %}"></script>
 <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-
 <script type="text/javascript" src="{% static '/js/materialize.min.js' %}"></script>
-<script src="/static/js/user_dashboard.js"></script>
-<script src="/static/js/user_datatable.js"></script>
+<script src="{% static '/js/user_dashboard.js' %}"></script>
+<script src="{% static '/js/user_datatable.js' %}"></script>
 
 <script>
-        $(document).ready(function(){
-            $('select').formSelect();
-             // Check username avaliable in database
+    $(document).ready(function(){
+        $('select').formSelect();
+            // Check username avaliable in database
     $('#user_name_edit').on('blur', function(){
         var user_name = $('#user_name_edit').val();
         if (user_name == '') {

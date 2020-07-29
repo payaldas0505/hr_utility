@@ -26,6 +26,7 @@ class Dashboard(APIView):
 
         try:
             print(request.GET['token'],"dashboard")
+
             today = datetime.date.today() + datetime.timedelta(days=1)
             last_week = datetime.date.today() - datetime.timedelta(days=7)
             new_users = User.objects.filter(last_login__isnull=True).filter(is_superuser=False).count()
@@ -51,12 +52,11 @@ class UserManagementDashboard(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    @has_permission('user_management_page')
+    @has_permission('user_management_page_GET')
     def get(self, request):
         """ active and inactive users count """
 
         try:
-    
             print("get user management dashboard")
 
             today = datetime.date.today() + datetime.timedelta(days=1)
@@ -86,7 +86,7 @@ class TemplateManagementDashboard(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    @has_permission('template_management_page')
+    @has_permission('template_management_page_GET')
     def get(self, request):
         """ active and inactive users count """
 
@@ -123,9 +123,8 @@ class GetAllUsersView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
-    @has_permission('user_management_page')
+    # @has_permission('user_management_page_GET')
     def get(self, request):
-
 
         try:
             datatable_server_processing = query_users_by_args(request, **request.query_params)
@@ -149,10 +148,9 @@ class EditUserFormView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
-    @has_permission('view_user')
+    @has_permission('edit_user_GET')
     def get(self, request, pk):
         """Get User details using User Id"""
-
 
         try:
             is_user_found = User.objects.filter(id = pk).exists()
@@ -165,10 +163,10 @@ class EditUserFormView(APIView):
             register = UserRegisterationModel.objects.filter(user_name = user.username).values\
                                                             ('user_name','first_name',
                                                             'last_name','email',
-                                                            'user_status', 'role')
+                                                            'user_status', 'role__id')
 
-            info_message = "Cannot fetch all users data from database"
-            print(info_message)
+            info_message = "successfully fetched detail of user from db"
+            print(info_message, register)
             return JsonResponse({'message' : list(register)})
         except Exception as e :
             print("Exception in getting  all user", e)
@@ -177,7 +175,7 @@ class EditUserFormView(APIView):
             print(info_message)
             return JsonResponse({'message' : str(info_message)}, status =422)
 
-    @has_permission('delete_user')
+    @has_permission('delete_user_DELETE')
     def delete(self, request, pk):
         """Delete user using User Id"""
 
@@ -213,7 +211,7 @@ class EditUserFormView(APIView):
             print(info_message)
             return JsonResponse({'message' : str(info_message)},status = 422)
 
-    @has_permission('edit_user')
+    @has_permission('edit_user_PUT')
     def put(self, request, pk):
         """Update user details using User Id"""
 
@@ -240,7 +238,7 @@ class EditUserFormView(APIView):
             
                             if(auth_user_serializer.is_valid()):
                                 edit_serializer.save()                                                                                                                                                    
-                    
+                                
                                 auth_user_instance = auth_user_serializer.save()
                     
                                 auth_user_instance.save()

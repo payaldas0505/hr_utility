@@ -7,7 +7,7 @@ class UserRegisterationForm(ModelForm):
     """Check the validation of the  registraion form."""
     class Meta: 
         model = UserRegisterationModel         
-        exclude = ['user'] 
+        exclude = ['user', 'role'] 
   
 
 class UserForm(ModelForm): 
