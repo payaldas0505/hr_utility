@@ -27,7 +27,20 @@ class DatatableSerializer(serializers.ModelSerializer):
         )
 
 
-class WordTemplateNewSerializer(serializers.ModelSerializer):
+class WordTemplateUploadSerializer(serializers.ModelSerializer):
     class Meta : 
         model = WordTemplateNew
-        fields = '__all__'
+        fields = (
+                    'word_template',
+                    'word_name'
+                )
+
+class WordTemplateDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WordTemplateNew
+        fields = (
+                    'word_template',
+                    'word_name',
+                    'dummy_values'
+                )
+                

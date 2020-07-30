@@ -156,17 +156,21 @@ function submit() {
             M.toast({ html: obj.detail, classes: 'red rounded' })
         }
     })
-};
-
-// register user
-function register() {
-    window.location.href = "/user/register/"
 }
 
-//get password reset page
-function getpasswordresetpage() {
-    window.location.href = "/v2s/forgot_password/"
-};
+ // Get the input field
+ var input = document.getElementById("password");
+
+ // Execute a function when the user releases a key on the keyboard
+ input.addEventListener("keyup", function(event) {
+   // Cancel the default action, if needed
+   event.preventDefault();
+   // Number 13 is the "Enter" key on the keyboard
+   if (event.keyCode === 13) {
+     // Trigger the button element with a click
+     document.getElementById("login_btn").click();
+   }
+ });
 
 
     

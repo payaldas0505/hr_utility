@@ -1,31 +1,31 @@
 $(".brand-logo").sideNav();
 var userDetails = getValues('UserDetails')
- jQuery(document).ready(function($)
- {
+jQuery(document).ready(function($){
+
     // alert(localStorage.getItem("User"))
     
 
     $('#user').html('<i class="material-icons left">account_circle</i>'+userDetails.username);
-    var language_id = localStorage.getItem('language')
-    $.ajax({
-        type: 'POST',
-        url: '/get_labels/',
-        data : {
-        	'page_name' : 'Nav_bar',
-        	'language_id' : language_id,
-		    },
-        success: function (jsondata) {
-            console.log(jsondata)
-            for (const [key, value] of Object.entries(jsondata)) {
-                console.log(key, value);
-                $('.'+value.page_label_class_name).text(value.page_label_text);
-              }
-        },
-        error: function(data){
-            obj = JSON.parse(data.responseText)
-            M.toast({html: obj.error, classes: 'red rounded'})
-        }
-    });
+    // var language_id = localStorage.getItem('language')
+    // $.ajax({
+    //     type: 'POST',
+    //     url: '/get_labels/',
+    //     data : {
+    //     	'page_name' : 'Nav_bar',
+    //     	'language_id' : language_id,
+	// 	    },
+    //     success: function (jsondata) {
+    //         console.log(jsondata)
+    //         for (const [key, value] of Object.entries(jsondata)) {
+    //             console.log(key, value);
+    //             $('.'+value.page_label_class_name).text(value.page_label_text);
+    //           }
+    //     },
+    //     error: function(data){
+    //         obj = JSON.parse(data.responseText)
+    //         M.toast({html: obj.error, classes: 'red rounded'})
+    //     }
+    // });
 });
 
 function changepassword(){

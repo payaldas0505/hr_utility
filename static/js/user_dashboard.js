@@ -1,8 +1,10 @@
 
 $(document).ready(function(){
+    $( ".add_user" ).hide();
     getUserRoleDropDown();
-    GetPermissionsUserDashboard();
+    SetPermissionsUserDashboard();
 })
+
 var userDetails = getValues('UserDetails')
 var access = userDetails.access
 
@@ -35,6 +37,7 @@ function getUserRoleDropDown(){
     });
 }
 
+// Get Main dashboard
 function getdashboard(){
     var token = access;
     var get_url = "/dashboard/?token="
@@ -52,7 +55,7 @@ function getdashboard(){
     })  
 }
 
-
+//  Get Add new user page
 function GetAddUserPage(){
 
     var token = access;
@@ -62,16 +65,18 @@ function GetAddUserPage(){
         url: '/dashboard/user_management/add_user/',
         headers: { Authorization: 'Bearer '+access},
         success: function (data) {
-        window.location.href = get_url + token
+            window.location.href = get_url + token
         },
         error: function(data){
-        if (data.status == 401) {
-            getaccessTokenForUrl(get_url);
-        }
+            if (data.status == 401) {
+                getaccessTokenForUrl(get_url);
+            }
         }
     })
-};
+}
 
+
+// get user management dashboard
 function getUserDashboardDatatable(){
     var token = access;
     var get_url = "/dashboard/user_management/?token="
@@ -89,7 +94,7 @@ function getUserDashboardDatatable(){
     })  
 }
 
-
+// Delete user by id
 function DeleteReport(id){
     url = 'edit_user_form/'+id
     var userDetails = getValues('UserDetails')
@@ -123,9 +128,10 @@ function DeleteReport(id){
         }
         
     })
-    // GetPermissions()
+    
 }
 
+// delete confirm prompt
 function getDeleteReport(id){
     var confirmation = confirm("Are you sure?\nDo you want to delete this user?");
     if(confirmation == true){
@@ -134,11 +140,10 @@ function getDeleteReport(id){
     else{
         return false
     }
-    // GetPermissions();
+    
 }
 
-
-
+//Get Datatable for user management
 function getDashboardDatatable(){
     var token = access;
     var get_url = "/dashboard/?token="
@@ -156,6 +161,7 @@ function getDashboardDatatable(){
     })  
 }
 
+//View of the user by ID
 function getViewReport(id){
     url = 'edit_user_form/'+id
     window.localStorage.setItem('editedUserId', id)
@@ -194,11 +200,6 @@ function getViewReport(id){
 
             $('#role_drop_down').prop("disabled", true);
             $('#role_drop_down').find('option[value='+role+']').prop('selected', true);
-            
-            // var user_role_id = localStorage.getItem('RoleId')
-            // if(user_role_id == 1){
-            //     $('#role_drop_down').prop("disabled", false);
-            // }
             $('select').formSelect();
         },
         error: function(xhr, status, error) {
@@ -211,9 +212,10 @@ function getViewReport(id){
             return false
         }
     })
-    // GetPermissions();
+    
 }
 
+// Edit of the user by ID
 function getEditReport(id){
     var userDetails = getValues('UserDetails')
     var token = userDetails.access
@@ -264,9 +266,10 @@ function getEditReport(id){
             return false
         }
     })
-    // GetPermissions()
+    
 }
 
+// Save the edited user 
 function EditUserSave(user_name,first_name,
                       last_name,email,
                       user_status,role)
@@ -310,13 +313,12 @@ function EditUserSave(user_name,first_name,
                 return false
             }
         })
-        // GetPermissions();
 }
 
-
+// Validation of user edit 
 function EditUserValidation(){
     $("#submit_edit_form").attr("disabled", true);
-
+          
     user_name = $('#user_name_edit').val()
     first_name = $('#first_name_edit').val();
     last_name = $('#last_name_edit').val();
@@ -367,13 +369,16 @@ function EditUserValidation(){
     }
 }
 
-function GetPermissionsUserDashboard(){
-    // var retrievedData = localStorage.getItem("UserPermissions");
+// Get the permissions from LocalStorge 
+function SetPermissionsUserDashboard(){
     var userPermissions = getValues('UserPermissions')
 
-    if (userPermissions.add_user_GET == undefined){
-        $( ".add_user" ).hide();
-    }  
+    if(!jQuery.isEmptyObject(userPermissions)){
+        if (userPermissions.includes('add_user_GET')){
+            $( ".add_user" ).show();
+        }
+        
+    }
 }
 
 

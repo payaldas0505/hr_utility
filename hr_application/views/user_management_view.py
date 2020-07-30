@@ -219,7 +219,7 @@ class GetPermissions(APIView):
             print(perms)
          
             # Permissions setting in session  
-            perms_dict = {}      
+            perms_list = []      
             for perm in perms:
                 values = []
                 for key, value in perm.items():
@@ -228,10 +228,10 @@ class GetPermissions(APIView):
                 key = perm['role__permissions__permission_name']+'_'+perm['role__permissions__api_method']
 
                 request.session[key] = values
-                perms_dict[key] = True
+                perms_list.append(key)
                 print("storing permissions for users in session {}:{}".format(key, request.session[key]))
 
-            return JsonResponse(perms_dict)
+            return JsonResponse(perms_list, safe=False)
         except Exception as error:
             info_message = "Permission fetching  issue due to Internal Server Error"
             print( info_message, error)

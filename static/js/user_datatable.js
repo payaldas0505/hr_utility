@@ -55,20 +55,25 @@ var tableLoad = $(document).ready(function() {
                             var retrievedData = localStorage.getItem("UserPermissions");
                             var userPermissions = JSON.parse(retrievedData);
 
-                            var delete_user_flag = userPermissions.delete_user_DELETE
-                            var edit_user_flag = userPermissions.edit_user_GET
-                            var view_user_flag = userPermissions.view_user_GET
+                            if(!jQuery.isEmptyObject(userPermissions)){
 
-                            console.log('perms', delete_user_flag, edit_user_flag, view_user_flag)
+                                var delete_user_flag = userPermissions.includes('delete_user_DELETE')
+                                var edit_user_flag = userPermissions.includes('edit_user_GET')
+                                var view_user_flag = userPermissions.includes('view_user_GET') 
 
-                            if(delete_user_flag == true && edit_user_flag == true && view_user_flag == true){
-                                return all_perms
+                                if(delete_user_flag == true && edit_user_flag == true && view_user_flag == true){
+                                    return all_perms
+                                }
+                                else if(delete_user_flag == false && edit_user_flag == true && view_user_flag == true){
+                                    return edit_view
+                                }
+                                else if(delete_user_flag == false && edit_user_flag == false && view_user_flag == true ){
+                                    return only_view
+                                }
+                                
                             }
-                            else if(delete_user_flag == undefined && edit_user_flag == true && view_user_flag == true){
-                                return edit_view
-                            }
-                            else if(delete_user_flag == undefined && edit_user_flag == undefined && view_user_flag == true ){
-                                return only_view
+                            else {
+                                return 'no action'
                             }
                             // var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditReport(id)><i class="material-icons prefix">mode_edit</i></button> <button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button><button class="delete_btn" id='+data+' onclick=getDeleteReport(id)><i class="material-icons prefix">delete</i></button> '
                             // return all_perms

@@ -1,6 +1,12 @@
 $(document).ready(function(){
+    $( ".user_management" ).hide();
+    $( ".template_management" ).hide();
+
     if (localStorage.getItem("UserPermissions") === null) {
         GetPermissions()
+    }
+    else {
+        SetPermissionsUserDashboard()
     }
     
 
@@ -48,6 +54,41 @@ $(document).ready(function(){
     
 
 })
+
+function GetPermissions(){
+    $.ajax({
+        url: 'permission',
+        headers: { Authorization: 'Bearer '+ userDetails.access},
+        type: 'GET',   
+
+        success: function(response){
+            
+            localStorage.setItem("UserPermissions", JSON.stringify(response));
+            console.log(response)
+
+            SetPermissionsUserDashboard();
+    
+        },
+        error: function(xhr) {
+            parsed_json = JSON.parse(xhr.responseText)
+            M.toast({html: parsed_json.message, classes: 'red rounded'})
+        }
+    });
+}
+
+function SetPermissionsUserDashboard(){
+    var userPermissions = getValues('UserPermissions')
+
+    if(!jQuery.isEmptyObject(userPermissions)){
+        if (userPermissions.includes('user_management_page_GET')){
+            $( ".user_management" ).show();
+        }
+        if (userPermissions.includes('template_management_page_GET')){
+            $( ".template_management" ).show();
+        }
+    }
+}
+
 var userDetails = getValues('UserDetails')
 var user_role_id = userDetails.role_id
 
@@ -483,30 +524,7 @@ function EditUserValidation(){
     }
 }
 
-function GetPermissions(){
-        $.ajax({
-            url: 'permission',
-            headers: { Authorization: 'Bearer '+ userDetails.access},
-            type: 'GET',   
 
-            success: function(response){
-                
-                localStorage.setItem("UserPermissions", JSON.stringify(response));
-    
-                if (!response.user_management_page_GET){
-                    $( ".user_management" ).hide();
-                }
-                if (!response.template_management_page_GET){
-                    $( ".template_management" ).hide();
-                }
-
-            },
-            error: function(xhr) {
-                parsed_json = JSON.parse(xhr.responseText)
-                M.toast({html: parsed_json.message, classes: 'red rounded'})
-            }
-          });
-    }
 
 function getaccessTokenDashboard(){
     $.ajax({

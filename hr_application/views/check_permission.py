@@ -29,6 +29,7 @@ def has_permission(perms):
             except Exception as e:
                 print(e)
                 err_msg = "You are not authorized to access this page"
+                print(err_msg)
                 return HttpResponse(err_msg) 
         return wrap   
     return inner  

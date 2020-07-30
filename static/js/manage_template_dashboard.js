@@ -1,4 +1,21 @@
 
+$(document).ready(function(){
+    $( ".add_template" ).hide();
+    SetPermissionsTemplateDashboard();
+})
+
+// Get the permissions from LocalStorge 
+function SetPermissionsTemplateDashboard(){
+    var userPermissions = getValues('UserPermissions')
+
+    if(!jQuery.isEmptyObject(userPermissions)){
+        if (userPermissions.includes('add_template_GET')){
+            $( ".add_template" ).show();
+        }
+        
+    }
+}
+
 var userDetails = getValues('UserDetails')
 var access = userDetails.access
 
@@ -19,32 +36,7 @@ function getdashboard(){
     })  
 }
 
-// function GetAccessTokenForBackButton(){
-//     $.ajax({
-//         type: 'POST',
-//         url: '/refresh_token/',
-//         data : {
-//           'refresh' : localStorage.getItem("Refresh"),
-//         },
-//         success: function (result) {
-//            localStorage.setItem("Token", result.access);
-//            token = localStorage.getItem("Token")
-//            // location.reload();
-//         //    RegisterUserForm()
-//            // return false
-//         //    window.location.href = "/v2s/dashboard/?token="+token
-//         setTimeout(function() {
-//             window.location.href = "/dashboard/?token="+token;
-//           }, 500);
 
-//         },
-//         error: function(data){
-//            obj = JSON.parse(data.responseText)
-//            M.toast({html: obj.detail})
-//         }
-//   })
-
-// }
 
 
 function GetAddTemplatePage(){
@@ -64,31 +56,4 @@ function GetAddTemplatePage(){
         }
         }
     })
-};
-
-// function getaccessTokenForAddTemplate(){
-//     $.ajax({
-//         type: 'POST',
-//         url: '/refresh_token/',
-//         data : {
-//           'refresh' : localStorage.getItem("Refresh"),
-//         },
-//         success: function (result) {
-//            localStorage.setItem("Token", result.access);
-//            token = localStorage.getItem("Token")
-//            // location.reload();
-//         //    RegisterUserForm()
-//            // return false
-//         //    window.location.href = "/dashboard/?token="+token
-//         setTimeout(function() {
-//             window.location.href = "add_template/?token="+token;
-//           }, 500);
-
-//         },
-//         error: function(data){
-//            obj = JSON.parse(data.responseText)
-//            M.toast({html: obj.detail})
-//         }
-//   })
-
-// }
+}
