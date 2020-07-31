@@ -106,7 +106,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+X_FRAME_OPTIONS = 'ALLOWALL'
 
+XS_SHARING_ALLOWED_METHODS = ['POST','GET','OPTIONS', 'PUT', 'DELETE']
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/

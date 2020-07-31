@@ -143,7 +143,7 @@ class GetAllUsersView(APIView):
             print(info_message)
             return JsonResponse({'message' : str(info_message)}, status = 422)
 
-class EditUserFormView(APIView):
+class UserDatatableView(APIView):
     """Get, Delete and Update user using User Id """
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)

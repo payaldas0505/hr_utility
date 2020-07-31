@@ -39,8 +39,6 @@ class WordTemplateDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = WordTemplateNew
         fields = (
-                    'word_template',
-                    'word_name',
-                    'dummy_values'
+                    '__all__'
                 )
                 

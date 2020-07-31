@@ -10,7 +10,7 @@ from .views import (LoginView, CustomTokenObtainPairView,
                     UserManagementDashboard, TemplateManagementDashboard,
                     AddUserFormView, GetRoleDropDown,
                     CheckUsername, CheckEmail,
-                    GetAllUsersView, EditUserFormView,
+                    GetAllUsersView, UserDatatableView,
                     NewGenDocxView, GetPermissions,
                     FillDocument)
 
@@ -49,7 +49,7 @@ urlpatterns = [
 
     path('dashboard/user_management/add_user/check_email/', CheckEmail.as_view(), name="check_email"),
 
-    path('dashboard/user_management/edit_user_form/<int:pk>', EditUserFormView.as_view(), name="edit_user_form"),
+    path('dashboard/user_management/edit_user_form/<int:pk>', UserDatatableView.as_view(), name="edit_user_form"),
 
     path('dashboard/template_management/', TemplateManagementDashboard.as_view(), name="template_management"),
 

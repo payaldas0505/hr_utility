@@ -122,8 +122,8 @@ class CustomJWTAuthentication(JWTAuthentication):
             # get user name from jwt
             decoded = jwt.decode(raw_token, settings.SECRET_KEY)
             username = decoded['username']
-            id = decoded['user_id']
-            print('username', username, id)
+            user_id = decoded['user_id']
+            print('username', username, user_id)
 
             # get user object from database
             user_obj = UserRegisterationModel.objects.filter(user_name=username).values()
@@ -270,4 +270,45 @@ class SaveChangePasswordView(APIView):
             info_message = "Internal server error"
             print(info_message, e)
             return JsonResponse({"success": False, "error": str(info_message)}, status=500) 
+     
        
+class GetPermissions(APIView):
+    """Get Permissons of user"""
+    authentication_classes = [CustomJWTAuthentication]
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        
+        try:
+            user_id = request.session['user_id']
+            perms = UserRegisterationModel.objects.filter(
+                                                          id=user_id
+                                                          ).filter(
+                                                                    role__role_status=True
+                                                                    ).filter(
+                                                                             role__permissions__status=True
+                                                                             ).values(
+                                                                                 'role__permissions__permission_name',
+                                                                                 'role__permissions__api_method',
+                                                                                 'role__permissions__url_identifier')
+            print(perms)
+         
+            # Permissions setting in session  
+            perms_list = []      
+            for perm in perms:
+                values = []
+                for key, value in perm.items():
+                    values.append(value)
+
+                key = perm['role__permissions__permission_name']+'_'+perm['role__permissions__api_method']
+
+                request.session[key] = values
+                perms_list.append(key)
+                print("storing permissions for users in session {}:{}".format(key, request.session[key]))
+
+            return JsonResponse(perms_list, safe=False)
+        except Exception as error:
+            info_message = "Permission fetching  issue due to Internal Server Error"
+            print( info_message, error)
+            return JsonResponse({'message' : str(info_message)},status = 422)
+

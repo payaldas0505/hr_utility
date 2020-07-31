@@ -114,17 +114,17 @@ def query_users_by_args(request,**kwargs):
 class WordTemplateNew(models.Model):
     word_name = models.CharField(max_length=100, null=False)
     word_template = models.FileField(upload_to = 'word_template', blank = False)
-    dummy_values = jsonfield.JSONField(null=True)
-    pdf = models.FileField(upload_to = 'pdf', blank = False)
     class Meta:
         verbose_name_plural = "4. Uploaded Templates"
     def __str__(self):
         return '{}' .format(self.word_name)
 
 class WordTemplateData(models.Model):
+    pdf_name =  models.CharField(max_length=100)
     dummy_values = jsonfield.JSONField()
+    pdf = models.FileField(upload_to = 'pdf', blank = False)
 
     class Meta:
         verbose_name_plural = "5. Templates Details"
-    # def __str__(self):
-    #     return '{}' .format(self.word_name)
+    def __str__(self):
+        return '{}' .format(self.pdf_name)
