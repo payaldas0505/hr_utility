@@ -9,7 +9,7 @@ function SetPermissionsTemplateDashboard(){
     var userPermissions = getValues('UserPermissions')
 
     if(!jQuery.isEmptyObject(userPermissions)){
-        if (userPermissions.includes('add_template_GET')){
+        if (userPermissions.includes('add_template_get')){
             $( ".add_template" ).show();
         }
         

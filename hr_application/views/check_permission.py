@@ -1,6 +1,7 @@
 from django.http.response import HttpResponse, JsonResponse
 from django.http import HttpResponseRedirect
 from functools import partial, update_wrapper, wraps
+from ..config import perms_config
 
 def has_permission(perms): 
     """
@@ -20,26 +21,28 @@ def has_permission(perms):
                 path = path.rsplit("/", 1)[0]
             
             # Exact method from the function
-            method = request.method
+            method = request.method.lower()
             print("Get requested url path: ", path)
             print("Get requested method: ", method)
             print("@"*20)
             try:
-                # Get permissions from the session 
-                session_perms_list = request.session[perms]
+                session_perm_key = perms_config.session_perm_key
+                print("session perm key", session_perm_key)
 
-                #Compare the permission url and method
-                if session_perms_list[1] == method and session_perms_list[2] == path:
-                    print('permissions in session', session_perms_list)
-                    print("@"*20)
-                    return func(self, request, *args, **kwargs)
+                if session_perm_key in request.session:
+
+                    # Get permissions from the session 
+                    session_perms_list = request.session[session_perm_key][perms]
+
+                    #Compare the method and path
+                    if session_perms_list['api_method'] == method and session_perms_list['url_identifier'] == path:
+                        print('permissions in session', session_perms_list)
+                        print("@"*20)
+                        return func(self, request, *args, **kwargs)
                     
             except Exception as e:
                 print(e)
-                err_msg = "<h1 style='color: red; text-align:center;'>\
-                    You are not authorized to access this page...!!!<h1>"
-                print(err_msg)
-                return HttpResponse(err_msg) 
+                return HttpResponse(status=403) 
         return wrap   
     return inner  
   

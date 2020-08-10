@@ -35,6 +35,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth import authenticate, login
 from ..models import UserRegisterationModel, UserRole
 import jwt
+from ..config import perms_config
 
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
@@ -270,8 +271,8 @@ class SaveChangePasswordView(APIView):
             info_message = "Internal server error"
             print(info_message, e)
             return JsonResponse({"success": False, "error": str(info_message)}, status=500) 
-     
-       
+
+
 class GetPermissions(APIView):
     """Get Permissons of user"""
     authentication_classes = [CustomJWTAuthentication]
@@ -294,18 +295,31 @@ class GetPermissions(APIView):
             print(perms)
          
             # Permissions setting in session  
-            perms_list = []      
+            perms_list = []  
+            perms_dict = {}    
             for perm in perms:
-                values = []
+                # permission_list= []
+                permission_dict =  {}
                 for key, value in perm.items():
-                    values.append(value)
+                    if key == 'role__permissions__permission_name':
+                        permission_dict['permission_name'] = value.lower()
 
-                key = perm['role__permissions__permission_name']+'_'+perm['role__permissions__api_method']
+                    elif key == 'role__permissions__api_method':
+                        permission_dict['api_method'] = value.lower()
+                    
+                    else:
+                        permission_dict['url_identifier'] = value
 
-                request.session[key] = values
+                # permission_list.append(permission_dict)
+
+                key = perm['role__permissions__permission_name'].lower() +'_'+perm['role__permissions__api_method'].lower()
+                perms_dict[key] = permission_dict
+                print("Individual permission dict:  ", permission_dict)
                 perms_list.append(key)
-                print("storing permissions for users in session {}:{}".format(key, request.session[key]))
-
+                # print("storing permissions for users in dict {}".format(perms_dict))
+            print()
+            request.session[perms_config.session_perm_key] = perms_dict
+            print("storing permissions for users in session {}:{}".format(perms_config.session_perm_key, perms_dict))
             return JsonResponse(perms_list, safe=False)
         except Exception as error:
             info_message = "Permission fetching  issue due to Internal Server Error"

@@ -57,9 +57,9 @@ var tableLoad = $(document).ready(function() {
 
                             if(!jQuery.isEmptyObject(userPermissions)){
 
-                                var delete_user_flag = userPermissions.includes('delete_user_DELETE')
-                                var edit_user_flag = userPermissions.includes('edit_user_GET')
-                                var view_user_flag = userPermissions.includes('view_user_GET') 
+                                var delete_user_flag = userPermissions.includes('delete_user_delete')
+                                var edit_user_flag = userPermissions.includes('edit_user_get')
+                                var view_user_flag = userPermissions.includes('view_user_get') 
 
                                 if(delete_user_flag == true && edit_user_flag == true && view_user_flag == true){
                                     return all_perms

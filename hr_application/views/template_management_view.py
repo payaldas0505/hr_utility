@@ -26,14 +26,14 @@ import re
 from docxtpl import DocxTemplate
 import uuid
 from hr_utility.settings import BASE_DIR
-
+from ..config.perms_config import perms
 
 class NewGenDocxView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    @has_permission('add_template_GET')
+    @has_permission(perms['add_template_get'])
     def get(self, request):
         """Renders Upload document form."""  
         try:
@@ -46,7 +46,7 @@ class NewGenDocxView(APIView):
             print(info_message)
             return  JsonResponse({"error": str(info_message)}, status=5)
     
-    @has_permission('add_template_POST')
+    @has_permission(perms['add_template_post'])
     def post(self,request):
         """Save the upload document and returns the placeholder and filename"""
         try:

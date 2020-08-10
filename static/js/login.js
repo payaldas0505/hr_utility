@@ -139,12 +139,6 @@ function submit() {
                 return false
             }
             localStorage.setItem("UserDetails", JSON.stringify(result));
-
-            // localStorage.setItem("Token", result.access);
-            // localStorage.setItem("Refresh", result.refresh);
-            // localStorage.setItem("UserId", result.id);
-            // localStorage.setItem("User", result.username);
-            // localStorage.setItem("RoleId", result.role_id);
             window.location.href = "/dashboard/?token=" + result.access;
          
             

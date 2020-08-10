@@ -80,10 +80,10 @@ function SetPermissionsUserDashboard(){
     var userPermissions = getValues('UserPermissions')
 
     if(!jQuery.isEmptyObject(userPermissions)){
-        if (userPermissions.includes('user_management_page_GET')){
+        if (userPermissions.includes('user_management_page_get')){
             $( ".user_management" ).show();
         }
-        if (userPermissions.includes('template_management_page_GET')){
+        if (userPermissions.includes('template_management_page_get')){
             $( ".template_management" ).show();
         }
     }
