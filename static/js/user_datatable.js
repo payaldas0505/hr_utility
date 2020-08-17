@@ -4,13 +4,12 @@ var tableLoad = $(document).ready(function() {
     var access = userDetails.access
     $('#dashboardRegisterForm').hide();
     $('#dropdownid').not('.disabled').formSelect();
-    
+
     if (localStorage.getItem("Supseruser") === "true") {
         localStorage.removeItem("Superuser");
     }
     $('#user_datatable').removeAttr('width').DataTable({
         dom: 'frtlip',
-        
         "processing": true,
         "serverSide": true,
         "ajax": {
@@ -22,19 +21,19 @@ var tableLoad = $(document).ready(function() {
                 if (data.status == 401) {
                     let get_url = "/dashboard/user_management/?token="
                     getaccessTokenForUrl(get_url);
-                    
+
                 }
                 else{
                     M.toast({html:JSON.parse(data.responseText).message, classes: 'red rounded'})
-                }                
+                }
             }
         },
-        "columns" : [   
+        "columns" : [
                         {"data" : null,
                         render: function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }},
-                       
+
                         {"data" : "user_name"},
                         {"data" : "email"},
                         {"data" : 'user_status',
@@ -59,7 +58,7 @@ var tableLoad = $(document).ready(function() {
 
                                 var delete_user_flag = userPermissions.includes('delete_user_delete')
                                 var edit_user_flag = userPermissions.includes('edit_user_get')
-                                var view_user_flag = userPermissions.includes('view_user_get') 
+                                var view_user_flag = userPermissions.includes('view_user_get')
 
                                 if(delete_user_flag == true && edit_user_flag == true && view_user_flag == true){
                                     return all_perms
@@ -70,7 +69,7 @@ var tableLoad = $(document).ready(function() {
                                 else if(delete_user_flag == false && edit_user_flag == false && view_user_flag == true ){
                                     return only_view
                                 }
-                                
+
                             }
                             else {
                                 return 'no action'
@@ -78,13 +77,13 @@ var tableLoad = $(document).ready(function() {
                             // var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditReport(id)><i class="material-icons prefix">mode_edit</i></button> <button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button><button class="delete_btn" id='+data+' onclick=getDeleteReport(id)><i class="material-icons prefix">delete</i></button> '
                             // return all_perms
                         }},
-                        
+
             ],
             "columnDefs": [
                 {"className": "dt-center", "targets": "_all"}
               ],
     });
-    //lengthmenu -> add a margin to the right and reset clear 
+    //lengthmenu -> add a margin to the right and reset clear
     $(".dataTables_length").css('clear', 'none');
     $(".dataTables_length").css('margin-right', '20px');
 
@@ -95,7 +94,7 @@ var tableLoad = $(document).ready(function() {
     // Binds datatables to all elements with a class of datatable
     var table = $("#user_datatable").dataTable().api();
     // var table = $('#user_datatable').DataTable();
-    
+
     // table.columns.adjust().draw();
     // Grab the datatables input box and alter how it is bound to events
     $(".dataTables_filter input")
@@ -112,11 +111,11 @@ var tableLoad = $(document).ready(function() {
             }
             return;
     });
-    
-   
+
+
 } );
 
-$.fn.dataTable.ext.errMode = function ( settings, helpPage, message ) { 
+$.fn.dataTable.ext.errMode = function ( settings, helpPage, message ) {
     console.log(message);
     M.toast({html: message, classes: 'red rounded'})
 };

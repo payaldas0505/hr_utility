@@ -12,7 +12,8 @@ from .views import (LoginView, CustomTokenObtainPairView,
                     CheckUsername, CheckEmail,
                     GetAllUsersView, UserDatatableView,
                     NewGenDocxView, GetPermissions,
-                    FillDocument)
+                    FillDocument, GetAllTemplatesView,
+                    WordTemplateDataView)
 
 urlpatterns = [
     path('api/rest-auth/', include('rest_auth.urls')),
@@ -31,10 +32,10 @@ urlpatterns = [
 
     path('forgot_password/', NewPasswordView.as_view(), name="forgot_password"),
 
-    path('dashboard/get_change_password/', GetChangePasswordView.as_view(), 
+    path('dashboard/get_change_password/', GetChangePasswordView.as_view(),
         name='get_change_password'),
 
-    path('dashboard/save_password/', SaveChangePasswordView.as_view(), 
+    path('dashboard/save_password/', SaveChangePasswordView.as_view(),
         name='save_password'),
 
     path('dashboard/user_management/', UserManagementDashboard.as_view(), name="user_management"),
@@ -55,6 +56,9 @@ urlpatterns = [
 
     path('dashboard/template_management/add_template/', NewGenDocxView.as_view(), name='new_generate_docx'),
 
+    path('dashboard/template_management/get_all_templates', GetAllTemplatesView.as_view(), name="get_all_templates"),
+
     path('dashboard/template_management/add_template/fill/', FillDocument.as_view(), name='fill_docx'),
 
+    path('dashboard/template_management/delete_template/<int:pk>', WordTemplateDataView.as_view(), name='delete_template')
 ]

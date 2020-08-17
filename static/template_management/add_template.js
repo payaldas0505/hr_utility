@@ -4,8 +4,9 @@ $(document).ready(function (){
     let keysToRemove = ["Id", "filename"];
 
     localStorageRemoveKey(keysToRemove);
-    
+
     $('#pdf').hide();
+    $('#save').hide();
 })
 var userDetails = getValues('UserDetails')
 var access = userDetails.access
@@ -26,7 +27,7 @@ function SubmitUploadWordTemplate(){
         contentType: false,
         processData: false,
         success: function(response){
-            $('#uploadTemplateDiv *').attr("disabled", true);                   
+            $('#uploadTemplateDiv *').attr("disabled", true);
             $('#uploadTemplateDiv *').fadeTo('slow', .8);
             // console.log(response)
             // $('#uploadTemplateDiv').hide();
@@ -63,7 +64,7 @@ function SubmitUploadWordTemplate(){
 
                 getaccessToken(SubmitUploadWordTemplate);
             }
-            
+
             parsed_jsondata = JSON.parse(xhr.responseText)
             // alert(parsed_jsondata.error)
             M.toast({html: parsed_jsondata.error, classes: 'red rounded'})
@@ -78,7 +79,7 @@ function SubmitUploadWordTemplate(){
 
 // Validation of fields
 
-$('#word_template').change(function(){    
+$('#word_template').change(function(){
     let keysToRemove = ["Id", "filename"];
     localStorageRemoveKey(keysToRemove);
     $("#templateFormAppend").empty();
@@ -86,9 +87,9 @@ $('#word_template').change(function(){
     $("#UploadTemplate").attr("disabled", true);
 
     var word_name = $('#word_name').val();
-    
+
     if (word_name == "") {
-        
+
         $("#UploadTemplate").attr("disabled", false);
         M.toast({html: 'Please enter the name for the document!', classes: 'red rounded'})
         return false;
@@ -99,7 +100,7 @@ $('#word_template').change(function(){
         M.toast({html: 'Please upload file!', classes: 'red rounded'})
         return false;
     }
-    
+
     else{
         SubmitUploadWordTemplate()
     }
@@ -120,18 +121,22 @@ function getTemplateDashboard(){
                 getaccessTokenForUrl(get_url)
             }
         }
-    })  
+    })
 }
 
 
 
- function SaveFields(){
-     
+ function SaveFields(save=false){
+
+
+
     $('#UploadTemplate').prop('disabled', true);
     var filename = localStorage.getItem('filename')
     var fd = new FormData();
     var retrievedData = localStorage.getItem("Id");
     var id = JSON.parse(retrievedData);
+    var doc_name = $('#word_name').val()
+
 
     $.each(id, function( i, l ){
         console.log(l)
@@ -141,7 +146,8 @@ function getTemplateDashboard(){
     })
 
     fd.append('filename', filename)
-   
+    fd.append('document', doc_name)
+    fd.append('save', save)
 
     console.log(fd)
     $.ajax({
@@ -150,52 +156,56 @@ function getTemplateDashboard(){
         method : "POST",
         enctype: 'multipart/form-data',
         data : fd,
-        contentType : false,    
+        contentType : false,
         processData: false,
         async : false,
         success: function(response){
+          if(response.status  == 201){
+              getTemplateDashboard();
+          }
+          else{
             M.toast({html: 'Template is successfully filled', classes: 'green rounded'})
-   
-            $('#templateForm *').attr("disabled", true);                   
+
+            $('#templateForm *').attr("disabled", true);
             $('#templateForm *').fadeTo('slow', .8);
-           
+
             setTimeout(function() {
                 var object = document.getElementById('pdf_preview');
                 // alert(response['success'])
                 object.setAttribute('data', response['success']);
-            
+
                 var clone = object.cloneNode(true);
                 var parent = object.parentNode;
-            
+
                 parent.removeChild(object );
                 parent.appendChild(clone );
                 }, 3000);
-            
-            // $("#pdf_preview").setAttribute("data", response['success']) 
-            
+            // $("#pdf_preview").setAttribute("data", response['success'])
+
+
             $('#pdf').show();
             return false
-            
-            
+          }
+
         },
         error: function(xhr) {
             if (xhr.status == 401) {
 
                 getaccessToken(SaveFields)
             }
-            
+
             parsed_jsondata = JSON.parse(xhr.responseText)
             // alert(parsed_jsondata.error)
             M.toast({html: parsed_jsondata.error, classes: 'red rounded'})
             setTimeout(function() {
                 $('#field_save_btn').prop('disabled', true)
               }, 2000);
-              
+
             return false
         }
 
     });
-    
+
 }
 
 
@@ -205,32 +215,58 @@ function FieldUploadWordTemplate(event){
     event.preventDefault();
     var retrievedData = localStorage.getItem("Id");
     var id = JSON.parse(retrievedData);
+    var all_validated = true
 
     values = []
     $.each(id, function( i, l ){
-        console.log(l)
+
         var id_name = $($.trim('#')+$.trim(l)).val()
         console.log(id_name)
         if ( id_name == ""){
             M.toast({html: "Please fill the " +l+ "field", classes: 'red rounded' })
             $('#field_save_btn').prop('disabled', false)
+            all_validated = false
             return false;
         }
-        
-            
+
       });
 
-    SaveFields(); 
+    if (all_validated == true){
+      SaveFields();
+      submit_button = '<div class="row">\
+      <div class="col push-s3">\
+        <button id="file_cancel_btn" class="btn btn-primary" type="reset" onclick="Cancel(event)">Cancel<i class="material-icons right">cancel</i>\
+        </button>\
+        <button id="file_save_btn" class="btn btn-primary" type="submit" onclick="SavePdfFile(event)">Save<i class="material-icons right">save</i>\
+        </button>\
+      </div>\
+      </div>'
+      $('#save').append(submit_button);
+      $('#save').show();
+    }
+
     //   alert(values)
 
 
 }
+
+
+function SavePdfFile(event){
+    // $('#file_save_btn').prop('disabled', true)
+    event.preventDefault();
+    SaveFields(save=true);
+}
+
+function Cancel(event) {
+  getTemplateDashboard();
+}
+
 
 function localStorageRemoveKey(keysToRemove){
     for (key of keysToRemove) {
         if(localStorage.getItem(key)){
             localStorage.removeItem(key);
         }
-        
+
     }
 }

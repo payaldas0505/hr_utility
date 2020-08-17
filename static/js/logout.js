@@ -7,26 +7,20 @@ function logout() {
       type: 'GET',
       url: '/logout/',
       headers: { Authorization: 'Bearer '+ access},
-      success: function (result) {
-        parsed_jsondata = JSON.parse(result)
-        console.log('result',parsed_jsondata)
+      success: function (data) {
+        // parsed_jsondata = JSON.parse(result)
+        // console.log('result',parsed_jsondata)
         window.localStorage.clear();
         window.sessionStorage.clear();
-        window.location.href = "/login/"
-        
-        location.href = result['template_name'];
+        window.location.href = data.url;
+
+        // location.href = result['template_name'];
       },
         error: function(data){
           if (data.status == 401) {
             getaccessToken(logout);
-            
+
          }
       }
     })
   }
-
-
-
-
-
-

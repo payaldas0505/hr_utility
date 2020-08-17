@@ -20,26 +20,26 @@ class AddUserFormView(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    @has_permission(perms['add_user_get'])
+    @has_permission('add_user_get')
     def get(self, request):
-        """Renders Registration form."""  
+        """Renders Registration form."""
 
         try:
-            
+
             return render(request, 'user_registration/registration_form.html')
-            
+
         except Exception as e:
             print("Error in getting registeration page:", e)
             info_message = 'Cannot get the registeration page.'
             print(info_message)
             return  JsonResponse({"error": str(info_message)}, status=500)
-    
+
     @has_permission(perms['add_user_post'])
     def post(self, request):
         """Submits and saves user data into the database."""
 
         try:
-           
+
             user_data = request.POST
             print('#'*80)
             print(user_data)
@@ -49,7 +49,7 @@ class AddUserFormView(APIView):
                 info_message = "Username already taken!"
                 print(info_message)
                 return JsonResponse({'message' : info_message})
-            
+
             auth_data = {
                 "username" : user_data['user_name'],
                 "email" : user_data['email'],
@@ -59,7 +59,7 @@ class AddUserFormView(APIView):
             print('A'*80)
             print(auth_data)
             print('A'*80)
-           
+
             check_register_data = user_data
             _mutable = check_register_data._mutable
 
@@ -80,7 +80,7 @@ class AddUserFormView(APIView):
 
             try:
                 with transaction.atomic():
-                    if details.is_valid() and one_user.is_valid(): 
+                    if details.is_valid() and one_user.is_valid():
                         # Save auth user
                         user = one_user.save(commit=False)
                         user.set_password(auth_data['password'])
@@ -95,7 +95,7 @@ class AddUserFormView(APIView):
                         print("user", user)
                         print("save_user_data", save_user_data)
                         print("form is validated")
-            
+
                         success_msg = 'User {}, have successfully registered.'.format(check_register_data['first_name'])
                         return JsonResponse({'message' : success_msg})
                     else:
@@ -110,7 +110,7 @@ class AddUserFormView(APIView):
                 print("exception in saving data rollback error", e)
                 return JsonResponse({'error' : str(info_message)}, status=500)
 
-        
+
         except Exception as e:
             print("Error in submitting form:", e)
             info_message = "internal_server_error"
@@ -133,7 +133,7 @@ class GetRoleDropDown(APIView):
             for role in get_role:
                 role_list.append(role)
             print(role_list)
-            
+
             return JsonResponse(role_list, safe=False)
         except Exception as e:
             print("exception in getting label", e)
@@ -157,7 +157,7 @@ class CheckUsername(APIView):
                 info_message = "Username already taken!"
                 print(info_message)
                 return JsonResponse({'message': 'taken', 'toast_msg':str(info_message)})
-        
+
 
             else:
                 info_message = "Username Available...!!!"
@@ -195,5 +195,3 @@ class CheckEmail(APIView):
             info_message = "Internal server error"
             print(info_message, e)
             return JsonResponse({'error' : str(info_message)}, status=500)
-
-

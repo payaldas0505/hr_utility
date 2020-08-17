@@ -16,7 +16,7 @@ from .check_permission import has_permission
 from django.core.files.storage import FileSystemStorage
 import json
 from ..serializer import WordTemplateUploadSerializer, WordTemplateDetailsSerializer
-from ..models import WordTemplateNew
+from ..models import query_templates_by_args, WordTemplateNew, WordTemplateData
 import docx
 import os
 import subprocess
@@ -35,17 +35,17 @@ class NewGenDocxView(APIView):
 
     @has_permission(perms['add_template_get'])
     def get(self, request):
-        """Renders Upload document form."""  
+        """Renders Upload document form."""
         try:
-            
+
             return render(request, 'template_management/add_template.html')
-        
+
         except Exception as e:
             print("Error in getting registeration page:", e)
             info_message = 'Cannot get the registeration page.'
             print(info_message)
             return  JsonResponse({"error": str(info_message)}, status=5)
-    
+
     @has_permission(perms['add_template_post'])
     def post(self,request):
         """Save the upload document and returns the placeholder and filename"""
@@ -53,7 +53,7 @@ class NewGenDocxView(APIView):
             word_serializer = WordTemplateUploadSerializer(data=request.data)
             print('word template', request.data['word_template'])
             print('word template name', request.data['word_name'])
-    
+
             if word_serializer.is_valid():
                 new_file_name = 'word_template/'+uuid.uuid4().hex + ".docx"
                 word_serializer.validated_data['word_name'] = request.data['word_name']
@@ -62,26 +62,26 @@ class NewGenDocxView(APIView):
 
             text_list = []
             regex = "(?<={{)[^}}]*(?=}})"
-            text = docx2txt.process(request.data['word_template'])    
+            text = docx2txt.process(request.data['word_template'])
             used = set()
             text_list = [x for x in re.findall(regex, text) if x not in used and (used.add(x) or True)]
             print('text_list', text_list)
 
             test  = [
-                        {"placeholder_list" : text_list}, 
-                        {'filename' : new_file_name}, 
+                        {"placeholder_list" : text_list},
+                        {'filename' : new_file_name},
                         {'word_name': request.data['word_name']}
                     ]
 
             return JsonResponse(test, safe = False)
-        
+
         except Exception as error:
             info_message = "Internal Server Error"
             print(info_message, error)
             return JsonResponse({'error': str(info_message) }, status=500)
 
 class FillDocument(APIView):
-   
+
     def post(self, request):
         """
         Filling the document and convert it into PDF.
@@ -95,9 +95,9 @@ class FillDocument(APIView):
 
             for k in templatejson:
                 if len(templatejson[k]) == 1:
-                    templatejson[k] = templatejson[k][0]  
+                    templatejson[k] = templatejson[k][0]
             print('templatejson', templatejson)
-            
+
             file_name = BASE_DIR + '/media/' + raw_file_name
             print('file_name', file_name)
 
@@ -119,10 +119,76 @@ class FillDocument(APIView):
             print(type(output))
 
             pdf_file = '/media/filled_template/' + '{}.pdf'.format(file_name_split)
+
+            if templatejson['save'] == "true":
+                pdf_name = templatejson['document']
+                keys = ['save','document']
+                {templatejson.pop(k) for k in keys}
+                new_file_name = 'filled_template/'+file_name_split+ ".pdf"
+                WordTemplateData.objects.create(
+                    pdf_name=pdf_name,
+                    dummy_values=templatejson,
+                    pdf=new_file_name
+                )
+                return JsonResponse({"success": "saved successfully","status": 201})
             print('pdf_file', pdf_file)
-            return JsonResponse({'success': pdf_file }) 
-        
+            return JsonResponse({'success': pdf_file, 'status': 200 })
+
         except Exception as e:
             print("Exception in filling templates", e)
             info_message = "Internal Server Error"
-            return JsonResponse({'error': str(info_message) }, status=500) 
+            return JsonResponse({'error': str(info_message) }, status=500)
+
+
+
+class GetAllTemplatesView(APIView):
+    """Return filtered Users details from database to display in datatable """
+    authentication_classes = [CustomJWTAuthentication]
+    permission_classes = (IsAuthenticated,)
+
+    # @has_permission(perms['user_managemen]t_page_GET')
+    def get(self, request):
+        try:
+            datatable_server_processing = query_templates_by_args(request, **request.query_params)
+            serializer = WordTemplateDetailsSerializer(datatable_server_processing['items'], many=True)
+            result = dict()
+            result['data'] = serializer.data
+            result['draw'] = datatable_server_processing['draw']
+            result['recordsTotal'] = datatable_server_processing['total']
+            result['recordsFiltered'] = datatable_server_processing['count']
+            print("#"*20)
+            print(result)
+            return Response(result)
+        except Exception as e:
+            print("Exception in getting  all templates", e)
+            info_message = "Cannot fetch all templates data from database"
+            print(info_message)
+            return JsonResponse({'message' : str(info_message)}, status = 422)
+
+
+
+class WordTemplateDataView(APIView):
+    authentication_classes = [CustomJWTAuthentication]
+    permission_classes = (IsAuthenticated,)
+
+    @has_permission('delete_template_delete')
+    def delete(self, request, pk):
+        """Delete template using Template Id"""
+
+        try:
+            message = "Template not found"
+            status = 404
+            template = WordTemplateData.objects.filter(id = pk)
+            if template:
+                template.delete()
+                message = "Template deleted successfully"
+                status = 200
+            return JsonResponse({'message' : message},status = status)
+
+
+        except Exception as error:
+            print("delete", error)
+
+            info_message = "Internal Server Error"
+            print(info_message)
+            return JsonResponse({'message' : str(info_message)},status = 422)

@@ -46,7 +46,7 @@ class CustomTokenRefreshSerializer(TokenRefreshSerializer):
         token['username'] = user.username
         token['is_superuser'] = user.is_superuser
 
-        return token    
+        return token
 
     def validate(self, attrs):
         refresh = RefreshToken(attrs['refresh'])
@@ -66,12 +66,12 @@ class CustomTokenRefreshSerializer(TokenRefreshSerializer):
             refresh.set_exp()
 
             data['refresh'] = str(refresh)
-    
-        return data  
+
+        return data
 
 class CustomTokenRefreshView(TokenRefreshView):
     serializer_class = CustomTokenRefreshSerializer
-    token_obtain_pair = TokenObtainPairView.as_view() 
+    token_obtain_pair = TokenObtainPairView.as_view()
 
 
 
@@ -95,16 +95,16 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         if UserRegisterationModel.objects.filter(user_id=data['id']).filter(user_status=True):
             print("active")
-            
+
         else:
             info_message = "Inactive user"
             print(info_message)
             data['error'] = info_message
 
         return data
-    
 
-        
+
+
 
 
 class CustomJWTAuthentication(JWTAuthentication):
@@ -139,7 +139,7 @@ class CustomJWTAuthentication(JWTAuthentication):
 
             print("#"*20)
             validated_token = self.get_validated_token(raw_token)
-        
+
             return self.get_user(validated_token), validated_token
         except Exception as e:
             print(e)
@@ -151,12 +151,12 @@ class CustomJWTAuthentication(JWTAuthentication):
         request.
         """
         header= request.META.get('HTTP_AUTHORIZATION')
-     
+
         if isinstance(header, str):
             # Work around django test client oddness
             header = header.encode(HTTP_HEADER_ENCODING)
         return header
-         
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -167,17 +167,17 @@ class LoginView(APIView):
     """ Login page """
     permission_classes = (AllowAny,)
     renderer_classes = [TemplateHTMLRenderer]
-    
+
     def get(self, request):
         """ get login page """
 
         # get_language = set_session_language(request)
-         
+
         try:
-            return render(request, "user_authentication/login.html")     
-             
+            return render(request, "user_authentication/login.html")
+
         except Exception as e:
-            
+
             print("exception while showing login page", e)
             # info_message = get_info_messages(get_language, 'login_page_error')
             info_message = "cannot get login page"
@@ -192,15 +192,15 @@ class LogoutView(APIView):
 
     def get(self, request):
         """ get login page """
-
         # get_language = set_session_language(request)
-        
+
         try:
             # info_message = get_info_messages(get_language, 'logout_success')
             info_message = 'You have successfully logged out'
             print(info_message)
             request.session.flush()
-            return Response({'data': str(info_message)}, status=204, template_name="user_authentication/login.html")
+            return JsonResponse({'data': str(info_message), 'url':'/login/'})
+            # return Response({'data': str(info_message), 'url':'/login/'}, status=204, template_name="user_authentication/login.html")
         except Exception as e:
             print("exception while showing login page", e)
             # info_message = get_info_messages(get_language, 'logout_error')
@@ -240,7 +240,7 @@ class SaveChangePasswordView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
 
     def post(self, request):
-        
+
         try:
             username = request.user
             old_password = request.data['old_password']
@@ -255,14 +255,14 @@ class SaveChangePasswordView(APIView):
                 return JsonResponse({"success": False, 'error': str(info_message)}, status=500)
 
             user = User.objects.get(username=username)
-            
+
             if user.check_password(old_password):
                 user.set_password(new_password)
                 user.save()
                 print("success")
                 info_message = "Password is successfully reset"
                 return JsonResponse({'data': str(info_message)})
-            
+
             else:
                 info_message = "Your old password is entered  wrong"
                 return JsonResponse({"success": False, "error": str(info_message)}, status=500)
@@ -270,7 +270,7 @@ class SaveChangePasswordView(APIView):
         except Exception as e:
             info_message = "Internal server error"
             print(info_message, e)
-            return JsonResponse({"success": False, "error": str(info_message)}, status=500) 
+            return JsonResponse({"success": False, "error": str(info_message)}, status=500)
 
 
 class GetPermissions(APIView):
@@ -279,7 +279,7 @@ class GetPermissions(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        
+
         try:
             user_id = request.session['user_id']
             perms = UserRegisterationModel.objects.filter(
@@ -293,10 +293,10 @@ class GetPermissions(APIView):
                                                                                  'role__permissions__api_method',
                                                                                  'role__permissions__url_identifier')
             print(perms)
-         
-            # Permissions setting in session  
-            perms_list = []  
-            perms_dict = {}    
+
+            # Permissions setting in session
+            perms_list = []
+            perms_dict = {}
             for perm in perms:
                 # permission_list= []
                 permission_dict =  {}
@@ -306,7 +306,7 @@ class GetPermissions(APIView):
 
                     elif key == 'role__permissions__api_method':
                         permission_dict['api_method'] = value.lower()
-                    
+
                     else:
                         permission_dict['url_identifier'] = value
 
@@ -325,4 +325,3 @@ class GetPermissions(APIView):
             info_message = "Permission fetching  issue due to Internal Server Error"
             print( info_message, error)
             return JsonResponse({'message' : str(info_message)},status = 422)
-

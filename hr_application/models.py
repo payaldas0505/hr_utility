@@ -13,7 +13,7 @@ class RolePermissions(models.Model):
     class Meta:
         verbose_name_plural = "3.Permissions"
     def __str__(self):
-        return 'Permission name: {}, API method: {}' .format(self.permission_name, self.api_method) 
+        return 'Permission name: {}, API method: {}' .format(self.permission_name, self.api_method)
 
 
 class UserRole(models.Model):
@@ -23,7 +23,7 @@ class UserRole(models.Model):
     class Meta:
         verbose_name_plural = "2. Roles"
     def __str__(self):
-        return '{}' .format(self.role_name) 
+        return '{}' .format(self.role_name)
 
 # Create your models here.
 class UserRegisterationModel(models.Model):
@@ -46,7 +46,7 @@ class UserRegisterationModel(models.Model):
 #     class Meta:
 #         verbose_name_plural = "2. Roles and Permissions"
 #     def __str__(self):
-#         return '{}' .format(self.role_name) 
+#         return '{}' .format(self.role_name)
 
 # class Permission(models.Model):
 #     permission = models.ForeignKey(UserRole, on_delete=models.CASCADE, null=False)
@@ -97,7 +97,7 @@ def query_users_by_args(request,**kwargs):
         queryset = queryset.filter(Q(id__icontains=search_value) |
                                         Q(user_name__icontains=search_value) |
                                         Q(email__icontains=search_value)
-                                        ) 
+                                        )
 
 
     count = queryset.count()
@@ -122,9 +122,51 @@ class WordTemplateNew(models.Model):
 class WordTemplateData(models.Model):
     pdf_name =  models.CharField(max_length=100)
     dummy_values = jsonfield.JSONField()
-    pdf = models.FileField(upload_to = 'pdf', blank = False)
-
+    pdf = models.FileField(upload_to = 'filled_template', blank = False)
     class Meta:
         verbose_name_plural = "5. Templates Details"
     def __str__(self):
         return '{}' .format(self.pdf_name)
+
+
+    ORDER_COLUMN_CHOICES = Choices(
+        ('0', 'pdf_name'),
+        ('1', 'dummy_values'),
+        ('2', 'id'),
+        ('3', 'pdf')
+    )
+
+
+def query_templates_by_args(request,**kwargs):
+    check_user_is_superuser = User.objects.filter(username = request.user.username).values('is_superuser')
+    draw = int(kwargs.get('draw', None)[0])
+    length = int(kwargs.get('length', None)[0])
+    start = int(kwargs.get('start', None)[0])
+    search_value = kwargs.get('search[value]', None)[0]
+    order_column = kwargs.get('order[0][column]', None)[0]
+    order = kwargs.get('order[0][dir]', None)[0]
+
+    order_column = ORDER_COLUMN_CHOICES[order_column]
+    if order == 'desc':
+        order_column = '-' + order_column
+
+
+    queryset = WordTemplateData.objects.all()
+    total = queryset.count()
+
+    if search_value:
+        queryset = queryset.filter(Q(id__icontains=search_value) |
+                                        Q(pdf_name__icontains=search_value)
+                                        )
+
+
+    count = queryset.count()
+
+    queryset = queryset[start:start + length]
+
+    return {
+        'items': queryset,
+        'count': count,
+        'total': total,
+        'draw': draw
+    }
