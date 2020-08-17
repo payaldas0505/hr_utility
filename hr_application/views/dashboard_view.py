@@ -12,7 +12,6 @@ from ..serializer import DatatableSerializer, AuthUserSerializer, UserRegisterat
 from ..models  import query_users_by_args, UserRegisterationModel
 from django.db import transaction
 from .check_permission import has_permission
-from ..config.perms_config import perms
 
 class Dashboard(APIView):
     """
@@ -53,7 +52,7 @@ class UserManagementDashboard(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    @has_permission(perms['user_management_page_get'])
+    @has_permission()
     def get(self, request):
         """ active and inactive users count """
 
@@ -87,7 +86,7 @@ class TemplateManagementDashboard(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    @has_permission(perms['template_management_page_get'])
+    @has_permission()
     def get(self, request):
         """ active and inactive users count """
 
@@ -124,7 +123,7 @@ class GetAllUsersView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
-    # @has_permission(perms['user_managemen]t_page_GET')
+    # @has_permission()
     def get(self, request):
 
         try:
@@ -149,7 +148,7 @@ class UserDatatableView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
-    @has_permission(perms['edit_user_get'])
+    @has_permission()
     def get(self, request, pk):
         """Get User details using User Id"""
 
@@ -176,7 +175,7 @@ class UserDatatableView(APIView):
             print(info_message)
             return JsonResponse({'message' : str(info_message)}, status =422)
 
-    @has_permission(perms['delete_user_delete'])
+    @has_permission()
     def delete(self, request, pk):
         """Delete user using User Id"""
 
@@ -212,7 +211,7 @@ class UserDatatableView(APIView):
             print(info_message)
             return JsonResponse({'message' : str(info_message)},status = 422)
 
-    @has_permission(perms['edit_user_put'])
+    @has_permission()
     def put(self, request, pk):
         """Update user details using User Id"""
 

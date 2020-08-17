@@ -12,7 +12,6 @@ from django.contrib.auth.models import User
 
 from django.db import transaction
 from .check_permission import has_permission
-from ..config.perms_config import perms
 
 class AddUserFormView(APIView):
     """Registration Form."""
@@ -20,7 +19,7 @@ class AddUserFormView(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    @has_permission('add_user_get')
+    @has_permission()
     def get(self, request):
         """Renders Registration form."""
 
@@ -34,7 +33,7 @@ class AddUserFormView(APIView):
             print(info_message)
             return  JsonResponse({"error": str(info_message)}, status=500)
 
-    @has_permission(perms['add_user_post'])
+    @has_permission()
     def post(self, request):
         """Submits and saves user data into the database."""
 
