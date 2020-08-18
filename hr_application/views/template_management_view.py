@@ -32,7 +32,7 @@ class NewGenDocxView(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    @has_permission()
+    # @has_permission()
     def get(self, request):
         """Renders Upload document form."""
         try:
@@ -45,7 +45,7 @@ class NewGenDocxView(APIView):
             print(info_message)
             return  JsonResponse({"error": str(info_message)}, status=5)
 
-    @has_permission()
+    # @has_permission()
     def post(self,request):
         """Save the upload document and returns the placeholder and filename"""
         try:
@@ -170,7 +170,7 @@ class WordTemplateDataView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
-    @has_permission()
+    # @has_permission()
     def delete(self, request, pk):
         """Delete template using Template Id"""
 

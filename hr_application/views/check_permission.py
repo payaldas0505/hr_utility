@@ -9,23 +9,29 @@ def has_permission():
     Decorder checks permission for requested url and method with session. 
     """
     def inner(func):
-        def wrap(self, request, *args, **kwargs):
+        def wrap(self, request, view_function, view_args, view_kwargs):
             print("@"*20)
-            pk = self.kwargs.get('pk')
+            pk = view_kwargs.get('pk')
             print('pk', pk)
-
+            media_pdf = ['media', '.pdf']
             # Exact url from the function
             raw_path = request.path
+            
             path = raw_path.split("?")[0]
             if pk:
                 path = path.rsplit("/", 1)[0]
-
+            elif any(x in path for x in media_pdf):
+                path = path.rsplit("/", 1)[0]
+                
             # Exact method from the function
             method = request.method.lower()
             print("Get requested url path: ", path)
             print("Get requested method: ", method)
             print("@"*20)
             try:
+                if path in perms_config.pass_urls or 'django.contrib.admin' in view_function.__module__:
+                    print("passing the url", path)
+                    return func(self, request, view_function, view_args, view_kwargs)
                 session_perm_key = perms_config.session_perm_key
                 print("session perm key", session_perm_key)
 
@@ -43,7 +49,7 @@ def has_permission():
                                 session_perms['api_method'], session_perms['url_identifier']))
                             print('+'*20)
                             print("@"*20)
-                            return func(self, request, *args, **kwargs)
+                            return func(self, request, view_function, view_args, view_kwargs)
 
                     return HttpResponse(status=403)
 

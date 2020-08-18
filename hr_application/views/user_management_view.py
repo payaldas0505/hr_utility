@@ -13,13 +13,14 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from .check_permission import has_permission
 
+
 class AddUserFormView(APIView):
     """Registration Form."""
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    @has_permission()
+    # @has_permission()
     def get(self, request):
         """Renders Registration form."""
 
@@ -31,9 +32,9 @@ class AddUserFormView(APIView):
             print("Error in getting registeration page:", e)
             info_message = 'Cannot get the registeration page.'
             print(info_message)
-            return  JsonResponse({"error": str(info_message)}, status=500)
+            return JsonResponse({"error": str(info_message)}, status=500)
 
-    @has_permission()
+    # @has_permission()
     def post(self, request):
         """Submits and saves user data into the database."""
 
@@ -47,12 +48,12 @@ class AddUserFormView(APIView):
             if User.objects.filter(username=user_data['user_name']).exists():
                 info_message = "Username already taken!"
                 print(info_message)
-                return JsonResponse({'message' : info_message})
+                return JsonResponse({'message': info_message})
 
             auth_data = {
-                "username" : user_data['user_name'],
-                "email" : user_data['email'],
-                "password" : user_data['password']
+                "username": user_data['user_name'],
+                "email": user_data['email'],
+                "password": user_data['password']
             }
             role_name = user_data['role']
             print('A'*80)
@@ -90,32 +91,32 @@ class AddUserFormView(APIView):
                         save_user_data.save()
                         print("role_name", role_name)
                         # m2m saving role in user table
-                        save_user_data.role.add(UserRole.objects.get(role_name=role_name))
+                        save_user_data.role.add(
+                            UserRole.objects.get(role_name=role_name))
                         print("user", user)
                         print("save_user_data", save_user_data)
                         print("form is validated")
 
-                        success_msg = 'User {}, have successfully registered.'.format(check_register_data['first_name'])
-                        return JsonResponse({'message' : success_msg})
+                        success_msg = 'User {}, have successfully registered.'.format(
+                            check_register_data['first_name'])
+                        return JsonResponse({'message': success_msg})
                     else:
                         print(details.errors)
                         print(one_user.errors)
                         info_message = "Invalid data"
                         print(info_message)
-                        return JsonResponse({'error' : str(info_message)}, status=500)
+                        return JsonResponse({'error': str(info_message)}, status=500)
             except Exception as e:
                 info_message = "Please try again saving the data"
                 print(info_message)
                 print("exception in saving data rollback error", e)
-                return JsonResponse({'error' : str(info_message)}, status=500)
-
+                return JsonResponse({'error': str(info_message)}, status=500)
 
         except Exception as e:
             print("Error in submitting form:", e)
             info_message = "internal_server_error"
             print("sometime went wrong", info_message)
-            return JsonResponse({'error': str(info_message) }, status=500)
-
+            return JsonResponse({'error': str(info_message)}, status=500)
 
 
 class GetRoleDropDown(APIView):
@@ -123,10 +124,12 @@ class GetRoleDropDown(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
     """Gets qualification dropdown from the database."""
+
     def get(self, request):
 
         try:
-            get_role= UserRole.objects.filter(role_status=True).all().values('id','role_name')
+            get_role = UserRole.objects.filter(
+                role_status=True).all().values('id', 'role_name')
             print('qualification', get_role[0])
             role_list = []
             for role in get_role:
@@ -139,6 +142,7 @@ class GetRoleDropDown(APIView):
             info_message = "Cannot fetch Role dropdown from database"
             print(info_message)
             return JsonResponse({"success": False, "error": str(info_message)}, status=404)
+
 
 class CheckUsername(APIView):
     """Checks whether username is available."""
@@ -155,19 +159,19 @@ class CheckUsername(APIView):
             if User.objects.filter(username=jsondata['user_name']).exists():
                 info_message = "Username already taken!"
                 print(info_message)
-                return JsonResponse({'message': 'taken', 'toast_msg':str(info_message)})
-
+                return JsonResponse({'message': 'taken', 'toast_msg': str(info_message)})
 
             else:
                 info_message = "Username Available...!!!"
                 print(info_message)
-                return JsonResponse({'message': 'not_taken', 'toast_msg':str(info_message)})
+                return JsonResponse({'message': 'not_taken', 'toast_msg': str(info_message)})
 
         except Exception as e:
             print("exception in check username", e)
             info_message = 'Internal server error'
             print(info_message)
-            return JsonResponse({'error' : str(info_message)}, status=500)
+            return JsonResponse({'error': str(info_message)}, status=500)
+
 
 class CheckEmail(APIView):
     """Checks whether email id is already registered or not."""
@@ -193,4 +197,4 @@ class CheckEmail(APIView):
         except Exception as e:
             info_message = "Internal server error"
             print(info_message, e)
-            return JsonResponse({'error' : str(info_message)}, status=500)
+            return JsonResponse({'error': str(info_message)}, status=500)

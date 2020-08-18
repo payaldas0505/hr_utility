@@ -297,7 +297,7 @@ class GetPermissions(APIView):
             # Permissions setting in session
             perms_list_font_end = []
             permission_list_backend= []
-            perms_dict = {}
+            # perms_dict = {}
             for perm in perms:
                 permission_dict =  {}
                 for key, value in perm.items():
@@ -312,12 +312,13 @@ class GetPermissions(APIView):
 
                 # permission_list.append(permission_dict)
 
-                key = perm['role__permissions__permission_name'].lower() +'_'+perm['role__permissions__api_method'].lower()
-                perms_dict[key] = permission_dict
-                print("Individual permission dict:  ", permission_dict)
-                perms_list_font_end.append(key)
+                perm_name_method = perm['role__permissions__permission_name'].lower() +'_'+perm['role__permissions__api_method'].lower()
+                perms_list_font_end.append(perm_name_method)
+
+                # print("Individual permission dict:  ", permission_dict)
+
                 permission_list_backend.append(permission_dict)
-                print("storing permissions for users in dict {}".format(permission_list_backend))
+                # print("storing permissions for users in dict {}".format(permission_list_backend))
                 
             print()
             request.session[perms_config.session_perm_key] = permission_list_backend
