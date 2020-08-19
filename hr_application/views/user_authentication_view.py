@@ -171,7 +171,6 @@ class LoginView(APIView):
     def get(self, request):
         """ get login page """
 
-        # get_language = set_session_language(request)
 
         try:
             return render(request, "user_authentication/login.html")
@@ -179,7 +178,6 @@ class LoginView(APIView):
         except Exception as e:
 
             print("exception while showing login page", e)
-            # info_message = get_info_messages(get_language, 'login_page_error')
             info_message = "cannot get login page"
             print(info_message)
             return Response({"success": False, "error": str(info_message)})
@@ -192,18 +190,15 @@ class LogoutView(APIView):
 
     def get(self, request):
         """ get login page """
-        # get_language = set_session_language(request)
 
         try:
-            # info_message = get_info_messages(get_language, 'logout_success')
             info_message = 'You have successfully logged out'
             print(info_message)
             request.session.flush()
             return JsonResponse({'data': str(info_message), 'url':'/login/'})
-            # return Response({'data': str(info_message), 'url':'/login/'}, status=204, template_name="user_authentication/login.html")
+       
         except Exception as e:
             print("exception while showing login page", e)
-            # info_message = get_info_messages(get_language, 'logout_error')
             info_message = "User Cannot logoutUser Cannot logout"
             print(info_message)
             return Response({"success": False, "error": str(info_message)})
@@ -219,12 +214,11 @@ class GetChangePasswordView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
 
     def get(self, request):
-        # get_language = set_session_language(request)
+
         try:
             return render(request, 'user_authentication/password_change_form.html')
+        
         except Exception as e:
-            # info_message = get_info_messages(get_language, 'password_page_error')
-
             info_message = "Cannot get reset password page"
             print("exception while getting page", e)
             print(info_message)
@@ -297,7 +291,7 @@ class GetPermissions(APIView):
             # Permissions setting in session
             perms_list_font_end = []
             permission_list_backend= []
-            # perms_dict = {}
+            
             for perm in perms:
                 permission_dict =  {}
                 for key, value in perm.items():
@@ -310,20 +304,18 @@ class GetPermissions(APIView):
                     else:
                         permission_dict['url_identifier'] = value
 
-                # permission_list.append(permission_dict)
 
                 perm_name_method = perm['role__permissions__permission_name'].lower() +'_'+perm['role__permissions__api_method'].lower()
                 perms_list_font_end.append(perm_name_method)
 
-                # print("Individual permission dict:  ", permission_dict)
 
                 permission_list_backend.append(permission_dict)
-                # print("storing permissions for users in dict {}".format(permission_list_backend))
                 
             print()
             request.session[perms_config.session_perm_key] = permission_list_backend
             print("storing permissions for users in session {}:{}".format(perms_config.session_perm_key, permission_list_backend))
             return JsonResponse(perms_list_font_end, safe=False)
+
         except Exception as error:
             info_message = "Permission fetching  issue due to Internal Server Error"
             print( info_message, error)

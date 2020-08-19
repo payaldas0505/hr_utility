@@ -1,16 +1,15 @@
-
-$(document).ready(function(){
-    $( ".add_template" ).hide();
+$(document).ready(function() {
+    $(".add_template").hide();
     SetPermissionsTemplateDashboard();
 })
 
 // Get the permissions from LocalStorge
-function SetPermissionsTemplateDashboard(){
+function SetPermissionsTemplateDashboard() {
     var userPermissions = getValues('UserPermissions')
 
-    if(!jQuery.isEmptyObject(userPermissions)){
-        if (userPermissions.includes('add_template_get')){
-            $( ".add_template" ).show();
+    if (!jQuery.isEmptyObject(userPermissions)) {
+        if (userPermissions.includes('add_template_get')) {
+            $(".add_template").show();
         }
 
     }
@@ -19,17 +18,17 @@ function SetPermissionsTemplateDashboard(){
 var userDetails = getValues('UserDetails')
 var access = userDetails.access
 
-function getdashboard(){
+function getdashboard() {
     var token = access;
     var get_url = "/dashboard/?token="
     $.ajax({
-        method : 'GET',
-        url : get_url+token,
-        success: function(data){
-            window.location.href = get_url+token
+        method: 'GET',
+        url: get_url + token,
+        success: function(data) {
+            window.location.href = get_url + token
         },
-        error : function(xhr){
-            if(xhr.status == 401){
+        error: function(xhr) {
+            if (xhr.status == 401) {
                 getaccessTokenForUrl(get_url);
             }
         }
@@ -39,46 +38,46 @@ function getdashboard(){
 
 
 
-function GetAddTemplatePage(){
+function GetAddTemplatePage() {
 
     var token = access;
     var get_url = 'add_template/?token='
     $.ajax({
         type: 'GET',
         url: 'add_template/',
-        headers: { Authorization: 'Bearer '+token},
-        success: function (data) {
-        window.location.href = get_url + token
+        headers: { Authorization: 'Bearer ' + token },
+        success: function(data) {
+            window.location.href = get_url + token
         },
-        error: function(data){
-        if (data.status == 401) {
-            getaccessTokenForUrl(get_url);
-        }
-        if (data.status == 403) {
-            logout();
-        }
+        error: function(data) {
+            if (data.status == 401) {
+                getaccessTokenForUrl(get_url);
+            }
+            if (data.status == 403) {
+                logout();
+            }
         }
     })
 }
 
 
 
-function DeleteTemplate(id){
-    url = '/dashboard/template_management/delete_template/'+id
+function DeleteTemplate(id) {
+    url = '/dashboard/template_management/delete_template/' + id
 
     $.ajax({
-        url : url,
-        method : 'DELETE',
-        headers: { Authorization: 'Bearer '+access},
-        dataType : 'text',
-        async : false,
-        success : function(jsonData){
+        url: url,
+        method: 'DELETE',
+        headers: { Authorization: 'Bearer ' + access },
+        dataType: 'text',
+        async: false,
+        success: function(jsonData) {
 
             parsed_jsondata = JSON.parse(jsonData)
-            M.toast({html: parsed_jsondata.message, classes: 'green rounded'})
+            M.toast({ html: parsed_jsondata.message, classes: 'green rounded' })
             setTimeout(function() {
                 getTemplateDashboard();
-              }, 2000);
+            }, 2000);
         },
         error: function(xhr, status, error) {
             console.log(xhr)
@@ -90,26 +89,22 @@ function DeleteTemplate(id){
                 getaccessTokenDeleteUser();
             }
             parsed_jsondata = JSON.parse(xhr.responseText)
-            M.toast({html: parsed_jsondata.message, classes: 'red rounded'})
+            M.toast({ html: parsed_jsondata.message, classes: 'red rounded' })
             return false
         }
 
     })
-    GetPermissions()
 }
 
-function deleteTemplate(id){
+function deleteTemplate(id) {
     var confirmation = confirm("Are you sure?\nDo you want to delete this template?");
-    if(confirmation == true){
+    if (confirmation == true) {
         DeleteTemplate(id)
-    }
-    else{
+    } else {
         return false
     }
-    GetPermissions();
 }
 
-function DownloadPdf(id){
-    window.location.href =id
-    GetPermissions()
+function DownloadPdf(id) {
+    window.location.href = id
 }
