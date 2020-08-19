@@ -1,7 +1,7 @@
 from django.http.response import HttpResponse
 from .views.check_permission import has_permission
 
-class StackOverflowMiddleware(object):
+class RoleBasedPermissionMiddleware(object):
     def __init__(self, get_response):
         self.get_response = get_response
 

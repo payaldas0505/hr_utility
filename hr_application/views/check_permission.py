@@ -58,12 +58,12 @@ def has_permission():
                             return func(self, request, view_function, view_args, view_kwargs)
                     
                     # if no condition matches then return status = 403
-                    request.session.flush()
+                    # request.session.flush()
                     return HttpResponse(status=403)
 
             except Exception as e:
                 print(e)
-                request.session.flush()
+                # request.session.flush()
                 return HttpResponse(status=403)
         return wrap
     return inner

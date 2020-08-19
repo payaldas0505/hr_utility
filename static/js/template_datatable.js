@@ -20,8 +20,8 @@ var tableLoad = $(document).ready(function() {
                     let get_url = "/dashboard/user_management/?token="
                     getaccessTokenForUrl(get_url);
 
-                } else if (data.status == 403) {
-                    logout()
+                    // } else if (data.status == 403) {
+                    //     logout()
                 } else {
                     M.toast({ html: JSON.parse(data.responseText).message, classes: 'red rounded' })
                 }
