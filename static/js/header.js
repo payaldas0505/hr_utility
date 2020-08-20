@@ -1,6 +1,15 @@
-$(".brand-logo").sideNav();
-var userDetails = getValues('UserDetails')
 jQuery(document).ready(function ($) {
+  var userDetails = localStorage.getItem("UserDetails")
+
+  if (userDetails == null){
+      window.location.href = "/login/"
+  }
+  else {
+      var userDetails = getValues('UserDetails')
+  }
+
+$(".brand-logo").sideNav();
+
 
     // alert(localStorage.getItem("User"))
 
@@ -98,7 +107,7 @@ function getUserDashboard() {
         url: '/dashboard/user_management/',
         headers: { Authorization: 'Bearer ' + token },
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = '/dashboard/user_management/'
         },
         error: function (data) {
             if (data.status == 401) {
@@ -137,13 +146,13 @@ function getUserDashboard() {
 function getTemplateDashboard() {
 
     var token = userDetails.access
-    var get_url = '/dashboard/template_management/?token='
+    var get_url = '/dashboard/template_management/'
     $.ajax({
         type: 'GET',
         url: '/dashboard/template_management/',
         headers: { Authorization: 'Bearer ' + token },
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = get_url
         },
         error: function (data) {
             if (data.status == 401) {
@@ -176,7 +185,7 @@ function getTemplateDashboard() {
 //             obj = JSON.parse(data.responseText)
 //             M.toast({html: obj.detail})
 //         }
-//     })  
+//     })
 // }
 
 function closeSideBar() {

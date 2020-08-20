@@ -4,12 +4,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import views as auth_views
 
 from .views import (LoginView, CustomTokenObtainPairView,
-                    CustomTokenRefreshView, Dashboard,
+                    CustomTokenRefreshView, Dashboard, DashboardPageView,
                     NewPasswordView, LogoutView,
-                    GetChangePasswordView, SaveChangePasswordView,
+                    GetChangePasswordView, SaveChangePasswordView,UserManagementDashboardPageView,
                     UserManagementDashboard, TemplateManagementDashboard,
+                    TemplateManagementDashboardPageView,
                     AddUserFormView, GetRoleDropDown,
-                    CheckUsername, CheckEmail,
+                    CheckUsername, CheckEmail,AddTemplatePageView,
                     GetAllUsersView, UserDatatableView,
                     NewGenDocxView, GetPermissions,
                     FillDocument, GetAllTemplatesView,
@@ -26,7 +27,9 @@ urlpatterns = [
 
     path('refresh_token/', CustomTokenRefreshView.as_view()),
 
-    path('dashboard/', Dashboard.as_view(), name="dashboard"),
+    path('dashboard_data/', Dashboard.as_view(), name="dashboard_data"),
+
+    path('dashboard/', DashboardPageView.as_view(), name="dashboard"),
 
     path('dashboard/permission', GetPermissions.as_view(), name='permission'),
 
@@ -38,7 +41,9 @@ urlpatterns = [
     path('dashboard/save_password/', SaveChangePasswordView.as_view(),
         name='save_password'),
 
-    path('dashboard/user_management/', UserManagementDashboard.as_view(), name="user_management"),
+    path('dashboard/user_management_data/', UserManagementDashboard.as_view(), name="user_management_data"),
+
+    path('dashboard/user_management/', UserManagementDashboardPageView.as_view(), name="user_management"),
 
     path('dashboard/user_management/add_user/', AddUserFormView.as_view(), name="add_user"),
 
@@ -52,9 +57,13 @@ urlpatterns = [
 
     path('dashboard/user_management/edit_user_form/<int:pk>', UserDatatableView.as_view(), name="edit_user_form"),
 
-    path('dashboard/template_management/', TemplateManagementDashboard.as_view(), name="template_management"),
+    path('dashboard/template_management_data/', TemplateManagementDashboard.as_view(), name="template_management_data"),
 
-    path('dashboard/template_management/add_template/', NewGenDocxView.as_view(), name='new_generate_docx'),
+    path('dashboard/template_management/', TemplateManagementDashboardPageView.as_view(), name="template_management"),
+
+    path('dashboard/template_management/add_template_data/', NewGenDocxView.as_view(), name='new_generate_docx_data'),
+
+    path('dashboard/template_management/add_template/', AddTemplatePageView.as_view(), name='new_generate_docx'),
 
     path('dashboard/template_management/get_all_templates', GetAllTemplatesView.as_view(), name="get_all_templates"),
 

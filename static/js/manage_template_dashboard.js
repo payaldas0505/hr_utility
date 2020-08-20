@@ -42,13 +42,13 @@ function getdashboard(){
 function GetAddTemplatePage(){
 
     var token = access;
-    var get_url = 'add_template/?token='
+    var get_url = 'add_template/'
     $.ajax({
         type: 'GET',
         url: 'add_template/',
         headers: { Authorization: 'Bearer '+token},
         success: function (data) {
-        window.location.href = get_url + token
+        window.location.href = get_url
         },
         error: function(data){
         if (data.status == 401) {
@@ -86,7 +86,6 @@ function DeleteTemplate(id){
             console.log(error)
             console.log(xhr.status)
             if (xhr.status == 401) {
-
                 getaccessTokenDeleteUser();
             }
             parsed_jsondata = JSON.parse(xhr.responseText)

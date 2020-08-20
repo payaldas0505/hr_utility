@@ -66,7 +66,7 @@ jQuery(document).ready(function ($) {
 //     });
 // }
 
-// Get toast messages from backend 
+// Get toast messages from backend
 function get_toast(label) {
 
     $.ajax({
@@ -120,7 +120,7 @@ function checkValidations(event) {
 
 // submit login credentials
 function submit() {
-    
+
     username = $('#username').val()
     password = $('#password').val()
 
@@ -139,9 +139,9 @@ function submit() {
                 return false
             }
             localStorage.setItem("UserDetails", JSON.stringify(result));
-            window.location.href = "/dashboard/?token=" + result.access;
-         
-            
+            window.location.href = "/dashboard/";
+
+
             // GetPermissions()
         },
         error: function (data) {
@@ -165,6 +165,3 @@ function submit() {
      document.getElementById("login_btn").click();
    }
  });
-
-
-    
