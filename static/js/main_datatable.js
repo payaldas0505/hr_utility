@@ -6,7 +6,7 @@ var tableLoad = $(document).ready(function() {
     if (localStorage.getItem("Supseruser") === "true") {
         localStorage.removeItem("Superuser");
     }
-    $('#example').DataTable({
+    $('#Dashboard-Datatable').DataTable({
         dom: 'frtlip'  ,
         "processing": true,
         "serverSide": true,

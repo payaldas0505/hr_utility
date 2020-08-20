@@ -1,6 +1,11 @@
-$(document).ready(function(){
-    $( ".user_management" ).hide();
-    $( ".template_management" ).hide();
+$(document).ready(function () {
+    $(".user_management").hide();
+    $(".template_management").hide();
+    $('#Template-dropdown').hide();
+    $('#templateDropdownForm').hide();
+    $('#Template-Dropdown-Header').hide();
+
+    $('select').formSelect();
 
     if (localStorage.getItem("UserPermissions") === null) {
         GetPermissions()
@@ -8,7 +13,7 @@ $(document).ready(function(){
     else {
         SetPermissionsUserDashboard()
     }
-    
+
 
     // var language_id = localStorage.getItem('language')
     // $.ajax({
@@ -17,7 +22,7 @@ $(document).ready(function(){
     //     data : {
     //     	'page_name' : 'Add_user',
     //     	'language_id' : language_id,
-	// 	    },
+    // 	    },
     //     success: function (jsondata) {
     //         console.log(jsondata)
     //         for (const [key, value] of Object.entries(jsondata)) {
@@ -30,8 +35,8 @@ $(document).ready(function(){
     //         M.toast({html: obj.error, classes: 'red rounded'})
     //     }
     // });
-      
-   // Get and set all the labels from backend
+
+    // Get and set all the labels from backend
     // $.ajax({
     //     type: 'POST',
     //     url: '/get_labels/',
@@ -51,40 +56,40 @@ $(document).ready(function(){
     //         M.toast({html: obj.error, classes: 'red rounded'})
     //     }
     // });
-    
+
 
 })
 
-function GetPermissions(){
+function GetPermissions() {
     $.ajax({
         url: 'permission',
-        headers: { Authorization: 'Bearer '+ userDetails.access},
-        type: 'GET',   
+        headers: { Authorization: 'Bearer ' + userDetails.access },
+        type: 'GET',
 
-        success: function(response){
-            
+        success: function (response) {
+
             localStorage.setItem("UserPermissions", JSON.stringify(response));
             console.log(response)
 
             SetPermissionsUserDashboard();
-    
+
         },
-        error: function(xhr) {
+        error: function (xhr) {
             parsed_json = JSON.parse(xhr.responseText)
-            M.toast({html: parsed_json.message, classes: 'red rounded'})
+            M.toast({ html: parsed_json.message, classes: 'red rounded' })
         }
     });
 }
 
-function SetPermissionsUserDashboard(){
+function SetPermissionsUserDashboard() {
     var userPermissions = getValues('UserPermissions')
 
-    if(!jQuery.isEmptyObject(userPermissions)){
-        if (userPermissions.includes('user_management_page_get')){
-            $( ".user_management" ).show();
+    if (!jQuery.isEmptyObject(userPermissions)) {
+        if (userPermissions.includes('user_management_page_get')) {
+            $(".user_management").show();
         }
-        if (userPermissions.includes('template_management_page_get')){
-            $( ".template_management" ).show();
+        if (userPermissions.includes('template_management_page_get')) {
+            $(".template_management").show();
         }
     }
 }
@@ -92,55 +97,55 @@ function SetPermissionsUserDashboard(){
 var userDetails = getValues('UserDetails')
 var user_role_id = userDetails.role_id
 
-function DownloadResume(id){
-    window.location.href =id
+function DownloadResume(id) {
+    window.location.href = id
     GetPermissions()
 }
-function DownloadPanCard(id){
-    window.location.href =id
+function DownloadPanCard(id) {
+    window.location.href = id
     GetPermissions()
 }
-function DownloadAdharCard(id){
-    window.location.href =id
+function DownloadAdharCard(id) {
+    window.location.href = id
     GetPermissions()
 }
 
 function readURL(input) {
     if (input.files && input.files[0]) {
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        $('#view_image').attr('src', e.target.result);
-        $('#view_image').show();
-      }
-      reader.readAsDataURL(input.files[0]);
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $('#view_image').attr('src', e.target.result);
+            $('#view_image').show();
+        }
+        reader.readAsDataURL(input.files[0]);
     }
 }
-  
-$("#profile_picture_edit").change(function() {
+
+$("#profile_picture_edit").change(function () {
     readURL(this);
-    });
+});
 
 
 
-function DeleteReport(id){
-    url = '/usermanagement/edituserform/'+id
-    
+function DeleteReport(id) {
+    url = '/usermanagement/edituserform/' + id
+
     $.ajax({
-        url : url,
-        method : 'DELETE',
-        headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
-        dataType : 'text',
-        async : false,
-        success : function(jsonData){
+        url: url,
+        method: 'DELETE',
+        headers: { Authorization: 'Bearer ' + localStorage.getItem("Token") },
+        dataType: 'text',
+        async: false,
+        success: function (jsonData) {
             var token = localStorage.getItem("Token");
             parsed_jsondata = JSON.parse(jsonData)
-            M.toast({html: parsed_jsondata.message, classes: 'green rounded'})
-            setTimeout(function() {
-                
-                window.location.href = "/dashboard/?token="+token 
-              }, 2000);
+            M.toast({ html: parsed_jsondata.message, classes: 'green rounded' })
+            setTimeout(function () {
+
+                window.location.href = "/dashboard/?token=" + token
+            }, 2000);
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             console.log(xhr)
             console.log(status)
             console.log(error)
@@ -150,97 +155,97 @@ function DeleteReport(id){
                 getaccessTokenDeleteUser();
             }
             parsed_jsondata = JSON.parse(xhr.responseText)
-            M.toast({html: parsed_jsondata.message, classes: 'red rounded'})
+            M.toast({ html: parsed_jsondata.message, classes: 'red rounded' })
             return false
         }
-        
+
     })
     GetPermissions()
 }
 
-function getDeleteReport(id){
+function getDeleteReport(id) {
     var confirmation = confirm("Are you sure?\nDo you want to delete this user?");
-    if(confirmation == true){
+    if (confirmation == true) {
         DeleteReport(id)
     }
-    else{
+    else {
         return false
     }
     GetPermissions();
 }
 
-function GetAccessTokenForBackButton(){
+function GetAccessTokenForBackButton() {
     $.ajax({
         type: 'POST',
         url: '/refresh_token/',
-        data : {
-          'refresh' : localStorage.getItem("Refresh"),
+        data: {
+            'refresh': localStorage.getItem("Refresh"),
         },
         success: function (result) {
-           localStorage.setItem("Token", result.access);
-           token = localStorage.getItem("Token")
-          
-            setTimeout(function() {
-                window.location.href = "/dashboard/?token="+token;
+            localStorage.setItem("Token", result.access);
+            token = localStorage.getItem("Token")
+
+            setTimeout(function () {
+                window.location.href = "/dashboard/?token=" + token;
             }, 500);
 
         },
-        error: function(data){
-           obj = JSON.parse(data.responseText)
-           M.toast({html: obj.detail})
+        error: function (data) {
+            obj = JSON.parse(data.responseText)
+            M.toast({ html: obj.detail })
         }
-  })
+    })
 
 }
 
-function getDashboardDatatable(){
+function getDashboardDatatable() {
     var token = localStorage.getItem("Token");
     $.ajax({
-        method : 'GET',
-        url : "/dashboard/?token="+token,
-        success: function(data){
-            window.location.href = "/dashboard/?token="+token
+        method: 'GET',
+        url: "/dashboard/?token=" + token,
+        success: function (data) {
+            window.location.href = "/dashboard/?token=" + token
         },
-        error : function(xhr){
-            if(xhr.status == 401){
+        error: function (xhr) {
+            if (xhr.status == 401) {
                 GetAccessTokenForBackButton()
             }
         }
-    })  
+    })
 }
 
-function getViewReport(id){
-    url = '/usermanagement/edituserform/'+id
+function getViewReport(id) {
+    url = '/usermanagement/edituserform/' + id
     window.localStorage.setItem('editedUserId', id)
     $.ajax({
-        url : url,
-        method : 'GET',
-        headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
-        dataType : 'text',
-        async : false,
-        success : function(jsonData){
+        url: url,
+        method: 'GET',
+        headers: { Authorization: 'Bearer ' + localStorage.getItem("Token") },
+        dataType: 'text',
+        async: false,
+        success: function (jsonData) {
             console.log(jsonData)
             parsed_json = JSON.parse(jsonData)
             data = parsed_json.message
             console.log(data)
-            for(i=0;i<data.length;i++){
-                    user_name = data[i].user_name
-                    first_name = data[i].first_name
-                    middle_name = data[i].middle_name
-                    last_name = data[i].last_name
-                    dob = data[i].dob
-                    email = data[i].email
-                    telephone = data[i].telephone
-                    gender = data[i].gender
-                    address = data[i].address
-                    indian = data[i].indian
-                    option = data[i].option
-                    profile_picture = data[i].profile_picture
-                    resume = data[i].resume
-                    pan_card = data[i].pan_card
-                    adhar_card = data[i].adhar_card
-                    role = data[i].role
-                }
+            for (i = 0; i < data.length; i++) {
+                user_name = data[i].user_name
+                first_name = data[i].first_name
+                middle_name = data[i].middle_name
+                last_name = data[i].last_name
+                dob = data[i].dob
+                email = data[i].email
+                telephone = data[i].telephone
+                gender = data[i].gender
+                address = data[i].address
+                indian = data[i].indian
+                option = data[i].option
+                profile_picture = data[i].profile_picture
+                resume = data[i].resume
+                pan_card = data[i].pan_card
+                adhar_card = data[i].adhar_card
+                role = data[i].role
+            }
             $('#HideProfileUpload').hide();
             $('#submit_form').hide();
             $('#hideUploadResume').hide();
@@ -251,7 +256,7 @@ function getViewReport(id){
             $('#SubmitEditUser').hide();
             $('#Dashboard_main').hide();
             $('#dashboardRegisterForm').show();
-            $("#view_image").attr('src' , '/media/'+profile_picture);
+            $("#view_image").attr('src', '/media/' + profile_picture);
             $('#profile_picture_edit_text').val(profile_picture);
             $('#user_name_edit').val(user_name);
             $('#first_name_edit').val(first_name);
@@ -262,67 +267,67 @@ function getViewReport(id){
             $('#telephone_edit').val(telephone);
             $('#textarea1_edit').val(address);
             $('#indian').prop('checked', indian);
-            $('#'+gender+'').prop('checked', true);
+            $('#' + gender + '').prop('checked', true);
             $('#resume_edit_file').val(resume);
             $('#pan_card_edit_file').val(pan_card);
             $('#adhar_card_edit_file').val(adhar_card);
-            $('#dropdownid').find('option[value='+option+']').prop('selected', true);
+            $('#dropdownid').find('option[value=' + option + ']').prop('selected', true);
             $('select').not('.disabled').formSelect();
             $('#role_drop_down').prop("disabled", true);
-            $('#role_drop_down').find('option[value='+role+']').prop('selected', true);
-            
-           
+            $('#role_drop_down').find('option[value=' + role + ']').prop('selected', true);
+
+
             $('select').not('.disabled').formSelect();
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             if (xhr.status == 401) {
 
                 getaccessTokenViewUser();
             }
             parsed_jsondata = JSON.parse(xhr.responseText)
-            M.toast({html: parsed_jsondata.message, classes: 'red rounded'})
+            M.toast({ html: parsed_jsondata.message, classes: 'red rounded' })
             return false
         }
     })
     GetPermissions();
 }
 
-function getEditReport(id){
-    url = '/usermanagement/edituserform/'+id
+function getEditReport(id) {
+    url = '/usermanagement/edituserform/' + id
     window.localStorage.setItem('editedUserId', id)
     $.ajax({
-        url : url,
-        method : 'GET',
-        headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
-        dataType : 'text',
-        async : false,
-        success : function(jsonData){
+        url: url,
+        method: 'GET',
+        headers: { Authorization: 'Bearer ' + localStorage.getItem("Token") },
+        dataType: 'text',
+        async: false,
+        success: function (jsonData) {
             console.log(jsonData)
             parsed_json = JSON.parse(jsonData)
             data = parsed_json.message
             console.log(data)
-            for(i=0;i<data.length;i++){
-                    user_name = data[i].user_name
-                    first_name = data[i].first_name
-                    middle_name = data[i].middle_name
-                    last_name = data[i].last_name
-                    dob = data[i].dob
-                    email = data[i].email
-                    telephone = data[i].telephone
-                    gender = data[i].gender
-                    address = data[i].address
-                    indian = data[i].indian
-                    option = data[i].option
-                    profile_picture = data[i].profile_picture
-                    resume = data[i].resume
-                    pan_card = data[i].pan_card
-                    adhar_card = data[i].adhar_card
-                    role = data[i].role
-                }
+            for (i = 0; i < data.length; i++) {
+                user_name = data[i].user_name
+                first_name = data[i].first_name
+                middle_name = data[i].middle_name
+                last_name = data[i].last_name
+                dob = data[i].dob
+                email = data[i].email
+                telephone = data[i].telephone
+                gender = data[i].gender
+                address = data[i].address
+                indian = data[i].indian
+                option = data[i].option
+                profile_picture = data[i].profile_picture
+                resume = data[i].resume
+                pan_card = data[i].pan_card
+                adhar_card = data[i].adhar_card
+                role = data[i].role
+            }
 
             $('#Dashboard_main').hide();
             $('#dashboardRegisterForm').show();
-            $("#view_image").attr('src' , '/media/'+profile_picture);
+            $("#view_image").attr('src', '/media/' + profile_picture);
             $('#profile_picture_edit_text').val(profile_picture)
             $('#user_name_edit').val(user_name)
             $('#first_name_edit').val(first_name)
@@ -337,19 +342,19 @@ function getEditReport(id){
             $('#pan_card_edit_file').val(pan_card)
             $('#adhar_card_edit_file').val(adhar_card)
             $('#indian').prop('checked', indian);
-            $('#'+gender+'').prop('checked', true)
-            $('#dropdownid').find('option[value='+option+']').prop('selected', true);
+            $('#' + gender + '').prop('checked', true)
+            $('#dropdownid').find('option[value=' + option + ']').prop('selected', true);
             $('select').not('.disabled').formSelect();
             $('#role_drop_down').prop("disabled", true);
-            $('#role_drop_down').find('option[value='+role+']').prop('selected', true);
-            
+            $('#role_drop_down').find('option[value=' + role + ']').prop('selected', true);
+
             var user_role_id = localStorage.getItem('RoleId')
-            if(user_role_id == 1){
+            if (user_role_id == 1) {
                 $('#role_drop_down').prop("disabled", false);
             }
             $('select').not('.disabled').formSelect();
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             console.log(xhr)
             console.log(status)
             console.log(error)
@@ -359,89 +364,88 @@ function getEditReport(id){
                 getaccessTokenEditUser();
             }
             parsed_jsondata = JSON.parse(xhr.responseText)
-            M.toast({html: parsed_jsondata.message, classes: 'red rounded'})
+            M.toast({ html: parsed_jsondata.message, classes: 'red rounded' })
             return false
         }
     })
     GetPermissions()
 }
 
-function EditUserSave(user_name,first_name,last_name,
-                    middle_name,password,dob,email,
-                    telephone,address,gender,indian,
-                    option,role)
-    {
-        var edituserid = window.localStorage.getItem('editedUserId')
-        option = $("#dropdownid option:selected").val();
-        role = $("#role_drop_down option:selected").val();
-        var formData = new FormData();
-        if ($('#profile_picture_edit').get(0).files.length === 0) {
-        }
-        else{
-            formData.append('profile_picture', $('#profile_picture_edit')[0].files[0]);
-        }
+function EditUserSave(user_name, first_name, last_name,
+    middle_name, password, dob, email,
+    telephone, address, gender, indian,
+    option, role) {
+    var edituserid = window.localStorage.getItem('editedUserId')
+    option = $("#dropdownid option:selected").val();
+    role = $("#role_drop_down option:selected").val();
+    var formData = new FormData();
+    if ($('#profile_picture_edit').get(0).files.length === 0) {
+    }
+    else {
+        formData.append('profile_picture', $('#profile_picture_edit')[0].files[0]);
+    }
 
-        if($('#resume_edit').get(0).files.length === 0){            
-        }
-        else{
-            formData.append('resume', $('#resume_edit')[0].files[0]);
-        }
+    if ($('#resume_edit').get(0).files.length === 0) {
+    }
+    else {
+        formData.append('resume', $('#resume_edit')[0].files[0]);
+    }
 
-        if($('#adhar_card_edit').get(0).files.length === 0){            
-        }
-        else{
-            formData.append('adhar_card', $('#adhar_card_edit')[0].files[0]);
-        }
+    if ($('#adhar_card_edit').get(0).files.length === 0) {
+    }
+    else {
+        formData.append('adhar_card', $('#adhar_card_edit')[0].files[0]);
+    }
 
-        if($('#pan_card_edit').get(0).files.length === 0){            
-        }
-        else{
-            formData.append('pan_card', $('#pan_card_edit')[0].files[0]);
-        }
+    if ($('#pan_card_edit').get(0).files.length === 0) {
+    }
+    else {
+        formData.append('pan_card', $('#pan_card_edit')[0].files[0]);
+    }
 
-        formData.append('user_name', user_name);
-        formData.append('first_name', first_name);
-        formData.append('middle_name', middle_name);
-        formData.append('last_name', last_name);
-        formData.append('password', password);
-        formData.append('dob', dob);
-        formData.append('email',email);
-        formData.append('telephone', telephone);
-        formData.append('address', address);
-        formData.append('gender', gender);
-        formData.append('indian', indian);
-        formData.append('option', option);
-        formData.append('role', role);
+    formData.append('user_name', user_name);
+    formData.append('first_name', first_name);
+    formData.append('middle_name', middle_name);
+    formData.append('last_name', last_name);
+    formData.append('password', password);
+    formData.append('dob', dob);
+    formData.append('email', email);
+    formData.append('telephone', telephone);
+    formData.append('address', address);
+    formData.append('gender', gender);
+    formData.append('indian', indian);
+    formData.append('option', option);
+    formData.append('role', role);
 
-        url = '/usermanagement/edituserform/'+edituserid
-        $.ajax({
-            url : url,
-            method : "PUT",
-            headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
-            enctype: 'multipart/form-data',
-            data : formData,
-            contentType : false,    
-            processData: false,
-            async : false,
-            success : function(jsonData){
-                window.location.reload();
-                M.toast({html: jsonData.message, classes: 'green rounded'})    
-            },
-            error: function(xhr, status, error) {
-                if (xhr.status == 401) {
+    url = '/usermanagement/edituserform/' + edituserid
+    $.ajax({
+        url: url,
+        method: "PUT",
+        headers: { Authorization: 'Bearer ' + localStorage.getItem("Token") },
+        enctype: 'multipart/form-data',
+        data: formData,
+        contentType: false,
+        processData: false,
+        async: false,
+        success: function (jsonData) {
+            window.location.reload();
+            M.toast({ html: jsonData.message, classes: 'green rounded' })
+        },
+        error: function (xhr, status, error) {
+            if (xhr.status == 401) {
 
-                    getaccessTokenDatatable();
-                }
-                parsed_jsondata = JSON.parse(xhr.responseText)
-                M.toast({html: parsed_jsondata.message, classes: 'red rounded'})
-                return false
+                getaccessTokenDatatable();
             }
-        })
-        GetPermissions();
+            parsed_jsondata = JSON.parse(xhr.responseText)
+            M.toast({ html: parsed_jsondata.message, classes: 'red rounded' })
+            return false
+        }
+    })
+    GetPermissions();
 }
 
 
-function EditUserValidation(){
+function EditUserValidation() {
     user_name = $('#user_name_edit').val()
     first_name = $('#first_name_edit').val();
     last_name = $('#last_name_edit').val();
@@ -456,182 +460,192 @@ function EditUserValidation(){
     option = $("#dropdownid option:selected").val();
     role = $("#role_drop_down option:selected").val();
 
-    if (indian){
+    if (indian) {
         indian = true
     }
-    else{
+    else {
         indian = false
     }
-    $('input:radio[name=sex]:nth(1)').attr('checked',true);
+    $('input:radio[name=sex]:nth(1)').attr('checked', true);
 
     if (user_name == "") {
-        M.toast({html: 'Username must be filled out!', classes: 'red rounded'})
+        M.toast({ html: 'Username must be filled out!', classes: 'red rounded' })
         return false;
     }
     else if (first_name == "") {
-        M.toast({html: 'First name must be filled out!', classes: 'red rounded'})
+        M.toast({ html: 'First name must be filled out!', classes: 'red rounded' })
         return false;
     }
     else if (middle_name == "") {
-        M.toast({html: 'Middle name must be filled out!', classes: 'red rounded'})
+        M.toast({ html: 'Middle name must be filled out!', classes: 'red rounded' })
         return false;
     }
     else if (last_name == "") {
-        M.toast({html: 'Last name must be filled out!', classes: 'red rounded'})
+        M.toast({ html: 'Last name must be filled out!', classes: 'red rounded' })
         return false;
     }
     else if (password == "") {
-        M.toast({html: 'Password must be filled out!', classes: 'red rounded'})
+        M.toast({ html: 'Password must be filled out!', classes: 'red rounded' })
         return false;
     }
     else if (dob == "") {
-        M.toast({html: 'Date of Birth must be filled out!', classes: 'red rounded'})
+        M.toast({ html: 'Date of Birth must be filled out!', classes: 'red rounded' })
         return false;
     }
     else if (email == "") {
-        M.toast({html: 'Email address must be filled out!', classes: 'red rounded'})
+        M.toast({ html: 'Email address must be filled out!', classes: 'red rounded' })
         return false;
     }
     else if (telephone == "") {
-        M.toast({html: 'telephone must be filled out and should be valid number!', classes: 'red rounded'})
+        M.toast({ html: 'telephone must be filled out and should be valid number!', classes: 'red rounded' })
         return false;
     }
-    else if (isNaN(telephone)){
-        M.toast({html: 'Telephone should be number!', classes: 'red rounded'})
+    else if (isNaN(telephone)) {
+        M.toast({ html: 'Telephone should be number!', classes: 'red rounded' })
         return false;
     }
     else if (address == "") {
-        M.toast({html: 'Address must be filled out!', classes: 'red rounded'})
+        M.toast({ html: 'Address must be filled out!', classes: 'red rounded' })
         return false;
     }
     else if (gender == "") {
-        M.toast({html: 'Gender must be filled out!', classes: 'red rounded'})
+        M.toast({ html: 'Gender must be filled out!', classes: 'red rounded' })
         return false;
     }
     else if (option == "") {
-        M.toast({html: 'Please select your qualification from the dropdown!', classes: 'red rounded'})
+        M.toast({ html: 'Please select your qualification from the dropdown!', classes: 'red rounded' })
         return false;
     }
     else if (role == "") {
-        M.toast({html: 'Please assign an to the user!', classes: 'red rounded'})
+        M.toast({ html: 'Please assign an to the user!', classes: 'red rounded' })
         return false;
     }
-    else{
-        EditUserSave(user_name,first_name,last_name,
-                    middle_name,password,dob,email,
-                    telephone,address,gender,
-                    indian,option,role)
+    else {
+        EditUserSave(user_name, first_name, last_name,
+            middle_name, password, dob, email,
+            telephone, address, gender,
+            indian, option, role)
     }
 }
 
 
 
-function getaccessTokenDashboard(){
+function getaccessTokenDashboard() {
     $.ajax({
-         type: 'POST',
-         url: '/refresh_token/',
-         data : {
-           'refresh' : localStorage.getItem("Refresh"),
-         },
-         success: function (result) {
+        type: 'POST',
+        url: '/refresh_token/',
+        data: {
+            'refresh': localStorage.getItem("Refresh"),
+        },
+        success: function (result) {
             localStorage.setItem("Token", result.access);
             // location.reload();
             var token = localStorage.getItem("Token");
-            window.location.href = "/dashboard/?token="+token;
+            window.location.href = "/dashboard/?token=" + token;
 
-         },
-         error: function(data){
+        },
+        error: function (data) {
             obj = JSON.parse(data.responseText)
-            M.toast({html: obj.detail})
-         }
-   })
- }
+            M.toast({ html: obj.detail })
+        }
+    })
+}
 
- 
 
- function getaccessTokenViewUser(){
+
+function getaccessTokenViewUser() {
     $.ajax({
-         type: 'POST',
-         url: '/refresh_token/',
-         data : {
-           'refresh' : localStorage.getItem("Refresh"),
-         },
-         success: function (result) {
+        type: 'POST',
+        url: '/refresh_token/',
+        data: {
+            'refresh': localStorage.getItem("Refresh"),
+        },
+        success: function (result) {
             localStorage.setItem("Token", result.access);
             var token = localStorage.getItem("Token");
             id = window.localStorage.getItem("editedUserId")
             getViewReport(id)
-         },
-         error: function(data){
+        },
+        error: function (data) {
             obj = JSON.parse(data.responseText)
-            M.toast({html: obj.detail})
-         }
-   })
- }
+            M.toast({ html: obj.detail })
+        }
+    })
+}
 
 
- 
 
- function getaccessTokenEditUser(){
+
+function getaccessTokenEditUser() {
     $.ajax({
-         type: 'POST',
-         url: '/refresh_token/',
-         data : {
-           'refresh' : localStorage.getItem("Refresh"),
-         },
-         success: function (result) {
+        type: 'POST',
+        url: '/refresh_token/',
+        data: {
+            'refresh': localStorage.getItem("Refresh"),
+        },
+        success: function (result) {
             localStorage.setItem("Token", result.access);
             // location.reload();
             var token = localStorage.getItem("Token");
             // window.location.href = "/dashboard/?token="+token;
             id = window.localStorage.getItem("editedUserId")
             getEditReport(id)
-         },
-         error: function(data){
+        },
+        error: function (data) {
             obj = JSON.parse(data.responseText)
-            M.toast({html: obj.detail})
-         }
-   })
- }
+            M.toast({ html: obj.detail })
+        }
+    })
+}
 
- 
 
- function getaccessTokenDeleteUser(){
+
+function getaccessTokenDeleteUser() {
     $.ajax({
-         type: 'POST',
-         url: '/refresh_token/',
-         data : {
-           'refresh' : localStorage.getItem("Refresh"),
-         },
-         success: function (result) {
+        type: 'POST',
+        url: '/refresh_token/',
+        data: {
+            'refresh': localStorage.getItem("Refresh"),
+        },
+        success: function (result) {
             localStorage.setItem("Token", result.access);
             var token = localStorage.getItem("Token");
             id = window.localStorage.getItem("editedUserId")
             DeleteReport(id)
-         },
-         error: function(data){
+        },
+        error: function (data) {
             obj = JSON.parse(data.responseText)
-            M.toast({html: obj.detail})
-         }
-   })
- }
+            M.toast({ html: obj.detail })
+        }
+    })
+}
 
- function getaccessTokenDatatable(){
+function getaccessTokenDatatable() {
     $.ajax({
         type: 'POST',
         url: '/refresh_token/',
-        data : {
-          'refresh' : localStorage.getItem("Refresh"),
+        data: {
+            'refresh': localStorage.getItem("Refresh"),
         },
         success: function (result) {
-           localStorage.setItem("Token", result.access);
-           var token = localStorage.getItem("Token");
-       
-           EditUserValidation()
+            localStorage.setItem("Token", result.access);
+            var token = localStorage.getItem("Token");
+
+            EditUserValidation()
         },
-        error: function(data){
-           obj = JSON.parse(data.responseText)
-           M.toast({html: obj.detail})
+        error: function (data) {
+            obj = JSON.parse(data.responseText)
+            M.toast({ html: obj.detail })
         }
-  })
+    })
+}
+
+function GetTemplateDropdown() {
+    $('#Template-dropdown').show();
+    $('#templateDropdownForm').show();
+    $('#RenderTemplateDropdown').hide();
+    $('#Document-Dashboard-header').hide();
+    $('#Template-Dropdown-Header').show();
+    $('#Dashboard-Datatable-Div').hide();
+    $('#templateDropdownForm').hide();
 }
