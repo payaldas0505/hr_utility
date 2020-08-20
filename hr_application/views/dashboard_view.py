@@ -405,3 +405,11 @@ class FillDropdownTemplate(APIView):
             print("Exception in filling templates", e)
             info_message = "Internal Server Error"
             return JsonResponse({'error': str(info_message)}, status=500)
+
+
+class GetAllFillTemplate(APIView):
+    authentication_classes = [CustomJWTAuthentication]
+    permission_classes = (IsAuthenticated,)
+    def get(self, request):
+        print('#'*80,'*'*80)
+        return HttpResponse('hi')

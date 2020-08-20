@@ -13,7 +13,7 @@ from .views import (LoginView, CustomTokenObtainPairView,
                     GetAllUsersView, UserDatatableView,
                     NewGenDocxView, GetPermissions,
                     FillDocument, GetAllTemplatesView,
-                    WordTemplateDataView, DocumentTeamplateDropdown, SelectTemplate, FillDropdownTemplate)
+                    WordTemplateDataView, DocumentTeamplateDropdown, SelectTemplate, FillDropdownTemplate, GetAllFillTemplate)
 
 urlpatterns = [
     path('api/rest-auth/', include('rest_auth.urls')),
@@ -66,5 +66,7 @@ urlpatterns = [
 
     path('dashboard/select_template/<int:pk>', SelectTemplate.as_view(), name = 'select_template'),
 
-    path('dashboard/fill_dropdown_template/', FillDropdownTemplate.as_view(), name= 'fill_dropdown_template')
+    path('dashboard/fill_dropdown_template/', FillDropdownTemplate.as_view(), name= 'fill_dropdown_template'),
+
+    path('getallfilltemplate', GetAllFillTemplate.as_view(), name = 'get_all_fill_template')
 ]

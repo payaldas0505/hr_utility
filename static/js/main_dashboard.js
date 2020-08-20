@@ -783,6 +783,7 @@ function SaveFilledForm(){
             // $("#pdf_preview").setAttribute("data", response['success']) 
             
             $('#pdf').show();
+            window.location.reload();
             return false
             
             

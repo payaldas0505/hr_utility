@@ -6,16 +6,17 @@ var tableLoad = $(document).ready(function() {
     if (localStorage.getItem("Supseruser") === "true") {
         localStorage.removeItem("Superuser");
     }
+    alert('1')
     $('#Dashboard-Datatable').DataTable({
-        dom: 'frtlip'  ,
+        dom: 'frtlip',
         "processing": true,
         "serverSide": true,
         "scrollX": true,
         "scrollY" : true,
         "ajax": {
-            "url": "/usermanagement/getalluser",
+            "url": "getallfilltemplate",
             "type": "GET",
-            "headers": { Authorization: 'Bearer '+localStorage.getItem("Token")},
+            "headers": { Authorization: 'Bearer ' + userDetails.access },
             "error" : function(data){
                 // alert(data.status)
                 if (data.status == 401) {
