@@ -137,7 +137,7 @@ function DeleteReport(id){
             M.toast({html: parsed_jsondata.message, classes: 'green rounded'})
             setTimeout(function() {
 
-                window.location.href = "/dashboard/?token="+token
+                window.location.href = "/dashboard/"
               }, 2000);
         },
         error: function(xhr, status, error) {
@@ -181,7 +181,7 @@ function GetAccessTokenForBackButton(){
            token = localStorage.getItem("Token")
 
             setTimeout(function() {
-                window.location.href = "/dashboard/?token="+token;
+                window.location.href = "/dashboard/";
             }, 500);
 
         },
@@ -537,7 +537,7 @@ function getaccessTokenDashboard(){
             localStorage.setItem("Token", result.access);
             // location.reload();
             var token = localStorage.getItem("Token");
-            window.location.href = "/dashboard/?token="+token;
+            window.location.href = "/dashboard/";
 
          },
          error: function(data){

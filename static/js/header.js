@@ -8,8 +8,6 @@ jQuery(document).ready(function ($) {
       var userDetails = getValues('UserDetails')
   }
 
-
-    alert(window.location.href);
     $(".brand-logo").sideNav();
 
 
@@ -42,13 +40,13 @@ jQuery(document).ready(function ($) {
 function changepassword() {
 
     var token = userDetails.access
-    var get_url = '/dashboard/get_change_password/?token='
+    var get_url = '/dashboard/get_change_password/'
     $.ajax({
         type: 'GET',
         url: '/dashboard/get_change_password/',
         headers: { Authorization: 'Bearer ' + token },
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = get_url
         },
         error: function (data) {
             if (data.status == 401) {
@@ -103,7 +101,7 @@ function changepassword() {
 function getUserDashboard() {
 
     var token = userDetails.access
-    var get_url = '/dashboard/user_management/?token='
+    var get_url = '/dashboard/user_management/'
     $.ajax({
         type: 'GET',
         url: '/dashboard/user_management/',
@@ -193,12 +191,12 @@ function getTemplateDashboard() {
 function closeSideBar() {
 
     var token = userDetails.access
-    var get_url = "/dashboard/?token="
+    var get_url = "/dashboard/"
     $.ajax({
         method: 'GET',
-        url: "/dashboard/?token=" + token,
+        url: "/dashboard/",
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = get_url
         },
         error: function (xhr) {
             if (xhr.status == 401) {

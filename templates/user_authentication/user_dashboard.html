@@ -161,6 +161,26 @@
 <script src="{% static '/js/logout.js' %}"></script>
 
 <script>
+
+
+function getData(){
+  $.ajax({
+      url: '/dashboard/user_management_data/',
+      headers: { Authorization: 'Bearer '+ userDetails.access},
+      type: 'GET',
+
+      success: function(response){
+      },
+      error: function(xhr) {
+          if (xhr.status == 401) {
+              getaccessTokenForMainDashboard();
+          }
+          if (xhr.status == 403) {
+              logout();
+          }
+      }
+  });
+}
     $(document).ready(function () {
       var userDetails = localStorage.getItem("UserDetails")
       if (userDetails == null){
@@ -169,25 +189,8 @@
       else{
         var userDetails = getValues('UserDetails')
         var access = userDetails.access
-
-
-    	$.ajax({
-    			url: '/dashboard/user_management_data/',
-    			headers: { Authorization: 'Bearer '+ userDetails.access},
-    			type: 'GET',
-
-    			success: function(response){
-    			},
-    			error: function(xhr) {
-    					if (xhr.status == 401) {
-    							logout();
-    					}
-    	        if (xhr.status == 403) {
-    	            logout();
-    	        }
-    			}
-    	});
-}
+        getData();
+      }
 
         $('select').formSelect();
         // Check username avaliable in database

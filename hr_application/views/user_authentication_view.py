@@ -212,6 +212,14 @@ class LogoutView(APIView):
 
 
 
+class GetChangePasswordPageView(APIView):
+    """
+    Get change password page
+    """
+    def get(self, request):
+        return render(request, 'user_authentication/password_change_form.html')
+
+
 class GetChangePasswordView(APIView):
     """
     Get and render the Change Password Page.

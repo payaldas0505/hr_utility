@@ -5,7 +5,7 @@ from django.contrib.auth import views as auth_views
 
 from .views import (LoginView, CustomTokenObtainPairView,
                     CustomTokenRefreshView, Dashboard, DashboardPageView,
-                    NewPasswordView, LogoutView,
+                    NewPasswordView, LogoutView, GetChangePasswordPageView,
                     GetChangePasswordView, SaveChangePasswordView,UserManagementDashboardPageView,
                     UserManagementDashboard, TemplateManagementDashboard,
                     TemplateManagementDashboardPageView,
@@ -35,8 +35,10 @@ urlpatterns = [
 
     path('forgot_password/', NewPasswordView.as_view(), name="forgot_password"),
 
-    path('dashboard/get_change_password/', GetChangePasswordView.as_view(),
-        name='get_change_password'),
+    path('dashboard/get_change_password_data/', GetChangePasswordView.as_view(),
+        name='get_change_password_data'),
+
+    path('dashboard/get_change_password/',GetChangePasswordPageView.as_view(), name="get_change_password"),
 
     path('dashboard/save_password/', SaveChangePasswordView.as_view(),
         name='save_password'),

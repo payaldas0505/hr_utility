@@ -49,7 +49,28 @@
 <script src="/static/js/manage_template_dashboard.js"></script>
 <script src="/static/js/template_datatable.js"></script>
 <script src="/static/js/logout.js"></script>
+<script src="/static/js/get_refresh_token.js"></script>
 <script>
+
+function getData() {
+  $.ajax({
+    url: '/dashboard/template_management_data/',
+    headers: { Authorization: 'Bearer '+ userDetails.access},
+    type: 'GET',
+
+    success: function(response){
+    },
+    error: function(xhr) {
+        if (xhr.status == 401) {
+            getaccessTokenForMainDashboard();
+        }
+        if (xhr.status == 403) {
+            logout();
+        }
+    }
+  });
+}
+
 
     $(document).ready(function(){
 
@@ -60,25 +81,7 @@
       else {
         var userDetails = getValues('UserDetails')
       	var access = userDetails.access
-
-
-      	$.ajax({
-      			url: '/dashboard/template_management_data/',
-      			headers: { Authorization: 'Bearer '+ userDetails.access},
-      			type: 'GET',
-
-      			success: function(response){
-      			},
-      			error: function(xhr) {
-      					if (xhr.status == 401) {
-      							logout();
-      					}
-      	        if (xhr.status == 403) {
-      	            logout();
-      	        }
-      			}
-      	});
-
+        getData();
       }
 
 

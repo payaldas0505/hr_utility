@@ -82,12 +82,12 @@ function GetAddUserPage() {
 // get user management dashboard
 function getUserDashboardDatatable() {
     var token = access;
-    var get_url = "/dashboard/user_management/?token="
+    var get_url = "/dashboard/user_management/"
     $.ajax({
         method: 'GET',
-        url: get_url + token,
+        url: get_url,
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = get_url
         },
         error: function (xhr) {
             if (xhr.status == 401) {
@@ -116,7 +116,7 @@ function DeleteReport(id) {
             M.toast({ html: parsed_jsondata.message, classes: 'green rounded' })
             setTimeout(function () {
 
-                window.location.href = "/dashboard/user_management/?token=" + token
+                window.location.href = "/dashboard/user_management/"
             }, 2000);
         },
         error: function (xhr, status, error) {
@@ -155,12 +155,12 @@ function getDeleteReport(id) {
 //Get Datatable for user management
 function getDashboardDatatable() {
     var token = access;
-    var get_url = "/dashboard/?token="
+    var get_url = "/dashboard/"
     $.ajax({
         method: 'GET',
         url: get_url + token,
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = get_url
         },
         error: function (xhr) {
             if (xhr.status == 401) {
