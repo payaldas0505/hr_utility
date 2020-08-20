@@ -40,12 +40,12 @@ function getUserRoleDropDown() {
 // Get Main dashboard
 function getdashboard() {
     var token = access;
-    var get_url = "/dashboard/?token="
+    var get_url = "/dashboard/"
     $.ajax({
         method: 'GET',
-        url: get_url + token,
+        url: get_url,
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = get_url
         },
         error: function (xhr) {
             if (xhr.status == 401) {
@@ -284,7 +284,7 @@ function getEditReport(id) {
 
 }
 
-// Save the edited user 
+// Save the edited user
 function EditUserSave(user_name, first_name,
     last_name, email,
     user_status, role) {
@@ -333,7 +333,7 @@ function EditUserSave(user_name, first_name,
     })
 }
 
-// Validation of user edit 
+// Validation of user edit
 function EditUserValidation() {
     $("#submit_edit_form").attr("disabled", true);
 
@@ -387,7 +387,7 @@ function EditUserValidation() {
     }
 }
 
-// Get the permissions from LocalStorge 
+// Get the permissions from LocalStorge
 function SetPermissionsUserDashboard() {
     var userPermissions = getValues('UserPermissions')
 
@@ -398,5 +398,3 @@ function SetPermissionsUserDashboard() {
 
     }
 }
-
-

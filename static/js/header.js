@@ -8,7 +8,9 @@ jQuery(document).ready(function ($) {
       var userDetails = getValues('UserDetails')
   }
 
-$(".brand-logo").sideNav();
+
+    alert(window.location.href);
+    $(".brand-logo").sideNav();
 
 
     // alert(localStorage.getItem("User"))
@@ -18,7 +20,7 @@ $(".brand-logo").sideNav();
     // var language_id = localStorage.getItem('language')
     // $.ajax({
     //     type: 'POST',
-    //     url: '/get_labels/',
+    //     url: '/get_labels/a',
     //     data : {
     //     	'page_name' : 'Nav_bar',
     //     	'language_id' : language_id,

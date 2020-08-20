@@ -21,12 +21,12 @@ var access = userDetails.access
 
 function getdashboard(){
     var token = access;
-    var get_url = "/dashboard/?token="
+    var get_url = "/dashboard/"
     $.ajax({
         method : 'GET',
-        url : get_url+token,
+        url : get_url,
         success: function(data){
-            window.location.href = get_url+token
+            window.location.href = get_url
         },
         error : function(xhr){
             if(xhr.status == 401){

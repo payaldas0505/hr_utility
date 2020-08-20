@@ -86,7 +86,8 @@ class UserManagementDashboard(APIView):
 
             total = User.objects.filter(is_superuser=False).count()
             inactive_users = total - active_users
-            return render(request, "user_authentication/user_dashboard.html", {'active': active_users, 'inactive': inactive_users})
+            return Response({'active': active_users, 'inactive': inactive_users}, template_name="user_authentication/user_dashboard.html")
+            # return render(request, "user_authentication/user_dashboard.html", {'active': active_users, 'inactive': inactive_users})
 
 
         except Exception as e:
@@ -115,12 +116,13 @@ class TemplateManagementDashboard(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    @has_permission(perms['template_management_page_get'])
+    # @has_permission(perms['template_management_page_get'])
     def get(self, request):
         """ active and inactive users count """
 
         try:
-            return render(request, "user_authentication/manage_template_dasboard.html")
+            return Response({"success": True}, template_name="user_authentication/manage_template_dasboard.html")
+            # return render(request, "user_authentication/manage_template_dasboard.html")
 
 
         except Exception as e:
@@ -128,7 +130,7 @@ class TemplateManagementDashboard(APIView):
 
             info_message = "Unable to get Dashboard"
             print("Unable to get Dashboard", info_message)
-            return Response({"success": False, "error": str(info_message)})
+            return Response({"success": False, "error": str(info_message)}, template_name="user_authentication/manage_template_dasboard.html")
 
 
 class NewPasswordView(APIView):

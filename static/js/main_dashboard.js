@@ -197,9 +197,9 @@ function getDashboardDatatable(){
     var token = localStorage.getItem("Token");
     $.ajax({
         method : 'GET',
-        url : "/dashboard/?token="+token,
+        url : "/dashboard/",
         success: function(data){
-            window.location.href = "/dashboard/?token="+token
+            window.location.href = "/dashboard/"
         },
         error : function(xhr){
             if(xhr.status == 401){
