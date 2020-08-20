@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 from django.http.response import HttpResponse, JsonResponse
 from ..serializer import DatatableSerializer, AuthUserSerializer, UserRegisterationModelSerializer
-from ..models  import query_users_by_args, UserRegisterationModel
+from ..models  import query_users_by_args, UserRegisterationModel, WordTemplateNew
 from django.db import transaction
 from .check_permission import has_permission
 
@@ -271,3 +271,24 @@ class UserDatatableView(APIView):
             info_message = "Internal Server Error"
             print( info_message, error)
             return JsonResponse({'message' : str(info_message)},status = 422)
+
+class DocumentTeamplateDropdown(APIView):
+    authentication_classes = [CustomJWTAuthentication]
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        get_all_template = WordTemplateNew.objects.all()
+        print('*'*80)
+        print(get_all_template)
+        print('*'*80)
+        all_template_list = []
+        all_template_obj = {}
+        for each in get_all_template:
+            all_template_obj['id'] = each.id
+            all_template_obj['word_name'] = each.word_name
+            all_template_obj['word_template'] = each.word_template.file.name
+            all_template_list.append(all_template_obj.copy())
+        print('-'*80)
+        print(all_template_list)
+        print('-'*80)
+        return JsonResponse({'message' : all_template_list})

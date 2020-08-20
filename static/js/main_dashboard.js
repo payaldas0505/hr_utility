@@ -14,6 +14,7 @@ $(document).ready(function () {
         SetPermissionsUserDashboard()
     }
 
+    DocumentTemplateDropdown()
 
     // var language_id = localStorage.getItem('language')
     // $.ajax({
@@ -59,6 +60,29 @@ $(document).ready(function () {
 
 
 })
+
+function DocumentTemplateDropdown() {
+    $.ajax({
+        url: '/dashboard/document_template_dropdown/',
+        headers: { Authorization: 'Bearer ' + userDetails.access },
+        type: 'GET',
+
+        success: function (response) {
+            console.log(response)
+            console.log(response.message.length)
+            for (i = 0; i < response.message.length; i++) {
+                temp = '<option value=' + response.message[i].id + '>' + response.message[i].word_name + '</option>'
+                $('#Template-dropdown-select').append(temp)
+                $('select').formSelect();
+            }
+
+        },
+        error: function (xhr) {
+            parsed_json = JSON.parse(xhr.responseText)
+            M.toast({ html: parsed_json.message, classes: 'red rounded' })
+        }
+    });
+}
 
 function GetPermissions() {
     $.ajax({
@@ -648,4 +672,10 @@ function GetTemplateDropdown() {
     $('#Template-Dropdown-Header').show();
     $('#Dashboard-Datatable-Div').hide();
     $('#templateDropdownForm').hide();
+}
+
+
+function GetSelectedTemplateId(){
+    var a = $( "#Template-dropdown-select option:selected" ).val();
+    alert(a)
 }
