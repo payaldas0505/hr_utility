@@ -4,6 +4,7 @@ $(document).ready(function () {
     $('#Template-dropdown').hide();
     $('#templateDropdownForm').hide();
     $('#Template-Dropdown-Header').hide();
+    $('.dropdown-back-button').hide();
 
     $('select').formSelect();
 
@@ -672,10 +673,59 @@ function GetTemplateDropdown() {
     $('#Template-Dropdown-Header').show();
     $('#Dashboard-Datatable-Div').hide();
     $('#templateDropdownForm').hide();
+    $('.dropdown-back-button').show();
 }
 
 
-function GetSelectedTemplateId(){
-    var a = $( "#Template-dropdown-select option:selected" ).val();
-    alert(a)
+function GetSelectedTemplateId() {
+    $("#templateDropdownForm").empty();
+
+    var templateId = $("#Template-dropdown-select option:selected").val();
+    // alert(templateId)
+    // $('#dashboard-template-form').show();
+    $.ajax({
+        type: 'GET',
+        url: "/dashboard/select_template/" + templateId,
+        headers: { Authorization: 'Bearer ' + userDetails.access },
+        success: function (result) {
+            console.log('result')
+            console.log(result)
+            console.log(result[0])
+            localStorage.setItem('fill_filename', result[1].filename)
+            var FillId = []
+            for (i = 0; i < result[0].placeholder_list.length; i++) {
+
+                if (result[0].placeholder_list[i].includes('image')) {
+                    input_type = 'file'
+                }
+                else {
+                    input_type = 'text'
+                }
+                div_class_start = '<div class="row"><div class="input-field col s12"><i class="material-icons prefix">edit</i>'
+                // temp = '<p>'+response[0].placeholder_list[i]+'</p>'
+                input = '<input id=' + result[0].placeholder_list[i] + ' type=' + input_type + ' class="validate" required="" aria-required="true">'
+                label = '<label for=' + result[0].placeholder_list[i] + '>' + result[0].placeholder_list[i] + '</label>'
+                div_class_end = '</div></div>'
+                $('#templateDropdownForm').append(div_class_start)
+                $('#templateDropdownForm').append(input)
+                $('#templateDropdownForm').append(label)
+                $('#templateDropdownForm').append(div_class_end)
+                FillId.push(result[0].placeholder_list[i])
+                $('#templateDropdownForm').show();
+                $('.dropdown-back-button').hide();
+
+            }
+            console.log(FillId)
+            localStorage.setItem("FillId", JSON.stringify(FillId));
+        },
+        error: function (data) {
+            obj = JSON.parse(data.responseText)
+            M.toast({ html: obj.detail })
+        }
+    })
+
+}
+
+function GotoDashboard(){
+    window.location.reload();
 }

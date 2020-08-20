@@ -12,6 +12,8 @@ from ..serializer import DatatableSerializer, AuthUserSerializer, UserRegisterat
 from ..models  import query_users_by_args, UserRegisterationModel, WordTemplateNew
 from django.db import transaction
 from .check_permission import has_permission
+import re
+import docx2txt
 
 class Dashboard(APIView):
     """
@@ -292,3 +294,33 @@ class DocumentTeamplateDropdown(APIView):
         print(all_template_list)
         print('-'*80)
         return JsonResponse({'message' : all_template_list})
+
+class SelectTemplate(APIView):
+    authentication_classes = [CustomJWTAuthentication]
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, pk):
+        print('='*80)
+        print(pk)
+        print('='*80)
+        template_form = WordTemplateNew.objects.filter(id=pk)
+        print(template_form)
+        print(template_form[0].word_template)
+
+        text_list = []
+        regex = "(?<={{)[^}}]*(?=}})"
+        text = docx2txt.process(template_form[0].word_template)
+        print(text)
+        used = set()
+        text_list = [x for x in re.findall(
+            regex, text) if x not in used and (used.add(x) or True)]
+        print('text_list', text_list)
+
+        test = [
+            {"placeholder_list": text_list},
+            {'filename': template_form[0].word_template.file.name.split('/media/')[1]}
+        ]
+        print('^'*80)
+        print(test)
+        print('^'*80)
+        return JsonResponse(test, safe=False)
