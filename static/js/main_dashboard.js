@@ -5,6 +5,7 @@ $(document).ready(function () {
     $('#templateDropdownForm').hide();
     $('#Template-Dropdown-Header').hide();
     $('.dropdown-back-button').hide();
+    $('.save-cancel-button').hide();
 
     $('select').formSelect();
 
@@ -674,6 +675,7 @@ function GetTemplateDropdown() {
     $('#Dashboard-Datatable-Div').hide();
     $('#templateDropdownForm').hide();
     $('.dropdown-back-button').show();
+    $('.save-cancel-button').hide();
 }
 
 
@@ -713,6 +715,7 @@ function GetSelectedTemplateId() {
                 FillId.push(result[0].placeholder_list[i])
                 $('#templateDropdownForm').show();
                 $('.dropdown-back-button').hide();
+                $('.save-cancel-button').show();
 
             }
             console.log(FillId)
@@ -728,4 +731,98 @@ function GetSelectedTemplateId() {
 
 function GotoDashboard(){
     window.location.reload();
+}
+
+
+function SaveFilledForm(){
+    // alert('hi')
+    // $('#UploadTemplate').prop('disabled', true);
+    var filename = localStorage.getItem('fill_filename')
+    var fd = new FormData();
+    var retrievedData = localStorage.getItem("FillId");
+    var id = JSON.parse(retrievedData);
+
+    $.each(id, function( i, l ){
+        console.log(l)
+        var id_name = $($.trim('#')+$.trim(l)).val()
+        fd.append(l, id_name)
+
+    })
+
+    fd.append('filename', filename)
+   
+
+    console.log(fd)
+    $.ajax({
+        url: '/dashboard/fill_dropdown_template/',
+        headers: { Authorization: 'Bearer ' + userDetails.access },
+        method : "POST",
+        enctype: 'multipart/form-data',
+        data : fd,
+        contentType : false,    
+        processData: false,
+        async : false,
+        success: function(response){
+            M.toast({html: 'Template is successfully filled', classes: 'green rounded'})
+   
+            $('#templateForm *').attr("disabled", true);                   
+            $('#templateForm *').fadeTo('slow', .8);
+           
+            setTimeout(function() {
+                var object = document.getElementById('pdf_preview');
+                // alert(response['success'])
+                object.setAttribute('data', response['success']);
+            
+                var clone = object.cloneNode(true);
+                var parent = object.parentNode;
+            
+                parent.removeChild(object );
+                parent.appendChild(clone );
+                }, 3000);
+            
+            // $("#pdf_preview").setAttribute("data", response['success']) 
+            
+            $('#pdf').show();
+            return false
+            
+            
+        },
+        error: function(xhr) {
+            if (xhr.status == 401) {
+
+                getaccessToken(SaveFields)
+            }
+            
+            parsed_jsondata = JSON.parse(xhr.responseText)
+            // alert(parsed_jsondata.error)
+            M.toast({html: parsed_jsondata.error, classes: 'red rounded'})
+            setTimeout(function() {
+                $('#field_save_btn').prop('disabled', true)
+              }, 2000);
+              
+            return false
+        }
+
+    });
+    
+}
+
+function SaveFillTemplate(){
+    var retrievedData = localStorage.getItem("FillId");
+    var FillId = JSON.parse(retrievedData);
+
+    values = []
+    $.each(FillId, function( i, l ){
+        console.log(l)
+        var id_name = $($.trim('#')+$.trim(l)).val()
+        console.log(id_name)
+        if ( id_name == ""){
+            M.toast({html: "Please fill the " +l+ "field", classes: 'red rounded' })
+            $('#field_save_btn').prop('disabled', false)
+            return false;
+        }
+        
+            
+      });
+      SaveFilledForm();
 }

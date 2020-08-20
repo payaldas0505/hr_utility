@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import UserRegisterationModel, WordTemplateNew, WordTemplateData
+from .models import UserRegisterationModel, WordTemplateNew, WordTemplateData, FilledTemplateData
 from django.contrib.auth.models import User
 
 class AuthUserSerializer(serializers.ModelSerializer):
@@ -44,3 +44,10 @@ class WordTemplateDetailsSerializer(serializers.ModelSerializer):
                     'dummy_values',
                     'pdf'
                 )
+
+class FilledTemplateDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FilledTemplateData
+        fields = (
+            '__all__'
+        )

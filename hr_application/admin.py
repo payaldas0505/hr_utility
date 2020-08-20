@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (UserRegisterationModel, UserRole, 
                     WordTemplateNew, RolePermissions,
-                    WordTemplateData)
+                    WordTemplateData, FilledTemplateData)
 import nested_admin
 
 # Register your models here.
@@ -15,7 +15,7 @@ class UserRoleAdmin(admin.ModelAdmin):
     filter_horizontal = ('permissions',)
 
 admin.site.register(UserRole, UserRoleAdmin)
-
+admin.site.register(FilledTemplateData)
 
 # class PermissionInline(nested_admin.NestedTabularInline):
 #     extra = 0

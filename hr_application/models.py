@@ -128,6 +128,13 @@ class WordTemplateData(models.Model):
     def __str__(self):
         return '{}' .format(self.pdf_name)
 
+class FilledTemplateData(models.Model):
+    fill_values = jsonfield.JSONField()
+
+    class Meta:
+        verbose_name_plural = "6. Fill Template Details"
+    def __str__(self):
+        return '{}'.format(self.fill_values)
 
     ORDER_COLUMN_CHOICES = Choices(
         ('0', 'pdf_name'),
