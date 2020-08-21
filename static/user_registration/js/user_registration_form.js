@@ -3,19 +3,16 @@ jQuery(document).ready(function ($) {
     $('select').not('.disabled').formSelect();
     $('textarea#textarea1').characterCounter();
     $('input#telephone').characterCounter();
-<<<<<<< HEAD
     get_labels('user_registration')
-=======
     var userDetails = getValues('UserDetails')
     var access = userDetails.access
 
->>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
     getUserRoleDropDown();
 
     // Check username avaliable in database
     $('#user_name').on('blur', function () {
         var user_name = $('#user_name').val();
-        var get_url = '/dashboard/user_management/add_user/?token';
+        var get_url = '/dashboard/user_management/add_user/';
         if (user_name == '') {
             var user_name_state = false;
             return;
@@ -55,14 +52,13 @@ jQuery(document).ready(function ($) {
     // Check emailid avaliable in database
     $('#email').on('blur', function () {
         var email = $('#email').val();
-        var get_url = '/dashboard/user_management/add_user/?token';
+        var get_url = '/dashboard/user_management/add_user/';
 
         if (email == '') {
             var email_state = false;
             return;
         }
         $.ajax({
-<<<<<<< HEAD
             url: 'check_email/',
             headers: { Authorization: 'Bearer ' + access },
             type: 'post',
@@ -89,30 +85,6 @@ jQuery(document).ready(function ($) {
                 let parsed_jsondata = JSON.parse(xhr.responseText)
                 // alert(parsed_jsondata.error)
                 M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
-=======
-        url: 'check_email/',
-        headers: { Authorization: 'Bearer '+access},
-        type: 'post',
-        data: {
-            'email_check' : 1,
-            'email' : email,
-        },
-        success: function(response){
-            if (response.message == 'taken' ) {
-                email_state = false;
-                $('#email').addClass("invalid");
-                M.toast({html: response.toast_msg, classes: 'red rounded'})
-            }
-            else if (response.message == 'not_taken') {
-                email_state = true;
-                $('#email').addClass("valid");
-            }
-
-        },
-        error: function(xhr) {
-            if (xhr.status == 401) {
-                getaccessTokenForUrl(get_url);
->>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
             }
         });
     });
@@ -150,85 +122,6 @@ function getUserRoleDropDown() {
     });
 }
 
-// function getaccessTokenForGetRoles(){
-//     $.ajax({
-//         type: 'POST',
-//         url: '/refresh_token/',
-//         data : {
-//           'refresh' : localStorage.getItem("Refresh"),
-//         },
-//         success: function (result) {
-//            localStorage.setItem("Token", result.access);
-//            token = access
-
-//         setTimeout(function() {
-//             getUserRoleDropDown()
-//           }, 500);
-
-//         },
-//         error: function(data){
-//            obj = JSON.parse(data.responseText)
-//            M.toast({html: obj.detail})
-//         }
-//   })
-// }
-<<<<<<< HEAD
-// Get toast messages from backend 
-function get_toast(label) {
-=======
-// Get toast messages from backend
-function get_toast(label){
->>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
-    $("#submit_form").attr("disabled", false);
-
-    $.ajax({
-        url: '/v2s/toast_msg/',
-        type: 'post',
-        data: {
-            'toast_label': label,
-        },
-<<<<<<< HEAD
-        success: function (response) {
-
-            M.toast({ html: response.message, classes: 'red rounded' })
-            return false;
-=======
-        success: function(response){
-
-        M.toast({html: response.message, classes: 'red rounded'})
-        return false;
->>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
-
-        },
-        error: function (xhr) {
-            let parsed_jsondata = JSON.parse(xhr.responseText)
-            // alert(parsed_jsondata.error)
-            M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
-        }
-    })
-}
-
-// Preview of image function
-function readURL(input) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            $('#view_image').attr('src', e.target.result);
-            $('#view_image').show();
-        }
-        reader.readAsDataURL(input.files[0]); // convert to base64 string
-    }
-<<<<<<< HEAD
-}
-
-$("#profile_picture").change(function () {
-=======
-  }
-
-  $("#profile_picture").change(function() {
->>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
-    readURL(this);
-});
 
 
 // Save data into database
@@ -245,32 +138,21 @@ function RegisterUserForm() {
     formData.append('role', role);
     formData.append('user_status', user_status);
     $.ajax({
-        url: "",
+        url: "/dashboard/user_management/add_user_data/",
         headers: { Authorization: 'Bearer ' + access },
         method: "POST",
         enctype: 'multipart/form-data',
-<<<<<<< HEAD
         data: formData,
         contentType: false,
-=======
-        data : formData,
-        contentType : false,
->>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
         processData: false,
         async: false,
         success: function (jsonData) {
             M.toast({ html: jsonData['message'], outDuration: 2000, classes: 'green rounded' })
             // var userDetails = getValues('UserDetails')
             // var token = userDetails.access;
-<<<<<<< HEAD
-            setTimeout(function () {
-                window.location.href = "/dashboard/user_management/?token=" + access;
-            }, 3000);
-=======
             setTimeout(function() {
                 window.location.href = "/dashboard/user_management/";
               }, 3000);
->>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
         },
         error: function (xhr) {
             if (xhr.status == 401) {
@@ -293,14 +175,14 @@ function RegisterUser() {
 
     $("#submit_form").attr("disabled", true);
 
-    let user_name = $('#user_name').val()
-    let first_name = $('#first_name').val();
-    let last_name = $('#last_name').val();
-    let email = $('#email').val();
-    let password = $('#password').val();
-    let confirm_password = $('#confirm_password').val();
-    let role = $("#role_drop_down option:selected").val();
-    let user_status = $("input[name='user_status']:checked", '#registration_form').val();
+     user_name = $('#user_name').val()
+     first_name = $('#first_name').val();
+     last_name = $('#last_name').val();
+     email = $('#email').val();
+     password = $('#password').val();
+     confirm_password = $('#confirm_password').val();
+     role = $("#role_drop_down option:selected").val();
+     user_status = $("input[name='user_status']:checked", '#registration_form').val();
     if (user_status) {
         user_status = true
     }
@@ -366,38 +248,16 @@ function RegisterUser() {
         return false;
     }
 
-<<<<<<< HEAD
     else {
-=======
-    else{
->>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
         RegisterUserForm()
     }
 }
 
-<<<<<<< HEAD
 function getUserDashboardDatatable() {
-=======
-function getUserDashboardDatatable(){
->>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
     // var userDetails = getValues('UserDetails')
     // var token = userDetails.access;
     var get_url = "/dashboard/user_management/"
     $.ajax({
-<<<<<<< HEAD
-        method: 'GET',
-        headers: { Authorization: 'Bearer ' + access },
-        url: "/dashboard/user_management/?token=" + access,
-        success: function (data) {
-            window.location.href = get_url + access
-        },
-        error: function (xhr) {
-            if (xhr.status == 401) {
-                getaccessTokenForUrl(get_url);
-            }
-        }
-    })
-=======
     method : 'GET',
     headers: { Authorization: 'Bearer '+access},
     url : "/dashboard/user_management/",
@@ -410,6 +270,5 @@ function getUserDashboardDatatable(){
         }
     }
 })
->>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
 }
 

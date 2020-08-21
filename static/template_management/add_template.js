@@ -20,7 +20,7 @@ function SubmitUploadWordTemplate() {
     fd.append('word_name', word_name);
 
     $.ajax({
-        url: '',
+        url: '/dashboard/template_management/add_template_data/',
         headers: { Authorization: 'Bearer ' + access },
         type: 'post',
         data: fd,

@@ -164,8 +164,8 @@ class GetAllUsersView(APIView):
             result['draw'] = datatable_server_processing['draw']
             result['recordsTotal'] = datatable_server_processing['total']
             result['recordsFiltered'] = datatable_server_processing['count']
-            print("#"*20)
-            print(result)
+            # print("#"*20)
+            # print(result)
             return Response(result)
         except Exception as e:
             print("Exception in getting  all user", e)

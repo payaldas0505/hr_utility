@@ -22,17 +22,10 @@ function getdashboard() {
     var token = access;
     var get_url = "/dashboard/"
     $.ajax({
-<<<<<<< HEAD
-        method: 'GET',
-        url: get_url + token,
-        success: function(data) {
-            window.location.href = get_url + token
-=======
         method : 'GET',
         url : get_url,
         success: function(data){
             window.location.href = get_url
->>>>>>> umesh
         },
         error: function(xhr) {
             if (xhr.status == 401) {
@@ -52,15 +45,9 @@ function GetAddTemplatePage() {
     $.ajax({
         type: 'GET',
         url: 'add_template/',
-<<<<<<< HEAD
-        headers: { Authorization: 'Bearer ' + token },
-        success: function(data) {
-            window.location.href = get_url + token
-=======
         headers: { Authorization: 'Bearer '+token},
         success: function (data) {
         window.location.href = get_url
->>>>>>> umesh
         },
         error: function(data) {
             if (data.status == 401) {

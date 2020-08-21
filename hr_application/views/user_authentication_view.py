@@ -124,22 +124,18 @@ class CustomJWTAuthentication(JWTAuthentication):
             decoded = jwt.decode(raw_token, settings.SECRET_KEY)
             username = decoded['username']
             user_id = decoded['user_id']
-            print('username', username, user_id)
+            # print('username', username, user_id)
 
             # get user object from database
             user_obj = UserRegisterationModel.objects.filter(
                 user_name=username).values()
 
-            print("#"*20)
 
             # get user object in the session
             for obj in user_obj:
                 for key, value in obj.items():
                     request.session[key] = value
-                    print("storing user object in session",
-                          key, request.session[key])
-
-            print("#"*20)
+                  
             validated_token = self.get_validated_token(raw_token)
 
             return self.get_user(validated_token), validated_token
