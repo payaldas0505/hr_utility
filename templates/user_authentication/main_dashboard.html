@@ -1,13 +1,15 @@
 {% extends 'user_authentication/base.html' %}
-
+{% load static %}
 
 {% block content %}
-	<div id="Dashboard_main">
-	<h3 class="dashboard_label header">Document Dashboard</h2>
-    <br>
-      <a href="/usermanagement/add_user_page/" class="add_user waves-effect waves-light btn" style="margin-bottom: -124px;"><i class="material-icons left">add_circle</i><span class="add_user_button">Document</span></a>
-	
-	  <!-- <table id="example" class="display" style="width:auto;">
+<div id="Dashboard_main">
+    <h3 class="main_dashboard_label header">Document Dashboard</h2>
+        <br>
+        <a href="/usermanagement/add_user_page/" class="add_user waves-effect waves-light btn"
+            style="margin-bottom: -124px;"><i class="material-icons left">add_circle</i><span
+                class="add_user_button">Document</span></a>
+
+        <!-- <table id="example" class="display" style="width:auto;">
 		<thead>
 			<tr>
                 <th class="dt_sr_no_label">Sr No.</th>
@@ -18,10 +20,10 @@
 			</tr>
 		</thead>
       </table> -->
-	</div>
+</div>
 
 
-	<!-- <div id='dashboardRegisterForm'>
+<!-- <div id='dashboardRegisterForm'>
 	<a id="back_button" onclick="getDashboardDatatable()" class="waves-effect waves-light btn"><i class="material-icons prefix">arrow_back</i></a>
     
     <div id="DisableDiv" class="form-border row">
@@ -204,81 +206,83 @@
             </div>      
         </form>   
     </div>
-	</div> -->
+    </div> -->
+
+<script type="text/javascript" src="{% static '/js/get_labels.js' %}"></script>
 <script src="/static/js/main_dashboard.js"></script>
-<!-- <script src="/static/js/main_datatable.js"></script> -->
+
 <script>
-        $(document).ready(function(){
-            $('select').formSelect();
-             // Check username avaliable in database
-    $('#user_name_edit').on('blur', function(){
-        var user_name = $('#user_name_edit').val();
-        if (user_name == '') {
-            user_name_state = false;
-            return;
-        }
-        $.ajax({
-          url: '/user/check_username/',
-          type: 'post',
-          data: {
-              'user_name_check' : 1,
-              'user_name' : user_name,
-          },
-          success: function(response){
-
-            if (response.message == 'taken' ) {
+    $(document).ready(function () {
+        $('select').formSelect();
+        // Check username avaliable in database
+        $('#user_name_edit').on('blur', function () {
+            var user_name = $('#user_name_edit').val();
+            if (user_name == '') {
                 user_name_state = false;
-                $('#user_name_edit').addClass("invalid");
-                M.toast({html: response.toast_msg , classes: 'red rounded'})
+                return;
             }
-            else if (response.message == 'not_taken') {
-                username_state = true;
-                $('#user_name_edit').addClass("valid");
-                M.toast({html: response.toast_msg, classes: 'green darken-1 rounded'})
-            }
-          },
-          error: function(xhr) {
-            parsed_jsondata = JSON.parse(xhr.responseText)
-            // alert(parsed_jsondata.error)
-            M.toast({html: parsed_jsondata.error, classes: 'red rounded'})
-        }
-        });
-    });	
+            $.ajax({
+                url: '/user/check_username/',
+                type: 'post',
+                data: {
+                    'user_name_check': 1,
+                    'user_name': user_name,
+                },
+                success: function (response) {
 
-    // Check emailid avaliable in database
-    $('#email_edit').on('blur', function(){
-        var email = $('#email_edit').val();
-        if (email == '') {
-            email_state = false;
-            return;
-        }
-        $.ajax({
-        url: '/user/check_email/',
-        type: 'post',
-        data: {
-            'email_check' : 1,
-            'email' : email,
-        },
-        success: function(response){
-            if (response.message == 'taken' ) {
+                    if (response.message == 'taken') {
+                        user_name_state = false;
+                        $('#user_name_edit').addClass("invalid");
+                        M.toast({ html: response.toast_msg, classes: 'red rounded' })
+                    }
+                    else if (response.message == 'not_taken') {
+                        username_state = true;
+                        $('#user_name_edit').addClass("valid");
+                        M.toast({ html: response.toast_msg, classes: 'green darken-1 rounded' })
+                    }
+                },
+                error: function (xhr) {
+                    parsed_jsondata = JSON.parse(xhr.responseText)
+                    // alert(parsed_jsondata.error)
+                    M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
+                }
+            });
+        });
+
+        // Check emailid avaliable in database
+        $('#email_edit').on('blur', function () {
+            var email = $('#email_edit').val();
+            if (email == '') {
                 email_state = false;
-                $('#email_edit').addClass("invalid");
-                M.toast({html: response.toast_msg, classes: 'red rounded'})
+                return;
             }
-            else if (response.message == 'not_taken') {
-                email_state = true;
-                $('#email_edit').addClass("valid");
-            }
-           
-        },
-        error: function(xhr) {
-            parsed_jsondata = JSON.parse(xhr.responseText)
-            // alert(parsed_jsondata.error)
-            M.toast({html: parsed_jsondata.error, classes: 'red rounded'})
-        }
+            $.ajax({
+                url: '/user/check_email/',
+                type: 'post',
+                data: {
+                    'email_check': 1,
+                    'email': email,
+                },
+                success: function (response) {
+                    if (response.message == 'taken') {
+                        email_state = false;
+                        $('#email_edit').addClass("invalid");
+                        M.toast({ html: response.toast_msg, classes: 'red rounded' })
+                    }
+                    else if (response.message == 'not_taken') {
+                        email_state = true;
+                        $('#email_edit').addClass("valid");
+                    }
+
+                },
+                error: function (xhr) {
+                    parsed_jsondata = JSON.parse(xhr.responseText)
+                    // alert(parsed_jsondata.error)
+                    M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
+                }
+            });
         });
     });
-});
- </script>
-    
+</script>
+
 {% endblock %}

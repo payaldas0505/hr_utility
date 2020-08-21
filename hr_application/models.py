@@ -10,8 +10,10 @@ class RolePermissions(models.Model):
     api_method = models.CharField(max_length=100)
     url_identifier = models.CharField(max_length=100)
     status = models.BooleanField(null=False)
+
     class Meta:
         verbose_name_plural = "3.Permissions"
+
     def __str__(self):
         return 'Permission name: {}, API method: {}' .format(self.permission_name, self.api_method)
 
@@ -20,49 +22,32 @@ class UserRole(models.Model):
     role_name = models.CharField(max_length=100)
     role_status = models.BooleanField(null=False)
     permissions = models.ManyToManyField(RolePermissions)
+
     class Meta:
         verbose_name_plural = "2. Roles"
+
     def __str__(self):
         return '{}' .format(self.role_name)
 
 # Create your models here.
+
+
 class UserRegisterationModel(models.Model):
-    user = models.OneToOneField(User, unique=True, on_delete=models.CASCADE, null=False)
+    user = models.OneToOneField(
+        User, unique=True, on_delete=models.CASCADE, null=False)
     user_name = models.CharField(max_length=100, null=False)
     first_name = models.CharField(max_length=100, null=False)
     last_name = models.CharField(max_length=100)
     email = models.EmailField(max_length=100, null=False)
     role = models.ManyToManyField(UserRole)
     user_status = models.BooleanField(null=False)
+
     class Meta:
         verbose_name_plural = "1. User Registration"
+
     def __str__(self):
         return '{}' .format(self.first_name)
 
-
-# class UserRole(models.Model):
-#     role_no = models.IntegerField(null=False)
-#     role_name = models.CharField(max_length=100)
-#     class Meta:
-#         verbose_name_plural = "2. Roles and Permissions"
-#     def __str__(self):
-#         return '{}' .format(self.role_name)
-
-# class Permission(models.Model):
-#     permission = models.ForeignKey(UserRole, on_delete=models.CASCADE, null=False)
-#     user_management_page = models.BooleanField(null=False)
-#     add_user = models.BooleanField(null=False)
-#     edit_user = models.BooleanField(null=False)
-#     view_user = models.BooleanField(null=False)
-#     delete_user = models.BooleanField(null=False)
-#     template_management_page = models.BooleanField(null=False)
-#     add_template = models.BooleanField(null=False)
-#     edit_template = models.BooleanField(null=False)
-#     view_template = models.BooleanField(null=False)
-#     delete_template = models.BooleanField(null=False)
-
-#     def __str__(self):
-#         return '{}' .format(self.permission)
 
 ORDER_COLUMN_CHOICES = Choices(
     ('0', 'user_name'),
@@ -71,8 +56,10 @@ ORDER_COLUMN_CHOICES = Choices(
     ('3', 'user_id')
 )
 
-def query_users_by_args(request,**kwargs):
-    check_user_is_superuser = User.objects.filter(username = request.user.username).values('is_superuser')
+
+def query_users_by_args(request, **kwargs):
+    check_user_is_superuser = User.objects.filter(
+        username=request.user.username).values('is_superuser')
     draw = int(kwargs.get('draw', None)[0])
     length = int(kwargs.get('length', None)[0])
     start = int(kwargs.get('start', None)[0])
@@ -87,18 +74,18 @@ def query_users_by_args(request,**kwargs):
     if check_user_is_superuser[0]['is_superuser'] == True:
         queryset = UserRegisterationModel.objects.all()
     else:
-        getuserid = UserRegisterationModel.objects.filter(user_name = request.user.username).values('role')
+        getuserid = UserRegisterationModel.objects.filter(
+            user_name=request.user.username).values('role')
         user_id = getuserid[0]['role']
-        queryset = UserRegisterationModel.objects.filter(role__gte = user_id)
+        queryset = UserRegisterationModel.objects.filter(role__gte=user_id)
 
     total = queryset.count()
 
     if search_value:
         queryset = queryset.filter(Q(id__icontains=search_value) |
-                                        Q(user_name__icontains=search_value) |
-                                        Q(email__icontains=search_value)
-                                        )
-
+                                   Q(user_name__icontains=search_value) |
+                                   Q(email__icontains=search_value)
+                                   )
 
     count = queryset.count()
 
@@ -111,23 +98,28 @@ def query_users_by_args(request,**kwargs):
         'draw': draw
     }
 
+
 class WordTemplateNew(models.Model):
     word_name = models.CharField(max_length=100, null=False)
-    word_template = models.FileField(upload_to = 'word_template', blank = False)
+    word_template = models.FileField(upload_to='word_template', blank=False)
+
     class Meta:
         verbose_name_plural = "4. Uploaded Templates"
+
     def __str__(self):
         return '{}' .format(self.word_name)
 
+
 class WordTemplateData(models.Model):
-    pdf_name =  models.CharField(max_length=100)
+    pdf_name = models.CharField(max_length=100)
     dummy_values = jsonfield.JSONField()
-    pdf = models.FileField(upload_to = 'filled_template', blank = False)
+    pdf = models.FileField(upload_to='filled_template', blank=False)
+
     class Meta:
         verbose_name_plural = "5. Templates Details"
+
     def __str__(self):
         return '{}' .format(self.pdf_name)
-
 
     ORDER_COLUMN_CHOICES = Choices(
         ('0', 'pdf_name'),
@@ -137,8 +129,9 @@ class WordTemplateData(models.Model):
     )
 
 
-def query_templates_by_args(request,**kwargs):
-    check_user_is_superuser = User.objects.filter(username = request.user.username).values('is_superuser')
+def query_templates_by_args(request, **kwargs):
+    check_user_is_superuser = User.objects.filter(
+        username=request.user.username).values('is_superuser')
     draw = int(kwargs.get('draw', None)[0])
     length = int(kwargs.get('length', None)[0])
     start = int(kwargs.get('start', None)[0])
@@ -150,15 +143,13 @@ def query_templates_by_args(request,**kwargs):
     if order == 'desc':
         order_column = '-' + order_column
 
-
     queryset = WordTemplateData.objects.all()
     total = queryset.count()
 
     if search_value:
         queryset = queryset.filter(Q(id__icontains=search_value) |
-                                        Q(pdf_name__icontains=search_value)
-                                        )
-
+                                   Q(pdf_name__icontains=search_value)
+                                   )
 
     count = queryset.count()
 
@@ -170,3 +161,35 @@ def query_templates_by_args(request,**kwargs):
         'total': total,
         'draw': draw
     }
+
+
+class FilledTemplateData(models.Model):
+
+    fill_values = jsonfield.JSONField()
+
+    class Meta:
+
+        verbose_name_plural = "6. Fill Template Details"
+
+    def __str__(self):
+        return '{}'.format(self.fill_values)
+
+class Language(models.Model):
+    language_name = models.CharField(max_length=100, null=False)
+    class Meta:
+        verbose_name_plural = "4 Add Languages"
+    def __str__(self):
+        return '{}' .format(self.language_name) 
+
+class PageName(models.Model):
+    language_name = models.ForeignKey(Language, on_delete=models.CASCADE,null=False)
+    page_name = models.CharField(max_length=100, null=False)
+    def __str__(self):
+        return '{}' .format(self.page_name) 
+
+class PageLabel(models.Model):
+    page_name = models.ForeignKey(PageName, on_delete=models.CASCADE,null=False)
+    page_label_class_name = models.CharField(max_length=100, null=False)
+    page_label_text = models.CharField(max_length=100, null=False)
+    def __str__(self):
+        return '{}' .format(self.page_label_class_name)

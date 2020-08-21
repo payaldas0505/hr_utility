@@ -39,6 +39,7 @@ from ..config import perms_config
 
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
+
 class CustomTokenRefreshSerializer(TokenRefreshSerializer):
     @classmethod
     def get_token(cls, user):
@@ -69,10 +70,10 @@ class CustomTokenRefreshSerializer(TokenRefreshSerializer):
 
         return data
 
+
 class CustomTokenRefreshView(TokenRefreshView):
     serializer_class = CustomTokenRefreshSerializer
     token_obtain_pair = TokenObtainPairView.as_view()
-
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -104,9 +105,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return data
 
 
-
-
-
 class CustomJWTAuthentication(JWTAuthentication):
 
     def authenticate(self, request):
@@ -127,15 +125,17 @@ class CustomJWTAuthentication(JWTAuthentication):
             print('username', username, user_id)
 
             # get user object from database
-            user_obj = UserRegisterationModel.objects.filter(user_name=username).values()
+            user_obj = UserRegisterationModel.objects.filter(
+                user_name=username).values()
 
             print("#"*20)
 
             # get user object in the session
             for obj in user_obj:
-                for key,value in obj.items():
+                for key, value in obj.items():
                     request.session[key] = value
-                    print("storing user object in session", key, request.session[key])
+                    print("storing user object in session",
+                          key, request.session[key])
 
             print("#"*20)
             validated_token = self.get_validated_token(raw_token)
@@ -144,13 +144,12 @@ class CustomJWTAuthentication(JWTAuthentication):
         except Exception as e:
             print(e)
 
-
     def get_header(self, request):
         """
         Extracts the header containing the JSON web token from the given
         request.
         """
-        header= request.META.get('HTTP_AUTHORIZATION')
+        header = request.META.get('HTTP_AUTHORIZATION')
 
         if isinstance(header, str):
             # Work around django test client oddness
@@ -171,7 +170,6 @@ class LoginView(APIView):
     def get(self, request):
         """ get login page """
 
-
         try:
             return render(request, "user_authentication/login.html")
 
@@ -181,6 +179,7 @@ class LoginView(APIView):
             info_message = "cannot get login page"
             print(info_message)
             return Response({"success": False, "error": str(info_message)})
+
 
 class LogoutView(APIView):
     """ Logout class """
@@ -195,14 +194,13 @@ class LogoutView(APIView):
             info_message = 'You have successfully logged out'
             print(info_message)
             request.session.flush()
-            return JsonResponse({'data': str(info_message), 'url':'/login/'})
-       
+            return JsonResponse({'data': str(info_message), 'url': '/login/'})
+
         except Exception as e:
             print("exception while showing login page", e)
             info_message = "User Cannot logoutUser Cannot logout"
             print(info_message)
             return Response({"success": False, "error": str(info_message)})
-
 
 
 class GetChangePasswordView(APIView):
@@ -217,7 +215,7 @@ class GetChangePasswordView(APIView):
 
         try:
             return render(request, 'user_authentication/password_change_form.html')
-        
+
         except Exception as e:
             info_message = "Cannot get reset password page"
             print("exception while getting page", e)
@@ -277,23 +275,23 @@ class GetPermissions(APIView):
         try:
             user_id = request.session['user_id']
             perms = UserRegisterationModel.objects.filter(
-                                                          id=user_id
-                                                          ).filter(
-                                                                    role__role_status=True
-                                                                    ).filter(
-                                                                             role__permissions__status=True
-                                                                             ).values(
-                                                                                 'role__permissions__permission_name',
-                                                                                 'role__permissions__api_method',
-                                                                                 'role__permissions__url_identifier')
+                id=user_id
+            ).filter(
+                role__role_status=True
+            ).filter(
+                role__permissions__status=True
+            ).values(
+                'role__permissions__permission_name',
+                'role__permissions__api_method',
+                'role__permissions__url_identifier')
             print(perms)
 
             # Permissions setting in session
             perms_list_font_end = []
-            permission_list_backend= []
-            
+            permission_list_backend = []
+
             for perm in perms:
-                permission_dict =  {}
+                permission_dict = {}
                 for key, value in perm.items():
                     if key == 'role__permissions__permission_name':
                         permission_dict['permission_name'] = value.lower()
@@ -304,19 +302,19 @@ class GetPermissions(APIView):
                     else:
                         permission_dict['url_identifier'] = value
 
-
-                perm_name_method = perm['role__permissions__permission_name'].lower() +'_'+perm['role__permissions__api_method'].lower()
+                perm_name_method = perm['role__permissions__permission_name'].lower(
+                ) + '_'+perm['role__permissions__api_method'].lower()
                 perms_list_font_end.append(perm_name_method)
 
-
                 permission_list_backend.append(permission_dict)
-                
+
             print()
             request.session[perms_config.session_perm_key] = permission_list_backend
-            print("storing permissions for users in session {}:{}".format(perms_config.session_perm_key, permission_list_backend))
+            print("storing permissions for users in session {}:{}".format(
+                perms_config.session_perm_key, permission_list_backend))
             return JsonResponse(perms_list_font_end, safe=False)
 
         except Exception as error:
             info_message = "Permission fetching  issue due to Internal Server Error"
-            print( info_message, error)
-            return JsonResponse({'message' : str(info_message)},status = 422)
+            print(info_message, error)
+            return JsonResponse({'message': str(info_message)}, status=422)

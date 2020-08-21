@@ -13,14 +13,14 @@ from .views import (LoginView, CustomTokenObtainPairView,
                     GetAllUsersView, UserDatatableView,
                     NewGenDocxView, GetPermissions,
                     FillDocument, GetAllTemplatesView,
-                    WordTemplateDataView)
+                    WordTemplateDataView, GetLabels)
 
 urlpatterns = [
     path('api/rest-auth/', include('rest_auth.urls')),
 
     path('login/', LoginView.as_view(), name="login"),
 
-    path('logout/', LogoutView.as_view(), name = "logout"),
+    path('logout/', LogoutView.as_view(), name="logout"),
 
     path('access_token/', CustomTokenObtainPairView.as_view(), name="gettoken"),
 
@@ -33,32 +33,47 @@ urlpatterns = [
     path('forgot_password/', NewPasswordView.as_view(), name="forgot_password"),
 
     path('dashboard/get_change_password/', GetChangePasswordView.as_view(),
-        name='get_change_password'),
+         name='get_change_password'),
 
     path('dashboard/save_password/', SaveChangePasswordView.as_view(),
-        name='save_password'),
+         name='save_password'),
 
-    path('dashboard/user_management/', UserManagementDashboard.as_view(), name="user_management"),
+    path('dashboard/user_management/',
+         UserManagementDashboard.as_view(), name="user_management"),
 
-    path('dashboard/user_management/add_user/', AddUserFormView.as_view(), name="add_user"),
+    path('dashboard/user_management/add_user/',
+         AddUserFormView.as_view(), name="add_user"),
 
-    path('dashboard/user_management/get_all_user', GetAllUsersView.as_view(), name="get_all_user"),
+    path('dashboard/user_management/get_all_user',
+         GetAllUsersView.as_view(), name="get_all_user"),
 
-    path('dashboard/user_management/add_user/get_roles/', GetRoleDropDown.as_view(), name="get_roles"),
+    path('dashboard/user_management/add_user/get_roles/',
+         GetRoleDropDown.as_view(), name="get_roles"),
 
-    path('dashboard/user_management/add_user/check_username/', CheckUsername.as_view(), name="check_username"),
+    path('dashboard/user_management/add_user/check_username/',
+         CheckUsername.as_view(), name="check_username"),
 
-    path('dashboard/user_management/add_user/check_email/', CheckEmail.as_view(), name="check_email"),
+    path('dashboard/user_management/add_user/check_email/',
+         CheckEmail.as_view(), name="check_email"),
 
-    path('dashboard/user_management/edit_user_form/<int:pk>', UserDatatableView.as_view(), name="edit_user_form"),
+    path('dashboard/user_management/edit_user_form/<int:pk>',
+         UserDatatableView.as_view(), name="edit_user_form"),
 
-    path('dashboard/template_management/', TemplateManagementDashboard.as_view(), name="template_management"),
+    path('dashboard/template_management/',
+         TemplateManagementDashboard.as_view(), name="template_management"),
 
-    path('dashboard/template_management/add_template/', NewGenDocxView.as_view(), name='new_generate_docx'),
+    path('dashboard/template_management/add_template/',
+         NewGenDocxView.as_view(), name='new_generate_docx'),
 
-    path('dashboard/template_management/get_all_templates', GetAllTemplatesView.as_view(), name="get_all_templates"),
+    path('dashboard/template_management/get_all_templates',
+         GetAllTemplatesView.as_view(), name="get_all_templates"),
 
-    path('dashboard/template_management/add_template/fill/', FillDocument.as_view(), name='fill_docx'),
+    path('dashboard/template_management/add_template/fill/',
+         FillDocument.as_view(), name='fill_docx'),
 
-    path('dashboard/template_management/delete_template/<int:pk>', WordTemplateDataView.as_view(), name='delete_template')
+    path('dashboard/template_management/delete_template/<int:pk>',
+         WordTemplateDataView.as_view(), name='delete_template'),
+
+    path('get_labels/', GetLabels.as_view(), name="get_labels"),
+
 ]

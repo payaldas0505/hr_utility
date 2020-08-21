@@ -18,14 +18,14 @@
         <div class="nav-wrapper">
             <a id="back_button" onclick="getdashboard()" data-activates="slide-out" class="brand-logo"
                 style="margin-right: 10px; margin-top: 1px;"><i class="material-icons prefix">arrow_back</i><span
-                    class="Menu_label">Back</span></a>
+                    class="back_label">Back</span></a>
         </div>
     </nav>
 </header>
 <div class="container">
     <div class="card-content">
         <div id="Dashboard_main">
-            <h3 class="dashboard_label header">User Management</h2>
+            <h3 class="user_dashboard_label header">User Management</h2>
                 <div class="row">
                     <div class="col s6 m4">
                         <div class="card horizontal">
@@ -57,13 +57,14 @@
                         class="add_user_button">Add user</span></a>
 
                 <table id="user_datatable" class="display" style="width:100%">
+                    <caption></caption>
                     <thead>
                         <tr>
-                            <th class="dt_sr_no_label">Sr No.</th>
-                            <th class="user_name_label">Username</th>
-                            <th class="email_label">Email</th>
-                            <th class="user_status_label">Status</th>
-                            <th class="action_btn_label">Action</th>
+                            <th class="dt_sr_no_label" scope="row">Sr No.</th>
+                            <th class="user_name_label" scope="row">Username</th>
+                            <th class="email_label" scope="row">Email</th>
+                            <th class="dt_user_status_label" scope="row">Status</th>
+                            <th class="action_btn_label" scope="row">Action</th>
                         </tr>
                     </thead>
                 </table>
@@ -71,7 +72,6 @@
 
 
         <div id='dashboardRegisterForm'>
-            <!-- <a id="back_button_form" onclick="getUserDashboardDatatable()" class="waves-effect waves-light btn"><i class="material-icons prefix">arrow_back</i>User Management Dashboard</a> -->
             <button class="btn waves-effect waves-light" onclick="getUserDashboardDatatable();"
                 style="margin-top: 20px;"><span class="submit_label">User Management Dashboard</span>
                 <i class="material-icons left">arrow_back</i>
@@ -152,12 +152,14 @@
     </div>
 </div>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="{% static '/js/get_labels.js' %}"></script>
 <script type="text/javascript" src="{% static '/js/get_refresh_token.js' %}"></script>
 <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="{% static '/js/materialize.min.js' %}"></script>
 <script src="{% static '/js/user_dashboard.js' %}"></script>
 <script src="{% static '/js/user_datatable.js' %}"></script>
 <script src="{% static '/js/logout.js' %}"></script>
+
 
 <script>
     $(document).ready(function () {

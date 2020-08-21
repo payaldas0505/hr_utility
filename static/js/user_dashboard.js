@@ -3,10 +3,12 @@ $(document).ready(function () {
     $(".add_user").hide();
     getUserRoleDropDown();
     SetPermissionsUserDashboard();
+    get_labels('user_dashboard')
 })
 
 var userDetails = getValues('UserDetails')
 var access = userDetails.access
+
 
 function getUserRoleDropDown() {
 
@@ -21,7 +23,7 @@ function getUserRoleDropDown() {
 
             var next_id = $("#role_drop_down");
             $.each(response, function (key, value) {
-                role = '<span class="role_option_' + value.id + '">' + value.role_name + '</span>'
+                let role = '<span class="role_option_' + value.id + '">' + value.role_name + '</span>'
                 $(next_id).append($("<option></option>").attr("value", value.id).html(role));
             });
             $(next_id).not('.disabled').formSelect();
@@ -30,7 +32,7 @@ function getUserRoleDropDown() {
             if (data.status == 401) {
                 getaccessToken(getUserRoleDropDown);
             }
-            obj = JSON.parse(data.responseText)
+            let obj = JSON.parse(data.responseText)
             M.toast({ html: obj.error, classes: 'red rounded' })
         }
 
