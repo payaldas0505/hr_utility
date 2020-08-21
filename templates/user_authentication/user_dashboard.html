@@ -156,13 +156,44 @@
 <script type="text/javascript" src="{% static '/js/get_refresh_token.js' %}"></script>
 <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="{% static '/js/materialize.min.js' %}"></script>
+<!-- <script src="{% static '/js/header.js' %}"></script> -->
 <script src="{% static '/js/user_dashboard.js' %}"></script>
 <script src="{% static '/js/user_datatable.js' %}"></script>
 <script src="{% static '/js/logout.js' %}"></script>
 
 
 <script>
+
+
+function getData(){
+  $.ajax({
+      url: '/dashboard/user_management_data/',
+      headers: { Authorization: 'Bearer '+ userDetails.access},
+      type: 'GET',
+
+      success: function(response){
+      },
+      error: function(xhr) {
+          if (xhr.status == 401) {
+              getaccessTokenForMainDashboard();
+          }
+          if (xhr.status == 403) {
+              logout();
+          }
+      }
+  });
+}
     $(document).ready(function () {
+      var userDetails = localStorage.getItem("UserDetails")
+      if (userDetails == null){
+          window.location.href = "/login/"
+      }
+      else{
+        var userDetails = getValues('UserDetails')
+        var access = userDetails.access
+        getData();
+      }
+
         $('select').formSelect();
         // Check username avaliable in database
         $('#user_name_edit').on('blur', function () {

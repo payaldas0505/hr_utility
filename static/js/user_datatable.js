@@ -19,7 +19,7 @@ var tableLoad = $(document).ready(function() {
             "error": function(data) {
                 // alert(data.status)
                 if (data.status == 401) {
-                    let get_url = "/dashboard/user_management/?token="
+                    let get_url = "/dashboard/user_management/"
                     getaccessTokenForUrl(get_url);
 
                 } else {

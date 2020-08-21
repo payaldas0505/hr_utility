@@ -1,9 +1,9 @@
 var userDetails = getValues('UserDetails')
-var refresh = userDetails.refresh 
+var refresh = userDetails.refresh
 
 // get access token when expired for functions
 function getaccessToken(fn){
-   
+
     $.ajax({
         type: 'POST',
         url: '/refresh_token/',
@@ -12,7 +12,7 @@ function getaccessToken(fn){
         },
         success: function (result) {
             updateItem('UserDetails', 'access', result.access);
-        
+
             fn();
         },
         error: function(data){
@@ -24,7 +24,7 @@ function getaccessToken(fn){
 
 // get access token when expired for urls
 function getaccessTokenForUrl(get_url){
-    
+
     $.ajax({
         type: 'POST',
         url: '/refresh_token/',
@@ -35,9 +35,9 @@ function getaccessTokenForUrl(get_url){
             updateItem('UserDetails', 'access', result.access);
             var userDetails = getValues('UserDetails')
             var token = userDetails.access
-           
+
             setTimeout(function() {
-                window.location.href = get_url+token;
+                window.location.href = get_url;
             }, 500);
 
         },
@@ -46,7 +46,28 @@ function getaccessTokenForUrl(get_url){
             M.toast({html: obj.detail})
         }
     })
-}  
+}
+
+
+function getaccessTokenForMainDashboard(fn){
+  $.ajax({
+          type: 'POST',
+          url: '/refresh_token/',
+          data : {
+              'refresh' : refresh,
+          },
+          success: function (result) {
+              updateItem('UserDetails', 'access', result.access);
+              var userDetails = getValues('UserDetails')
+              var token = userDetails.access
+              id = window.localStorage.getItem("editedUserId")
+          },
+          error: function(data){
+              obj = JSON.parse(data.responseText)
+              M.toast({html: obj.detail})
+          }
+  })
+}
 
 function getaccessTokenUserDashboard(fn){
 
@@ -60,7 +81,7 @@ function getaccessTokenUserDashboard(fn){
                 updateItem('UserDetails', 'access', result.access);
                 var userDetails = getValues('UserDetails')
                 var token = userDetails.access
-                
+
                 id = window.localStorage.getItem("editedUserId")
                 fn(id)
             },
@@ -69,7 +90,7 @@ function getaccessTokenUserDashboard(fn){
                 M.toast({html: obj.detail})
             }
     })
- }  
+ }
 
 function getObject(key) {
     return JSON.parse(localStorage.getItem(key));
@@ -82,7 +103,7 @@ function setObject(key, obj) {
 function updateItem(key, property, value)
 {
     var obj = getObject(key);
-    obj[property] = value;    
+    obj[property] = value;
     setObject(key, obj);
 }
 

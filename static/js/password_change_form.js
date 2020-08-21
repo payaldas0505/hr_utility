@@ -4,24 +4,24 @@ var access = userDetails.access
 get_labels('change_password')
 function getdashboard(){
     var token = access;
-    var get_url = "/dashboard/?token="
+    var get_url = "/dashboard/"
     $.ajax({
         method : 'GET',
-        url : "/dashboard/?token="+token,
+        url : "/dashboard/",
         success: function(data){
-            window.location.href = get_url+token
+            window.location.href = get_url
         },
         error : function(xhr){
             if(xhr.status == 401){
                 getaccessTokenForUrl(get_url);
             }
         }
-    })  
+    })
 }
 
 
 
-// submit changed password 
+// submit changed password
 function save_password() {
     $('#password_change_btn').attr("disabled", true);
     var old_password = $('#old_password').val()
@@ -100,7 +100,7 @@ function changepassword(){
         // alert("check match condition")
         $('#password_change_btn').attr("disabled", false);
         M.toast({ html: 'New password and confirm password fields do not match', classes: 'red rounded' })
-        
+
         return false;
     }
 

@@ -8,7 +8,7 @@ $(document).ready(function(){
     else {
         SetPermissionsUserDashboard()
     }
-    
+
 
     // var language_id = localStorage.getItem('language')
     // $.ajax({
@@ -30,7 +30,7 @@ $(document).ready(function(){
     //         M.toast({html: obj.error, classes: 'red rounded'})
     //     }
     // });
-      
+
    // Get and set all the labels from backend
     // $.ajax({
     //     type: 'POST',
@@ -51,7 +51,7 @@ $(document).ready(function(){
     //         M.toast({html: obj.error, classes: 'red rounded'})
     //     }
     // });
-    
+
 
 })
 
@@ -59,15 +59,15 @@ function GetPermissions(){
     $.ajax({
         url: 'permission',
         headers: { Authorization: 'Bearer '+ userDetails.access},
-        type: 'GET',   
+        type: 'GET',
 
         success: function(response){
-            
+
             localStorage.setItem("UserPermissions", JSON.stringify(response));
             console.log(response)
 
             SetPermissionsUserDashboard();
-    
+
         },
         error: function(xhr) {
             parsed_json = JSON.parse(xhr.responseText)
@@ -115,7 +115,7 @@ function readURL(input) {
       reader.readAsDataURL(input.files[0]);
     }
 }
-  
+
 $("#profile_picture_edit").change(function() {
     readURL(this);
     });
@@ -124,7 +124,7 @@ $("#profile_picture_edit").change(function() {
 
 function DeleteReport(id){
     url = '/usermanagement/edituserform/'+id
-    
+
     $.ajax({
         url : url,
         method : 'DELETE',
@@ -136,8 +136,8 @@ function DeleteReport(id){
             parsed_jsondata = JSON.parse(jsonData)
             M.toast({html: parsed_jsondata.message, classes: 'green rounded'})
             setTimeout(function() {
-                
-                window.location.href = "/dashboard/?token="+token 
+
+                window.location.href = "/dashboard/"
               }, 2000);
         },
         error: function(xhr, status, error) {
@@ -153,7 +153,7 @@ function DeleteReport(id){
             M.toast({html: parsed_jsondata.message, classes: 'red rounded'})
             return false
         }
-        
+
     })
     GetPermissions()
 }
@@ -179,9 +179,9 @@ function GetAccessTokenForBackButton(){
         success: function (result) {
            localStorage.setItem("Token", result.access);
            token = localStorage.getItem("Token")
-          
+
             setTimeout(function() {
-                window.location.href = "/dashboard/?token="+token;
+                window.location.href = "/dashboard/";
             }, 500);
 
         },
@@ -197,16 +197,16 @@ function getDashboardDatatable(){
     var token = localStorage.getItem("Token");
     $.ajax({
         method : 'GET',
-        url : "/dashboard/?token="+token,
+        url : "/dashboard/",
         success: function(data){
-            window.location.href = "/dashboard/?token="+token
+            window.location.href = "/dashboard/"
         },
         error : function(xhr){
             if(xhr.status == 401){
                 GetAccessTokenForBackButton()
             }
         }
-    })  
+    })
 }
 
 function getViewReport(id){
@@ -270,8 +270,8 @@ function getViewReport(id){
             $('select').not('.disabled').formSelect();
             $('#role_drop_down').prop("disabled", true);
             $('#role_drop_down').find('option[value='+role+']').prop('selected', true);
-            
-           
+
+
             $('select').not('.disabled').formSelect();
         },
         error: function(xhr, status, error) {
@@ -342,7 +342,7 @@ function getEditReport(id){
             $('select').not('.disabled').formSelect();
             $('#role_drop_down').prop("disabled", true);
             $('#role_drop_down').find('option[value='+role+']').prop('selected', true);
-            
+
             var user_role_id = localStorage.getItem('RoleId')
             if(user_role_id == 1){
                 $('#role_drop_down').prop("disabled", false);
@@ -381,19 +381,19 @@ function EditUserSave(user_name,first_name,last_name,
             formData.append('profile_picture', $('#profile_picture_edit')[0].files[0]);
         }
 
-        if($('#resume_edit').get(0).files.length === 0){            
+        if($('#resume_edit').get(0).files.length === 0){
         }
         else{
             formData.append('resume', $('#resume_edit')[0].files[0]);
         }
 
-        if($('#adhar_card_edit').get(0).files.length === 0){            
+        if($('#adhar_card_edit').get(0).files.length === 0){
         }
         else{
             formData.append('adhar_card', $('#adhar_card_edit')[0].files[0]);
         }
 
-        if($('#pan_card_edit').get(0).files.length === 0){            
+        if($('#pan_card_edit').get(0).files.length === 0){
         }
         else{
             formData.append('pan_card', $('#pan_card_edit')[0].files[0]);
@@ -420,12 +420,12 @@ function EditUserSave(user_name,first_name,last_name,
             headers: { Authorization: 'Bearer '+localStorage.getItem("Token")},
             enctype: 'multipart/form-data',
             data : formData,
-            contentType : false,    
+            contentType : false,
             processData: false,
             async : false,
             success : function(jsonData){
                 window.location.reload();
-                M.toast({html: jsonData.message, classes: 'green rounded'})    
+                M.toast({html: jsonData.message, classes: 'green rounded'})
             },
             error: function(xhr, status, error) {
                 if (xhr.status == 401) {
@@ -537,7 +537,7 @@ function getaccessTokenDashboard(){
             localStorage.setItem("Token", result.access);
             // location.reload();
             var token = localStorage.getItem("Token");
-            window.location.href = "/dashboard/?token="+token;
+            window.location.href = "/dashboard/";
 
          },
          error: function(data){
@@ -547,7 +547,7 @@ function getaccessTokenDashboard(){
    })
  }
 
- 
+
 
  function getaccessTokenViewUser(){
     $.ajax({
@@ -570,7 +570,7 @@ function getaccessTokenDashboard(){
  }
 
 
- 
+
 
  function getaccessTokenEditUser(){
     $.ajax({
@@ -594,7 +594,7 @@ function getaccessTokenDashboard(){
    })
  }
 
- 
+
 
  function getaccessTokenDeleteUser(){
     $.ajax({
@@ -626,7 +626,7 @@ function getaccessTokenDashboard(){
         success: function (result) {
            localStorage.setItem("Token", result.access);
            var token = localStorage.getItem("Token");
-       
+
            EditUserValidation()
         },
         error: function(data){

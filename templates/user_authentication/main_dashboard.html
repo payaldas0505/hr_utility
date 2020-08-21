@@ -3,286 +3,115 @@
 
 {% block content %}
 <div id="Dashboard_main">
-    <h3 class="main_dashboard_label header">Document Dashboard</h2>
+    <h3 class="dashboard_label header">Document Dashboard</h2>
         <br>
         <a href="/usermanagement/add_user_page/" class="add_user waves-effect waves-light btn"
             style="margin-bottom: -124px;"><i class="material-icons left">add_circle</i><span
                 class="add_user_button">Document</span></a>
 
-        <!-- <table id="example" class="display" style="width:auto;">
-		<thead>
-			<tr>
-                <th class="dt_sr_no_label">Sr No.</th>
-                <th class="dt_doc_name_label">Document Name</th>
-				<th class="dt_template_name_label">Template Name</th>
-                <th class="dt_preview_label">Preview</th>
-                <th class="action_btn_label" style="width: 150px;">Action</th>
-			</tr>
-		</thead>
-      </table> -->
-</div>
 
 
-<!-- <div id='dashboardRegisterForm'>
-	<a id="back_button" onclick="getDashboardDatatable()" class="waves-effect waves-light btn"><i class="material-icons prefix">arrow_back</i></a>
-    
-    <div id="DisableDiv" class="form-border row">
-        <form id="registration_form" class="col s8 push-s2" method="post" >
-            {% csrf_token %}
-            <div class="row">
-                <div class="col push-s3">
-                    <div class="col push-s2">
-                        <img id="view_image" src="" alt="image not found" class="circle responsive-img" width="150" height="150">
-                    </div>
-                </div>
-            </div>
-            <div class="row" id="HideProfileUpload">
-                <div class="col"> 
-                    <div class="file-field input-field">
-                        <div class="btn">
-                            <span class="upload_picture_label">Upload Profile Picture</span>
-                            <input id="profile_picture_edit" type="file" name="profile_picture_edit" required="required" class="validate" accept=".jpg,.jpeg,.png"/>
-                        </div>
-                        <div class="file-path-wrapper">
-                            <input id="profile_picture_edit_text" class="profile file-path validate" type="text" > 
-                        </div>
-                        <span class="helper-text"><b class="note_label">Note: </b><span class="profile_pic_note">Only .jpg, .jpeg or .png file extension is allowed.</span></span>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s6">
-                    <i class="material-icons prefix">account_circle</i>
-                    <input placeholder="eg.Dave" id="user_name_edit" type="text" class="validate" required="" aria-required="true">
-                    <label class="user_name_label" for="user_name_edit">Username</label>
-                    <span class="helper-text" data-error="Sorry... Username already taken" data-success="Username available"></span>
-                </div>
-                <div class="input-field col s6">
-                    <i class="material-icons prefix">edit</i>
-                    <input placeholder="eg.Dave" id="first_name_edit" type="text" class="validate" required="" aria-required="true">
-                    <label class="first_name_label" for="first_name_edit">First Name</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s6">
-                    <i class="material-icons prefix">edit</i>
-                    <input placeholder="eg.Dave" id="middle_name_edit" type="text" class="validate" required="" aria-required="true">
-                    <label class="middle_name_label" for="middle_name_edit">Middle Name</label>
-                </div>
-                <div class="input-field col s6">
-                    <i class="material-icons prefix">edit</i>
-                    <input placeholder="eg.Dave" id="last_name_edit" type="text" class="validate" required="" aria-required="true">
-                    <label class="last_name_label" for="last_name_edit">Last Name</label>
-                </div>
-            </div>
-            <div class="row">
-                <div style="margin-top: 1.5rem;" class="input-field col s6">
-                    <i class="material-icons prefix">vpn_key</i>
-                    <input placeholder="password" id="password_edit" type="password" class="validate" required="" aria-required="true">
-                    <label class="password_label" for="password_edit">Password</label>
-                </div>
-                <div class="row">
-                    <div class="col s6">
-                        <label class="dob_label" for="dob">Date of Birth</label>
-                        <input placeholder="eg.Dave" id="dob_edit" type="date" class="datepicker" required="" aria-required="true">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s6">
-                    <i class="material-icons prefix">mail</i>
-                    <input placeholder="eg.Dave" id="email_edit" type="email" class="validate" required="" aria-required="true">
-                    <label class="email_label" for="email_edit" >Email</label>
-                    <span class="helper-text" data-error="Email Id is already registered" data-success="check once again whether email address is correct."></span>
-                </div>
-                <div class="input-field col s6">
-                    <i class="material-icons prefix">phone</i>
-                    <input placeholder="eg.Dave" id="telephone_edit" type="tel" class="validate" data-length="10" required="" aria-required="true">
-                    <label class="telephone_label" for="telephone_edit">Telephone</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12">
-                    <i class="material-icons prefix">home</i>
-                    <textarea placeholder="eg.Dave" id="textarea1_edit" class="materialize-textarea" data-length="120" required class="validate"></textarea>
-                    <label class="address_label" for="textarea1_edit">Address</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col s6">
-                    <label class="gender_label" required class="validate" for="gender">Gender</label>
-                    <p>
-                        <label>
-                          <input name="gender"id="Male" type="radio" checked value="Male"/>
-                          <span class="Male_label">Male</span>
-                        </label>
-                    </p>
-                    <p>
-                    <label>
-                        <input name="gender" id="Female" type="radio" value="Female" />
-                        <span class="Female_label">Female</span>
-                    </label>
-                    </p>
-                    <p>
-                    <label>
-                        <input class="with-gap" id="Other" name="gender"type="radio" value="Other" />
-                        <span class="Other_label">Other</span>
-                    </label>
-                    </p>
-                </div>
-                <div class="switch col s6">
-                    <label class="switch_label" for="switch">Indian ?</label>
-                    <label><br>
-                    <span class="switch_off_label">Off</span>
-                    <input type="checkbox" name="indian" id="indian" required class="validate">
-                    <span class="lever"></span>
-                    <span class="switch_on_label">On</span>
-                    </label>
-                </div>
-            </div>
-            <br>
-            <div class="row">
-                <div class="input-field col s12 m6">
-                    
-                    <select id="dropdownid" required class="validate">
-                        <option class="select_one_label" value="" disabled selected><span class="select_one_label"></span></option>   
-                    </select>
-                    <label class="qualification_label" data-error="Select an option">Choose your Qualification</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12 m6">
-                    <select id="role_drop_down" class="validate">
-                        <option class="select_one_label" value="" disabled selected><span class="select_one_label"></span></option>
-                    </select>
-                    <label id="role_label" data-error="Select an option">Assign Role</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="file-field input-field">
-                    <div class="btn" id="hideUploadResume">
-                        <span class="resume_label">Upload Resume</span>
-                        <input id="resume_edit" type="file" name="resume" required="required" class="validate" accept=".doc,.docx,.pdf"/>
-                    </div>
-                    <div class="file-path-wrapper">
-                        <input id="resume_edit_file" class="file-path validate" type="text" > 
-                    </div>
-                    <span class="helper-text"><b class="note_label">Note: </b><span class="resume_note">Only .doc, .docx or .pdf file extension is allowed.</span></span>
-                </div>
-            </div>
+        <script src="/static/js/logout.js"></script>
+        <script src="/static/js/get_refresh_token.js"></script>
+        <script src="/static/js/main_dashboard.js"></script>
+        <script>
 
-            <div class="row">
-                <div class="file-field input-field">
-                    <div class="btn" id="hideUploadPancard">
-                        <span class="pan_card_label">Upload Pan Card</span>
-                        <input id="pan_card_edit" type="file" name="pan_card" required="required" class="validate" accept=".jpg,.jpeg,.png,.doc,.docx"/>
-                    </div>
-                    <div class="file-path-wrapper">
-                        <input id="pan_card_edit_file" class="file-path validate" type="text" > 
-                    </div>
-                    <span class="helper-text"><b class="note_label">Note: </b><span class="pan_card_note">Only .jpg, .jpeg, .png, .doc or .docx file extension is allowed.</span></span>
-                </div>
-            </div>
+            function getData() {
+                $.ajax({
+                    url: '/dashboard_data/',
+                    headers: { Authorization: 'Bearer ' + userDetails.access },
+                    type: 'GET',
 
-            <div class="row">
-                <div class="file-field input-field">
-                    <div class="btn" id="hideUploadAdharcard">
-                        <span class="adhar_card_label" >Upload Aadhar Card</span>
-                        <input id="adhar_card_edit" type="file" name="adhar_card" required="required" class="validate" accept=".jpg,.jpeg,.png,.doc,.docx"/>
-                    </div>
-                    <div class="file-path-wrapper">
-                        <input id="adhar_card_edit_file" class="file-path validate" type="text" > 
-                    </div>
-                    <span class="helper-text"><b class="note_label">Note: </b><span class="aadhar_card_note">Only .jpg, .jpeg, .png, .doc or .docx file extension is allowed.</span></span>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col push-getUserDashboards3">
-                    <button id="submit_form" class="btn waves-effect waves-light" type="submit" name="submit" onclick="EditUserValidation();"><span class="submit_label">Save Edited User</span>
-                    <i class="material-icons right">send</i>
-                    </button>
-                </div>
-            </div>      
-        </form>   
-    </div>
-    </div> -->
-
-<script type="text/javascript" src="{% static '/js/get_labels.js' %}"></script>
-<script src="/static/js/main_dashboard.js"></script>
-
-<script>
-    $(document).ready(function () {
-        $('select').formSelect();
-        // Check username avaliable in database
-        $('#user_name_edit').on('blur', function () {
-            var user_name = $('#user_name_edit').val();
-            if (user_name == '') {
-                user_name_state = false;
-                return;
+                    success: function (response) {
+                    },
+                    error: function (xhr) {
+                        if (xhr.status == 401) {
+                            getaccessTokenForMainDashboard();
+                            // alert("yes changed")
+                        }
+                        if (xhr.status == 403) {
+                            logout();
+                        }
+                    }
+                });
             }
-            $.ajax({
-                url: '/user/check_username/',
-                type: 'post',
-                data: {
-                    'user_name_check': 1,
-                    'user_name': user_name,
-                },
-                success: function (response) {
 
-                    if (response.message == 'taken') {
+            $(document).ready(function () {
+                var userDetails = getValues('UserDetails')
+                var access = userDetails.access
+
+                getData();
+
+                $('select').formSelect();
+                // Check username avaliable in database
+                $('#user_name_edit').on('blur', function () {
+                    var user_name = $('#user_name_edit').val();
+                    if (user_name == '') {
                         user_name_state = false;
-                        $('#user_name_edit').addClass("invalid");
-                        M.toast({ html: response.toast_msg, classes: 'red rounded' })
+                        return;
                     }
-                    else if (response.message == 'not_taken') {
-                        username_state = true;
-                        $('#user_name_edit').addClass("valid");
-                        M.toast({ html: response.toast_msg, classes: 'green darken-1 rounded' })
-                    }
-                },
-                error: function (xhr) {
-                    parsed_jsondata = JSON.parse(xhr.responseText)
-                    // alert(parsed_jsondata.error)
-                    M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
-                }
-            });
-        });
+                    $.ajax({
+                        url: '/user/check_username/',
+                        type: 'post',
+                        data: {
+                            'user_name_check': 1,
+                            'user_name': user_name,
+                        },
+                        success: function (response) {
 
-        // Check emailid avaliable in database
-        $('#email_edit').on('blur', function () {
-            var email = $('#email_edit').val();
-            if (email == '') {
-                email_state = false;
-                return;
-            }
-            $.ajax({
-                url: '/user/check_email/',
-                type: 'post',
-                data: {
-                    'email_check': 1,
-                    'email': email,
-                },
-                success: function (response) {
-                    if (response.message == 'taken') {
+                            if (response.message == 'taken') {
+                                user_name_state = false;
+                                $('#user_name_edit').addClass("invalid");
+                                M.toast({ html: response.toast_msg, classes: 'red rounded' })
+                            }
+                            else if (response.message == 'not_taken') {
+                                username_state = true;
+                                $('#user_name_edit').addClass("valid");
+                                M.toast({ html: response.toast_msg, classes: 'green darken-1 rounded' })
+                            }
+                        },
+                        error: function (xhr) {
+                            parsed_jsondata = JSON.parse(xhr.responseText)
+                            // alert(parsed_jsondata.error)
+                            M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
+                        }
+                    });
+                });
+
+                // Check emailid avaliable in database
+                $('#email_edit').on('blur', function () {
+                    var email = $('#email_edit').val();
+                    if (email == '') {
                         email_state = false;
-                        $('#email_edit').addClass("invalid");
-                        M.toast({ html: response.toast_msg, classes: 'red rounded' })
+                        return;
                     }
-                    else if (response.message == 'not_taken') {
-                        email_state = true;
-                        $('#email_edit').addClass("valid");
-                    }
+                    $.ajax({
+                        url: '/user/check_email/',
+                        type: 'post',
+                        data: {
+                            'email_check': 1,
+                            'email': email,
+                        },
+                        success: function (response) {
+                            if (response.message == 'taken') {
+                                email_state = false;
+                                $('#email_edit').addClass("invalid");
+                                M.toast({ html: response.toast_msg, classes: 'red rounded' })
+                            }
+                            else if (response.message == 'not_taken') {
+                                email_state = true;
+                                $('#email_edit').addClass("valid");
+                            }
 
-                },
-                error: function (xhr) {
-                    parsed_jsondata = JSON.parse(xhr.responseText)
-                    // alert(parsed_jsondata.error)
-                    M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
-                }
+                        },
+                        error: function (xhr) {
+                            parsed_jsondata = JSON.parse(xhr.responseText)
+                            // alert(parsed_jsondata.error)
+                            M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
+                        }
+                    });
+                });
             });
-        });
-    });
-</script>
+        </script>
 
-{% endblock %}
+        {% endblock %}

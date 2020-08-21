@@ -3,7 +3,13 @@ jQuery(document).ready(function ($) {
     $('select').not('.disabled').formSelect();
     $('textarea#textarea1').characterCounter();
     $('input#telephone').characterCounter();
+<<<<<<< HEAD
     get_labels('user_registration')
+=======
+    var userDetails = getValues('UserDetails')
+    var access = userDetails.access
+
+>>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
     getUserRoleDropDown();
 
     // Check username avaliable in database
@@ -56,6 +62,7 @@ jQuery(document).ready(function ($) {
             return;
         }
         $.ajax({
+<<<<<<< HEAD
             url: 'check_email/',
             headers: { Authorization: 'Bearer ' + access },
             type: 'post',
@@ -82,6 +89,30 @@ jQuery(document).ready(function ($) {
                 let parsed_jsondata = JSON.parse(xhr.responseText)
                 // alert(parsed_jsondata.error)
                 M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
+=======
+        url: 'check_email/',
+        headers: { Authorization: 'Bearer '+access},
+        type: 'post',
+        data: {
+            'email_check' : 1,
+            'email' : email,
+        },
+        success: function(response){
+            if (response.message == 'taken' ) {
+                email_state = false;
+                $('#email').addClass("invalid");
+                M.toast({html: response.toast_msg, classes: 'red rounded'})
+            }
+            else if (response.message == 'not_taken') {
+                email_state = true;
+                $('#email').addClass("valid");
+            }
+
+        },
+        error: function(xhr) {
+            if (xhr.status == 401) {
+                getaccessTokenForUrl(get_url);
+>>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
             }
         });
     });
@@ -141,8 +172,13 @@ function getUserRoleDropDown() {
 //         }
 //   })
 // }
+<<<<<<< HEAD
 // Get toast messages from backend 
 function get_toast(label) {
+=======
+// Get toast messages from backend
+function get_toast(label){
+>>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
     $("#submit_form").attr("disabled", false);
 
     $.ajax({
@@ -151,10 +187,17 @@ function get_toast(label) {
         data: {
             'toast_label': label,
         },
+<<<<<<< HEAD
         success: function (response) {
 
             M.toast({ html: response.message, classes: 'red rounded' })
             return false;
+=======
+        success: function(response){
+
+        M.toast({html: response.message, classes: 'red rounded'})
+        return false;
+>>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
 
         },
         error: function (xhr) {
@@ -175,9 +218,15 @@ function readURL(input) {
         }
         reader.readAsDataURL(input.files[0]); // convert to base64 string
     }
+<<<<<<< HEAD
 }
 
 $("#profile_picture").change(function () {
+=======
+  }
+
+  $("#profile_picture").change(function() {
+>>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
     readURL(this);
 });
 
@@ -200,17 +249,28 @@ function RegisterUserForm() {
         headers: { Authorization: 'Bearer ' + access },
         method: "POST",
         enctype: 'multipart/form-data',
+<<<<<<< HEAD
         data: formData,
         contentType: false,
+=======
+        data : formData,
+        contentType : false,
+>>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
         processData: false,
         async: false,
         success: function (jsonData) {
             M.toast({ html: jsonData['message'], outDuration: 2000, classes: 'green rounded' })
             // var userDetails = getValues('UserDetails')
             // var token = userDetails.access;
+<<<<<<< HEAD
             setTimeout(function () {
                 window.location.href = "/dashboard/user_management/?token=" + access;
             }, 3000);
+=======
+            setTimeout(function() {
+                window.location.href = "/dashboard/user_management/";
+              }, 3000);
+>>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
         },
         error: function (xhr) {
             if (xhr.status == 401) {
@@ -306,16 +366,25 @@ function RegisterUser() {
         return false;
     }
 
+<<<<<<< HEAD
     else {
+=======
+    else{
+>>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
         RegisterUserForm()
     }
 }
 
+<<<<<<< HEAD
 function getUserDashboardDatatable() {
+=======
+function getUserDashboardDatatable(){
+>>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
     // var userDetails = getValues('UserDetails')
     // var token = userDetails.access;
-    var get_url = "/dashboard/user_management/?token="
+    var get_url = "/dashboard/user_management/"
     $.ajax({
+<<<<<<< HEAD
         method: 'GET',
         headers: { Authorization: 'Bearer ' + access },
         url: "/dashboard/user_management/?token=" + access,
@@ -328,5 +397,19 @@ function getUserDashboardDatatable() {
             }
         }
     })
+=======
+    method : 'GET',
+    headers: { Authorization: 'Bearer '+access},
+    url : "/dashboard/user_management/",
+    success: function(data){
+        window.location.href = get_url
+    },
+    error : function(xhr){
+        if(xhr.status == 401){
+            getaccessTokenForUrl(get_url);
+        }
+    }
+})
+>>>>>>> ad1a38ac80ca3f05c7980af8685c0cc9f77c6ffa
 }
 

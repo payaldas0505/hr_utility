@@ -1,6 +1,15 @@
-$(".brand-logo").sideNav();
-var userDetails = getValues('UserDetails')
 jQuery(document).ready(function ($) {
+  var userDetails = localStorage.getItem("UserDetails")
+
+  if (userDetails == null){
+      window.location.href = "/login/"
+  }
+  else {
+      var userDetails = getValues('UserDetails')
+  }
+
+    $(".brand-logo").sideNav();
+
 
     // alert(localStorage.getItem("User"))
 
@@ -9,7 +18,7 @@ jQuery(document).ready(function ($) {
     // var language_id = localStorage.getItem('language')
     // $.ajax({
     //     type: 'POST',
-    //     url: '/get_labels/',
+    //     url: '/get_labels/a',
     //     data : {
     //     	'page_name' : 'Nav_bar',
     //     	'language_id' : language_id,
@@ -31,13 +40,13 @@ jQuery(document).ready(function ($) {
 function changepassword() {
 
     var token = userDetails.access
-    var get_url = '/dashboard/get_change_password/?token='
+    var get_url = '/dashboard/get_change_password/'
     $.ajax({
         type: 'GET',
         url: '/dashboard/get_change_password/',
         headers: { Authorization: 'Bearer ' + token },
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = get_url
         },
         error: function (data) {
             if (data.status == 401) {
@@ -92,13 +101,13 @@ function changepassword() {
 function getUserDashboard() {
 
     var token = userDetails.access
-    var get_url = '/dashboard/user_management/?token='
+    var get_url = '/dashboard/user_management/'
     $.ajax({
         type: 'GET',
         url: '/dashboard/user_management/',
         headers: { Authorization: 'Bearer ' + token },
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = '/dashboard/user_management/'
         },
         error: function (data) {
             if (data.status == 401) {
@@ -137,13 +146,13 @@ function getUserDashboard() {
 function getTemplateDashboard() {
 
     var token = userDetails.access
-    var get_url = '/dashboard/template_management/?token='
+    var get_url = '/dashboard/template_management/'
     $.ajax({
         type: 'GET',
         url: '/dashboard/template_management/',
         headers: { Authorization: 'Bearer ' + token },
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = get_url
         },
         error: function (data) {
             if (data.status == 401) {
@@ -176,18 +185,18 @@ function getTemplateDashboard() {
 //             obj = JSON.parse(data.responseText)
 //             M.toast({html: obj.detail})
 //         }
-//     })  
+//     })
 // }
 
 function closeSideBar() {
 
     var token = userDetails.access
-    var get_url = "/dashboard/?token="
+    var get_url = "/dashboard/"
     $.ajax({
         method: 'GET',
-        url: "/dashboard/?token=" + token,
+        url: "/dashboard/",
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = get_url
         },
         error: function (xhr) {
             if (xhr.status == 401) {
