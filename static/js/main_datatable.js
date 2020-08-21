@@ -40,7 +40,7 @@ var tableLoad = $(document).ready(function() {
                         }},
                         {"data" : "id",
                         "render" : function(data){
-                            var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditReport(id)><i class="material-icons prefix">mode_edit</i></button> <button class="delete_btn" id='+data+' onclick=getDeleteFillTemplate(id)><i class="material-icons prefix">delete</i></button> <button class="view_btn" id='+data+' onclick=getViewFilledTemplate(id)><i class="material-icons prefix">visibility</i></button>'
+                            var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditFillTemplate(id)><i class="material-icons prefix">mode_edit</i></button> <button class="delete_btn" id='+data+' onclick=getDeleteFillTemplate(id)><i class="material-icons prefix">delete</i></button> <button class="view_btn" id='+data+' onclick=getViewFilledTemplate(id)><i class="material-icons prefix">visibility</i></button>'
                             // var edit_view = '<button class="edit_btn" id='+data+' onclick=getEditReport(id)><i class="material-icons prefix">mode_edit</i></button> <button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button>'
                             // var only_view = '<button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button>'
                             // // alert(window.localStorage.getItem('delete_user'))

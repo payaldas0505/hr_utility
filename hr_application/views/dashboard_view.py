@@ -460,13 +460,16 @@ class GetFillTemplateDetails(APIView):
         def get(self, request, pk):
             try:
                 print('10'*50)
-                template = FilledTemplateData.objects.get(id = pk)
-                print('T'*80)
-                print(template)
+                # template = FilledTemplateData.objects.get(id = pk)
+                template = FilledTemplateData.objects.filter(id=pk).values('fill_values')
                 print('T'*80)
                 
-                print(filled_data_details)
-                return JsonResponse({'message' : template})
+                template_detail = template[0]['fill_values']
+                remove_template_name = template_detail.pop('templatename', None)
+                remove_file_name = template_detail.pop('filename', None)
+                print(template_detail)
+                print('T'*80)
+                return JsonResponse({'message' : template_detail})
             except Exception as error:
                 print("get", error)
 
@@ -491,6 +494,22 @@ class GetFillTemplateDetails(APIView):
 
             except Exception as error:
                 print("delete", error)
+
+                info_message = "Internal Server Error"
+                print(info_message)
+                return JsonResponse({'message' : str(info_message)},status = 422)
+
+
+        def put(self, request, pk):
+            try:
+                print('p'*80)
+                print(request.POST)
+                print('p'*80)
+                edited_template = FilledTemplateData.objects.get(id=pk)
+                print(edited_template)
+                return HttpResponse('hi')
+            except Exception as error:
+                print("update", error)
 
                 info_message = "Internal Server Error"
                 print(info_message)

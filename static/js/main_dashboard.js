@@ -6,6 +6,8 @@ $(document).ready(function () {
     $('#Template-Dropdown-Header').hide();
     $('.dropdown-back-button').hide();
     $('.save-cancel-button').hide();
+    $('#ViewDivTemplate').hide();
+    $('#EditDivTemplate').hide();
 
     $('select').formSelect();
 
@@ -124,7 +126,7 @@ var userDetails = getValues('UserDetails')
 var user_role_id = userDetails.role_id
 
 function DownloadFillTemplate(id) {
-    window.location.href = '/media/filled_user_template/'+id+'.pdf'
+    window.location.href = '/media/filled_user_template/' + id + '.pdf'
     GetPermissions()
 }
 function DownloadPanCard(id) {
@@ -154,7 +156,7 @@ $("#profile_picture_edit").change(function () {
 
 
 function DeleteFillTemplate(id) {
-    url = '/dashboard/fill_template_detail/'+id
+    url = '/dashboard/fill_template_detail/' + id
 
     $.ajax({
         url: url,
@@ -242,8 +244,10 @@ function getDashboardDatatable() {
 }
 
 function getViewFilledTemplate(id) {
-    alert('hi')
-    url = '/dashboard/fill_template_detail/'+id
+    $('#HideDivForView').hide();
+    $('#ViewDivTemplate').show();
+    
+    url = '/dashboard/fill_template_detail/' + id
     window.localStorage.setItem('editedUserId', id)
     $.ajax({
         url: url,
@@ -253,7 +257,17 @@ function getViewFilledTemplate(id) {
         async: false,
         success: function (jsonData) {
             console.log(jsonData)
-            
+            parsed_json = JSON.parse(jsonData)
+            console.log(parsed_json)
+            console.log(typeof (parsed_json))
+            $.each(parsed_json['message'], function (key, value) {
+                input = '<input class="validate" required="" aria-required="true" value='+value+'>'
+                label = '<label>'+key+'</label>'
+                $('#viewFillTemplate').append(input)
+                $('#viewFillTemplate').append(label)
+            });
+            $('#viewFillTemplate').prop("disabled", true);
+            $("input").prop("disabled", true);
         },
         error: function (xhr, status, error) {
             if (xhr.status == 401) {
@@ -268,67 +282,36 @@ function getViewFilledTemplate(id) {
     GetPermissions();
 }
 
-function getEditReport(id) {
-    url = '/usermanagement/edituserform/'+id
+function getEditFillTemplate(id) {
+    $('#HideDivForView').hide();
+    $('#EditDivTemplate').show();
+    url = '/dashboard/fill_template_detail/' + id
     window.localStorage.setItem('editedUserId', id)
     $.ajax({
         url: url,
         method: 'GET',
-        headers: { Authorization: 'Bearer ' + localStorage.getItem("Token") },
+        headers: { Authorization: 'Bearer ' + userDetails.access },
         dataType: 'text',
         async: false,
         success: function (jsonData) {
             console.log(jsonData)
+            console.log(jsonData)
             parsed_json = JSON.parse(jsonData)
-            data = parsed_json.message
-            console.log(data)
-            for (i = 0; i < data.length; i++) {
-                user_name = data[i].user_name
-                first_name = data[i].first_name
-                middle_name = data[i].middle_name
-                last_name = data[i].last_name
-                dob = data[i].dob
-                email = data[i].email
-                telephone = data[i].telephone
-                gender = data[i].gender
-                address = data[i].address
-                indian = data[i].indian
-                option = data[i].option
-                profile_picture = data[i].profile_picture
-                resume = data[i].resume
-                pan_card = data[i].pan_card
-                adhar_card = data[i].adhar_card
-                role = data[i].role
-            }
+            console.log(parsed_json)
+            console.log(typeof (parsed_json))
+            var EditTemplateId = []
+            $.each(parsed_json['message'], function (key, value) {
+                // alert(value)
+                // alert(key)
+                input = '<input class="validate" id='+key+' required="" aria-required="true" value='+value+'>'
+                label = '<label>'+key+'</label>'
+                $('#editFillTemplate').append(input)
+                $('#editFillTemplate').append(label)
+                EditTemplateId.push(key)
+                console.log(EditTemplateId)
+                localStorage.setItem("EditTemplateId", JSON.stringify(EditTemplateId));
+            });
 
-            $('#Dashboard_main').hide();
-            $('#dashboardRegisterForm').show();
-            $("#view_image").attr('src', '/media/' + profile_picture);
-            $('#profile_picture_edit_text').val(profile_picture)
-            $('#user_name_edit').val(user_name)
-            $('#first_name_edit').val(first_name)
-            $('#middle_name_edit').val(middle_name)
-            $('#last_name_edit').val(last_name)
-            $('#dob_edit').val(dob)
-            $('#email_edit').val(email)
-            $('#telephone_edit').val(telephone)
-            $('#textarea1_edit').val(address)
-            $('#indian').val(indian)
-            $('#resume_edit_file').val(resume)
-            $('#pan_card_edit_file').val(pan_card)
-            $('#adhar_card_edit_file').val(adhar_card)
-            $('#indian').prop('checked', indian);
-            $('#' + gender + '').prop('checked', true)
-            $('#dropdownid').find('option[value=' + option + ']').prop('selected', true);
-            $('select').not('.disabled').formSelect();
-            $('#role_drop_down').prop("disabled", true);
-            $('#role_drop_down').find('option[value=' + role + ']').prop('selected', true);
-
-            var user_role_id = localStorage.getItem('RoleId')
-            if (user_role_id == 1) {
-                $('#role_drop_down').prop("disabled", false);
-            }
-            $('select').not('.disabled').formSelect();
         },
         error: function (xhr, status, error) {
             console.log(xhr)
@@ -565,7 +548,7 @@ function getaccessTokenEditUser() {
             var token = localStorage.getItem("Token");
             // window.location.href = "/dashboard/?token="+token;
             id = window.localStorage.getItem("editedUserId")
-            getEditReport(id)
+            getEditFillTemplate(id)
         },
         error: function (data) {
             obj = JSON.parse(data.responseText)
@@ -632,7 +615,7 @@ function GetTemplateDropdown() {
 function GetSelectedTemplateId() {
     var templateName = $("#Template-dropdown-select option:selected").text();
     alert(templateName)
-    window.localStorage.setItem('selected_template_name',templateName)
+    window.localStorage.setItem('selected_template_name', templateName)
     $("#templateDropdownForm").empty();
 
     var templateId = $("#Template-dropdown-select option:selected").val();
@@ -682,12 +665,12 @@ function GetSelectedTemplateId() {
 
 }
 
-function GotoDashboard(){
+function GotoDashboard() {
     window.location.reload();
 }
 
 
-function SaveFilledForm(){
+function SaveFilledForm() {
     // alert('hi')
     // $('#UploadTemplate').prop('disabled', true);
     var filename = localStorage.getItem('fill_filename')
@@ -695,9 +678,9 @@ function SaveFilledForm(){
     var retrievedData = localStorage.getItem("FillId");
     var id = JSON.parse(retrievedData);
     var selected_template_name_retrieve = window.localStorage.getItem('selected_template_name')
-    $.each(id, function( i, l ){
+    $.each(id, function (i, l) {
         console.log(l)
-        var id_name = $($.trim('#')+$.trim(l)).val()
+        var id_name = $($.trim('#') + $.trim(l)).val()
         fd.append(l, id_name)
 
     })
@@ -709,74 +692,155 @@ function SaveFilledForm(){
     $.ajax({
         url: '/dashboard/fill_dropdown_template/',
         headers: { Authorization: 'Bearer ' + userDetails.access },
-        method : "POST",
+        method: "POST",
         enctype: 'multipart/form-data',
-        data : fd,
-        contentType : false,    
+        data: fd,
+        contentType: false,
         processData: false,
-        async : false,
-        success: function(response){
-            M.toast({html: 'Template is successfully filled', classes: 'green rounded'})
-   
-            $('#templateForm *').attr("disabled", true);                   
+        async: false,
+        success: function (response) {
+            M.toast({ html: 'Template is successfully filled', classes: 'green rounded' })
+
+            $('#templateForm *').attr("disabled", true);
             $('#templateForm *').fadeTo('slow', .8);
-           
-            setTimeout(function() {
+
+            setTimeout(function () {
                 var object = document.getElementById('pdf_preview');
                 // alert(response['success'])
                 object.setAttribute('data', response['success']);
-            
+
                 var clone = object.cloneNode(true);
                 var parent = object.parentNode;
-            
-                parent.removeChild(object );
-                parent.appendChild(clone );
-                }, 3000);
-            
+
+                parent.removeChild(object);
+                parent.appendChild(clone);
+            }, 3000);
+
             // $("#pdf_preview").setAttribute("data", response['success']) 
-            
+
             $('#pdf').show();
             window.location.reload();
             return false
-            
-            
+
+
         },
-        error: function(xhr) {
+        error: function (xhr) {
             if (xhr.status == 401) {
 
                 getaccessToken(SaveFields)
             }
-            
+
             parsed_jsondata = JSON.parse(xhr.responseText)
             // alert(parsed_jsondata.error)
-            M.toast({html: parsed_jsondata.error, classes: 'red rounded'})
-            setTimeout(function() {
+            M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
+            setTimeout(function () {
                 $('#field_save_btn').prop('disabled', true)
-              }, 2000);
-              
+            }, 2000);
+
             return false
         }
 
     });
-    
+
 }
 
-function SaveFillTemplate(){
+function SaveFillTemplate() {
     var retrievedData = localStorage.getItem("FillId");
     var FillId = JSON.parse(retrievedData);
 
     values = []
-    $.each(FillId, function( i, l ){
+    $.each(FillId, function (i, l) {
         console.log(l)
-        var id_name = $($.trim('#')+$.trim(l)).val()
+        var id_name = $($.trim('#') + $.trim(l)).val()
         console.log(id_name)
-        if ( id_name == ""){
-            M.toast({html: "Please fill the " +l+ "field", classes: 'red rounded' })
+        if (id_name == "") {
+            M.toast({ html: "Please fill the " + l + "field", classes: 'red rounded' })
             $('#field_save_btn').prop('disabled', false)
             return false;
         }
-        
-            
-      });
-      SaveFilledForm();
+
+
+    });
+    SaveFilledForm();
+}
+
+function GotoDashboard(){
+    window.location.reload();
+}
+
+function SaveEditedTemplateValidate(){
+    var fd = new FormData();
+    edittemplateid = window.localStorage.getItem('editedUserId')
+    retrievedEditTemplateId = window.localStorage.getItem('EditTemplateId')
+    parsedEditTemplateId = JSON.parse(retrievedEditTemplateId)
+    for(i=0; i<parsedEditTemplateId.length; i++)
+    {
+        var str = $('#' + parsedEditTemplateId[i]).val();
+        fd.append(parsedEditTemplateId[i], str)
+    }
+    console.log(fd)
+    $.ajax({
+        url: '/dashboard/fill_template_detail/'+edittemplateid,
+        headers: { Authorization: 'Bearer ' + userDetails.access },
+        method: "PUT",
+        enctype: 'multipart/form-data',
+        data: fd,
+        contentType: false,
+        processData: false,
+        async: false,
+        success: function (response) {
+            M.toast({ html: 'Template is successfully filled', classes: 'green rounded' })
+
+            $('#templateForm *').attr("disabled", true);
+            $('#templateForm *').fadeTo('slow', .8);
+
+            setTimeout(function () {
+                var object = document.getElementById('pdf_preview');
+                // alert(response['success'])
+                object.setAttribute('data', response['success']);
+
+                var clone = object.cloneNode(true);
+                var parent = object.parentNode;
+
+                parent.removeChild(object);
+                parent.appendChild(clone);
+            }, 3000);
+
+            // $("#pdf_preview").setAttribute("data", response['success']) 
+
+            $('#pdf').show();
+            window.location.reload();
+            return false
+
+
+        },
+        error: function (xhr) {
+            if (xhr.status == 401) {
+
+                getaccessToken(SaveFields)
+            }
+
+            parsed_jsondata = JSON.parse(xhr.responseText)
+            // alert(parsed_jsondata.error)
+            M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
+            setTimeout(function () {
+                $('#field_save_btn').prop('disabled', true)
+            }, 2000);
+
+            return false
+        }
+
+    });
+
+}
+
+function SaveEditedTemplate(){
+    retrievedEditTemplateId = window.localStorage.getItem('EditTemplateId')
+    parsedEditTemplateId = JSON.parse(retrievedEditTemplateId)
+    for(i=0; i<parsedEditTemplateId.length; i++)
+    {
+        var str = $('#' + parsedEditTemplateId[i]).val();
+        alert(str);
+    }
+    SaveEditedTemplateValidate()
 }
