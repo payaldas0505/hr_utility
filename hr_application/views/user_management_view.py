@@ -14,6 +14,14 @@ from django.db import transaction
 from .check_permission import has_permission
 from ..config.perms_config import perms
 
+
+class AddUserPageView(APIView):
+    """
+    Get Registration Form
+    """
+    def get(self, request):
+        return render(request, 'user_registration/registration_form.html')
+
 class AddUserFormView(APIView):
     """Registration Form."""
     authentication_classes = [CustomJWTAuthentication]

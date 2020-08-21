@@ -8,7 +8,7 @@ from .views import (LoginView, CustomTokenObtainPairView,
                     NewPasswordView, LogoutView, GetChangePasswordPageView,
                     GetChangePasswordView, SaveChangePasswordView,UserManagementDashboardPageView,
                     UserManagementDashboard, TemplateManagementDashboard,
-                    TemplateManagementDashboardPageView,
+                    TemplateManagementDashboardPageView, AddUserPageView,
                     AddUserFormView, GetRoleDropDown,
                     CheckUsername, CheckEmail,AddTemplatePageView,
                     GetAllUsersView, UserDatatableView,
@@ -47,7 +47,9 @@ urlpatterns = [
 
     path('dashboard/user_management/', UserManagementDashboardPageView.as_view(), name="user_management"),
 
-    path('dashboard/user_management/add_user/', AddUserFormView.as_view(), name="add_user"),
+    path('dashboard/user_management/add_user_data/', AddUserFormView.as_view(), name="add_user_data"),
+
+    path('dashboard/user_management/add_user/', AddUserPageView.as_view(), name="add_user"),
 
     path('dashboard/user_management/get_all_user', GetAllUsersView.as_view(), name="get_all_user"),
 

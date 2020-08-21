@@ -5,9 +5,9 @@ jQuery(document).ready(function($) {
     $('input#telephone').characterCounter();
     var userDetails = getValues('UserDetails')
     var access = userDetails.access
-    
+
     getUserRoleDropDown();
-     
+
     // Check username avaliable in database
     $('#user_name').on('blur', function(){
         var user_name = $('#user_name').val();
@@ -46,7 +46,7 @@ jQuery(document).ready(function($) {
             M.toast({html: parsed_jsondata.error, classes: 'red rounded'})
         }
         });
-    });	
+    });
 
     // Check emailid avaliable in database
     $('#email').on('blur', function(){
@@ -75,7 +75,7 @@ jQuery(document).ready(function($) {
                 email_state = true;
                 $('#email').addClass("valid");
             }
-           
+
         },
         error: function(xhr) {
             if (xhr.status == 401) {
@@ -108,7 +108,7 @@ function getUserRoleDropDown(){
                 role = '<span class="role_option_'+value.role_no+'">'+value.role_name+'</span>'
                 $(next_id).append($("<option></option>").attr("value", value.role_no).html(role));
             });
-            $(next_id).not('.disabled').formSelect();           
+            $(next_id).not('.disabled').formSelect();
         },
         error: function(data){
             if (data.status == 401) {
@@ -131,7 +131,7 @@ function getUserRoleDropDown(){
 //         success: function (result) {
 //            localStorage.setItem("Token", result.access);
 //            token = access
-        
+
 //         setTimeout(function() {
 //             getUserRoleDropDown()
 //           }, 500);
@@ -143,7 +143,7 @@ function getUserRoleDropDown(){
 //         }
 //   })
 // }
-// Get toast messages from backend 
+// Get toast messages from backend
 function get_toast(label){
     $("#submit_form").attr("disabled", false);
 
@@ -154,10 +154,10 @@ function get_toast(label){
             'toast_label' : label,
         },
         success: function(response){
-        
+
         M.toast({html: response.message, classes: 'red rounded'})
         return false;
-           
+
         },
         error: function(xhr) {
             parsed_jsondata = JSON.parse(xhr.responseText)
@@ -166,7 +166,7 @@ function get_toast(label){
         }
     })
 }
-    
+
 // Preview of image function
 function readURL(input) {
     if (input.files && input.files[0]) {
@@ -178,7 +178,7 @@ function readURL(input) {
       reader.readAsDataURL(input.files[0]); // convert to base64 string
     }
   }
-  
+
   $("#profile_picture").change(function() {
     readURL(this);
   });
@@ -188,7 +188,7 @@ function readURL(input) {
 function RegisterUserForm(){
 
     var formData = new FormData();
-    
+
     formData.append('user_name', user_name);
     formData.append('first_name', first_name);
     formData.append('last_name', last_name);
@@ -203,7 +203,7 @@ function RegisterUserForm(){
         method : "POST",
         enctype: 'multipart/form-data',
         data : formData,
-        contentType : false,    
+        contentType : false,
         processData: false,
         async : false,
         success : function(jsonData){
@@ -211,7 +211,7 @@ function RegisterUserForm(){
             // var userDetails = getValues('UserDetails')
             // var token = userDetails.access;
             setTimeout(function() {
-                window.location.href = "/dashboard/user_management/?token="+access;
+                window.location.href = "/dashboard/user_management/";
               }, 3000);
         },
         error: function(xhr) {
@@ -250,20 +250,20 @@ function RegisterUser(){
         user_status = false
     }
     if (user_name == "") {
-        
+
         // get_toast('user_name_toast');
         $("#submit_form").attr("disabled", false);
         M.toast({html: 'Username must be filled out!', classes: 'red rounded'})
         return false;
     }
     else if (first_name == "") {
-        
+
         // get_toast('first_name_toast');
         $("#submit_form").attr("disabled", false);
         M.toast({html: 'First name must be filled out!', classes: 'red rounded'})
         return false;
     }
- 
+
     else if (last_name == "") {
 
         $("#submit_form").attr("disabled", false);
@@ -273,21 +273,21 @@ function RegisterUser(){
         return false;
     }
     else if (email == "") {
-        
+
         // get_toast('email_toast');
         $("#submit_form").attr("disabled", false);
         M.toast({html: 'Email address must be filled out!', classes: 'red rounded'})
         return false;
     }
     else if (password == "") {
-        
+
         // get_toast('password_toast');
         $("#submit_form").attr("disabled", false);
         M.toast({html: 'Password must be filled out!', classes: 'red rounded'})
         return false;
     }
     else if (confirm_password == "") {
-        
+
         // get_toast('confirm_password_toast');
         $("#submit_form").attr("disabled", false);
         M.toast({html: 'Password must be filled out!', classes: 'red rounded'})
@@ -301,35 +301,35 @@ function RegisterUser(){
     }
 
     else if (role == "") {
-        
+
         // get_toast('role_toast');
         $("#submit_form").attr("disabled", false);
         M.toast({html: 'Please assign role for the user from the dropdown!', classes: 'red rounded'})
         return false;
     }
-    
+
     else{
         RegisterUserForm()
     }
 }
-    
+
 function getUserDashboardDatatable(){
     // var userDetails = getValues('UserDetails')
     // var token = userDetails.access;
-    var get_url = "/dashboard/user_management/?token="
+    var get_url = "/dashboard/user_management/"
     $.ajax({
     method : 'GET',
     headers: { Authorization: 'Bearer '+access},
-    url : "/dashboard/user_management/?token="+access,
+    url : "/dashboard/user_management/",
     success: function(data){
-        window.location.href = get_url+access
+        window.location.href = get_url
     },
     error : function(xhr){
         if(xhr.status == 401){
             getaccessTokenForUrl(get_url);
         }
     }
-})  
+})
 }
 
 // function getaccessAddUser(){

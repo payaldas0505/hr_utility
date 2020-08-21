@@ -59,13 +59,13 @@ function getdashboard() {
 function GetAddUserPage() {
 
     var token = access;
-    var get_url = '/dashboard/user_management/add_user/?token='
+    var get_url = '/dashboard/user_management/add_user/'
     $.ajax({
         type: 'GET',
         url: '/dashboard/user_management/add_user/',
         headers: { Authorization: 'Bearer ' + access },
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = get_url
         },
         error: function (data) {
             if (data.status == 401) {

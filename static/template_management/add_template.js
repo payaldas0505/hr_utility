@@ -112,7 +112,7 @@ function getTemplateDashboard(){
     var get_url = "/dashboard/template_management/"
     $.ajax({
         method : 'GET',
-        url : get_url+token,
+        url : get_url,
         success: function(data){
             window.location.href = get_url
         },
