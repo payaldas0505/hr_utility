@@ -4,19 +4,19 @@ var access = userDetails.access
 
 function getdashboard(){
     var token = access;
-    var get_url = "/dashboard/?token="
+    var get_url = "/dashboard/"
     $.ajax({
         method : 'GET',
-        url : "/dashboard/?token="+token,
+        url : "/dashboard/",
         success: function(data){
-            window.location.href = get_url+token
+            window.location.href = get_url
         },
         error : function(xhr){
             if(xhr.status == 401){
                 getaccessTokenForUrl(get_url);
             }
         }
-    })  
+    })
 }
 
 // function GetAccessTokenForBackButton(){
@@ -29,7 +29,7 @@ function getdashboard(){
 //         success: function (result) {
 //            localStorage.setItem("Token", result.access);
 //            token = localStorage.getItem("Token")
-        
+
 //         setTimeout(function() {
 //             window.location.href = "/dashboard/?token="+token;
 //           }, 500);
@@ -43,7 +43,7 @@ function getdashboard(){
 
 // }
 
-// submit changed password 
+// submit changed password
 function save_password() {
     $('#password_change_btn').attr("disabled", true);
     var old_password = $('#old_password').val()
@@ -133,7 +133,7 @@ function changepassword(){
         // alert("check match condition")
         $('#password_change_btn').attr("disabled", false);
         M.toast({ html: 'New password and confirm password fields do not match', classes: 'red rounded' })
-        
+
         return false;
     }
 

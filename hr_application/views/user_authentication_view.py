@@ -1,5 +1,6 @@
 import datetime
 import uuid
+import json
 from django.contrib.auth.models import User
 
 from django.shortcuts import render
@@ -36,6 +37,7 @@ from django.contrib.auth import authenticate, login
 from ..models import UserRegisterationModel, UserRole
 import jwt
 from ..config import perms_config
+from django.http import HttpResponseRedirect
 
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
@@ -203,6 +205,14 @@ class LogoutView(APIView):
             print(info_message)
             return Response({"success": False, "error": str(info_message)})
 
+
+
+class GetChangePasswordPageView(APIView):
+    """
+    Get change password page
+    """
+    def get(self, request):
+        return render(request, 'user_authentication/password_change_form.html')
 
 
 class GetChangePasswordView(APIView):

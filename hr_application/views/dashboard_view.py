@@ -1,4 +1,3 @@
-
 from .user_authentication_view import CustomJWTAuthentication, IsAuthenticated, TemplateHTMLRenderer
 from django.shortcuts import render
 from django.contrib.auth.models import User
@@ -13,6 +12,14 @@ from ..models  import query_users_by_args, UserRegisterationModel
 from django.db import transaction
 from .check_permission import has_permission
 
+
+class DashboardPageView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+
+    def get(self, request):
+
+        return Response(template_name="user_authentication/main_dashboard.html")
+
 class Dashboard(APIView):
     """
     Get the template for Main Dashboard.
@@ -25,7 +32,7 @@ class Dashboard(APIView):
         """ active and inactive users count """
 
         try:
-            print(request.GET['token'],"dashboard")
+
 
             today = datetime.date.today() + datetime.timedelta(days=1)
             last_week = datetime.date.today() - datetime.timedelta(days=7)
@@ -38,11 +45,22 @@ class Dashboard(APIView):
 
             return Response({'active': active_users, 'inactive': inactive_users}, template_name="user_authentication/main_dashboard.html")
         except Exception as e:
-            print("exception in dashboard", e)
+            print("exception in main dashboard", e)
 
             info_message = "Unable to get Dashboard"
             print("Unable to get Dashboard", info_message)
-            return Response({"success": False, "error": str(info_message)})
+            return Response({"success": False, "error": str(info_message)}, template_name="user_authentication/main_dashboard.html")
+
+
+class UserManagementDashboardPageView(APIView):
+    """
+    Get user management dashboard
+    """
+    renderer_classes = [TemplateHTMLRenderer]
+    def get(self, request):
+        print("user management")
+        return Response(template_name="user_authentication/user_dashboard.html")
+
 
 class UserManagementDashboard(APIView):
     """
@@ -52,7 +70,7 @@ class UserManagementDashboard(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    # @has_permission()
+    # @has_permission(perms['user_management_page_get'])
     def get(self, request):
         """ active and inactive users count """
 
@@ -67,15 +85,26 @@ class UserManagementDashboard(APIView):
 
             total = User.objects.filter(is_superuser=False).count()
             inactive_users = total - active_users
-            return render(request, "user_authentication/user_dashboard.html", {'active': active_users, 'inactive': inactive_users})
+            return Response({'active': active_users, 'inactive': inactive_users}, template_name="user_authentication/user_dashboard.html")
+            # return render(request, "user_authentication/user_dashboard.html", {'active': active_users, 'inactive': inactive_users})
 
 
         except Exception as e:
-            print("exception in dashboard", e)
+            print("exception in user management dashboard", e)
 
             info_message = "Unable to get Dashboard"
             print("Unable to get Dashboard", info_message)
             return Response({"success": False, "error": str(info_message)})
+
+
+class TemplateManagementDashboardPageView(APIView):
+    """
+    Get template management dashboard
+    """
+    renderer_classes = [TemplateHTMLRenderer]
+    def get(self, request):
+        print("user management")
+        return Response(template_name="user_authentication/manage_template_dasboard.html")
 
 
 class TemplateManagementDashboard(APIView):
@@ -86,20 +115,21 @@ class TemplateManagementDashboard(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    # @has_permission()
+    # @has_permission(perms['template_management_page_get'])
     def get(self, request):
         """ active and inactive users count """
 
         try:
-            return render(request, "user_authentication/manage_template_dasboard.html")
+            return Response({"success": True}, template_name="user_authentication/manage_template_dasboard.html")
+            # return render(request, "user_authentication/manage_template_dasboard.html")
 
 
         except Exception as e:
-            print("exception in dashboard", e)
+            print("exception in template management dashboard", e)
 
             info_message = "Unable to get Dashboard"
             print("Unable to get Dashboard", info_message)
-            return Response({"success": False, "error": str(info_message)})
+            return Response({"success": False, "error": str(info_message)}, template_name="user_authentication/manage_template_dasboard.html")
 
 
 class NewPasswordView(APIView):
@@ -155,7 +185,7 @@ class UserDatatableView(APIView):
         try:
             is_user_found = User.objects.filter(id = pk).exists()
             if is_user_found == False:
-    
+
                 info_message = "User Not found"
                 print(info_message)
                 return JsonResponse({'message' : info_message},status = 404)
@@ -183,7 +213,7 @@ class UserDatatableView(APIView):
         try:
             is_user_found = User.objects.filter(id = pk).exists()
             if is_user_found == False:
-    
+
                 info_message = "User Not found"
                 print(info_message)
                 return JsonResponse({'message' : info_message},status = 404)
@@ -193,17 +223,17 @@ class UserDatatableView(APIView):
                 with transaction.atomic():
                     user.delete()
                     register.delete()
-        
+
                     success_msg = "User {} deleted successfully".format(user.username)
                     print(success_msg)
                     return JsonResponse({'message' : success_msg})
             except Exception as e:
-    
+
                 info_message = "Please try again"
                 print(info_message)
                 print("exception in saving data rollback error", e)
                 return JsonResponse({'error' : str(info_message)}, status=422)
-            
+
         except Exception as error:
             print("delete", error)
 
@@ -218,12 +248,12 @@ class UserDatatableView(APIView):
         try:
             is_user_found = User.objects.filter(id = pk).exists()
             if is_user_found == False:
-    
+
                 info_message = "User Not found"
                 print(info_message)
                 return JsonResponse({'message' : info_message},status = 404)
 
-            user = User.objects.get(pk = pk)        
+            user = User.objects.get(pk = pk)
             edited_user = UserRegisterationModel.objects.get(user_name = user.username)
 
 
@@ -234,37 +264,37 @@ class UserDatatableView(APIView):
             try:
                 with transaction.atomic():
                     if(edit_serializer.is_valid()):
-            
+
                             if(auth_user_serializer.is_valid()):
-                                edit_serializer.save()                                                                                                                                                    
-                                
+                                edit_serializer.save()
+
                                 auth_user_instance = auth_user_serializer.save()
-                    
+
                                 auth_user_instance.save()
-                    
-                    
+
+
                                 success_msg = 'User {} updated successfully'\
                                                     .format(request.POST['user_name'])
                                 return JsonResponse({'message' : success_msg})
                             else:
-                    
+
                                 info_message = "Internal Server Error"
                                 print("serializer error", auth_user_serializer.errors)
                                 print(info_message)
                                 return JsonResponse({'message' : str(info_message)}, status = 422)
 
                     else:
-            
+
                         info_message = "Internal Server Error"
                         print("serializer error", edit_serializer.errors)
                         print(info_message)
                         return JsonResponse({'message' : str(info_message)}, status = 422)
             except Exception as e:
                 print("exception in saving data rollback error", e)
-    
+
                 info_message = "Please try again saving the data"
                 print(info_message)
-                return JsonResponse({'message' : str(info_message)}, status=422)  
+                return JsonResponse({'message' : str(info_message)}, status=422)
 
         except Exception as error:
 
