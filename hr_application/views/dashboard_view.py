@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 from django.http.response import HttpResponse, JsonResponse
 from ..serializer import DatatableSerializer, AuthUserSerializer, UserRegisterationModelSerializer, FilledTemplateDataSerializer
-from ..models import query_users_by_args, UserRegisterationModel, WordTemplateNew
+from ..models import query_users_by_args, UserRegisterationModel, WordTemplateNew, query_fill_templates_by_args, FilledTemplateData
 from django.db import transaction
 from .check_permission import has_permission
 import re
@@ -291,21 +291,26 @@ class DocumentTeamplateDropdown(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        get_all_template = WordTemplateNew.objects.all()
-        print('*'*80)
-        print(get_all_template)
-        print('*'*80)
-        all_template_list = []
-        all_template_obj = {}
-        for each in get_all_template:
-            all_template_obj['id'] = each.id
-            all_template_obj['word_name'] = each.word_name
-            all_template_obj['word_template'] = each.word_template.file.name
-            all_template_list.append(all_template_obj.copy())
-        print('-'*80)
-        print(all_template_list)
-        print('-'*80)
-        return JsonResponse({'message': all_template_list})
+        try:
+            get_all_template = WordTemplateNew.objects.all()
+            print('*'*80)
+            print(get_all_template)
+            print('*'*80)
+            all_template_list = []
+            all_template_obj = {}
+            for each in get_all_template:
+                all_template_obj['id'] = each.id
+                all_template_obj['word_name'] = each.word_name
+                all_template_obj['word_template'] = each.word_template.file.name
+                all_template_list.append(all_template_obj.copy())
+            print('-'*80)
+            print(all_template_list)
+            print('-'*80)
+            return JsonResponse({'message': all_template_list})
+        except Exception as error:
+            info_message = "Internal Server Error"
+            print(info_message, error)
+            return JsonResponse({'message': str(info_message)}, status=422)
 
 
 class SelectTemplate(APIView):
@@ -355,10 +360,12 @@ class FillDropdownTemplate(APIView):
         """
         try:
             template_dict = request.POST
-            print('!'*80)
+            print('^'*80)
             print(template_dict)
-            print('!'*80)
+            print('^'*80)
             raw_file_name = request.POST['filename']
+            new_raw_file_name = uuid.uuid4().hex
+            # new_raw_file_name = 'abc'
 
             if type(template_dict) != dict:
                 templatejson = dict(template_dict)
@@ -367,13 +374,24 @@ class FillDropdownTemplate(APIView):
                 if len(templatejson[k]) == 1:
                     templatejson[k] = templatejson[k][0]
             print('templatejson', templatejson)
-
+            print(templatejson['templatename'])
+            print(templatejson['Name'])
+            new_docx_file_name = new_raw_file_name
+            templatejsonnew = {'fill_values': templatejson, 'template_name': templatejson[
+                'templatename'], 'employee_name': templatejson['Name'], 'docx_name': new_docx_file_name}
             fill_form_serializer = FilledTemplateDataSerializer(
-                data=templatejson)
+                data=templatejsonnew)
 
             if fill_form_serializer.is_valid():
                 fill_form_serializer.validated_data['fill_values'] = templatejson
+                fill_form_serializer.validated_data['template_name'] = templatejson['templatename']
+                fill_form_serializer.validated_data['employee_name'] = templatejson['Name']
+                print('<'*40, '>'*80)
                 fill_form_serializer.save()
+            else:
+                print('<'*40, '>'*40)
+                print(fill_form_serializer.errors)
+                print('<'*40, '>'*40)
 
             file_name = BASE_DIR + '/media/' + raw_file_name
             print('file_name', file_name)
@@ -385,19 +403,19 @@ class FillDropdownTemplate(APIView):
             print('file_name_split', file_name_split)
 
             bytesio_object = document
-            dir_path_ft = BASE_DIR + '/media/filled_template/'
+            dir_path_ft = BASE_DIR + '/media/filled_user_template/'
 
             print('A'*20)
-            with open(dir_path_ft + "{}.docx".format(file_name_split), 'wb') as f:
+            with open(dir_path_ft + "{}.docx".format(new_raw_file_name), 'wb') as f:
                 f.write(bytesio_object.getbuffer())
 
             print("1"*20)
             output = subprocess.check_output(
-                ['libreoffice', '--convert-to', 'pdf', '{}.docx'.format(file_name_split)], cwd=dir_path_ft)
+                ['libreoffice', '--convert-to', 'pdf', '{}.docx'.format(new_raw_file_name)], cwd=dir_path_ft)
             print(type(output))
 
-            pdf_file = '/media/filled_template/' + \
-                '{}.pdf'.format(file_name_split)
+            pdf_file = '/media/filled_user_template/' + \
+                '{}.pdf'.format(new_raw_file_name)
             print('pdf_file', pdf_file)
             return JsonResponse({'success': pdf_file})
 
@@ -410,6 +428,70 @@ class FillDropdownTemplate(APIView):
 class GetAllFillTemplate(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
+
     def get(self, request):
-        print('#'*80,'*'*80)
-        return HttpResponse('hi')
+        try:
+            datatable_server_processing = query_fill_templates_by_args(
+                request, **request.query_params)
+            serializer = FilledTemplateDataSerializer(
+                datatable_server_processing['items'], many=True)
+            print('S'*80)
+            print(serializer.data)
+            print(serializer.data[0]['fill_values']['Name'])
+            print('S'*80)
+            result = dict()
+            result['data'] = serializer.data
+            result['draw'] = datatable_server_processing['draw']
+            result['recordsTotal'] = datatable_server_processing['total']
+            result['recordsFiltered'] = datatable_server_processing['count']
+            print("*"*20, "-"*20, "*"*20)
+            print(result)
+            print("*"*20, "-"*20, "*"*20)
+            return Response(result)
+        except Exception as e:
+            print("Exception in getting  all templates", e)
+            info_message = "Cannot fetch all templates data from database"
+            print(info_message)
+            return JsonResponse({'message': str(info_message)}, status=422)
+
+
+class GetFillTemplateDetails(APIView):
+
+        def get(self, request, pk):
+            try:
+                print('10'*50)
+                template = FilledTemplateData.objects.get(id = pk)
+                print('T'*80)
+                print(template)
+                print('T'*80)
+                
+                print(filled_data_details)
+                return JsonResponse({'message' : template})
+            except Exception as error:
+                print("get", error)
+
+                info_message = "Internal Server Error"
+                print(info_message)
+                return JsonResponse({'message' : str(info_message)},status = 422)
+            
+
+        def delete(self, request, pk):
+            """Delete template using Template Id"""
+
+            try:
+                message = "Template not found"
+                status = 404
+                template = FilledTemplateData.objects.filter(id = pk)
+                if template:
+                    template.delete()
+                    message = "Template deleted successfully"
+                    status = 200
+                return JsonResponse({'message' : message},status = status)
+
+
+            except Exception as error:
+                print("delete", error)
+
+                info_message = "Internal Server Error"
+                print(info_message)
+                return JsonResponse({'message' : str(info_message)},status = 422)

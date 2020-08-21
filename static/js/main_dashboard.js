@@ -123,8 +123,8 @@ function SetPermissionsUserDashboard() {
 var userDetails = getValues('UserDetails')
 var user_role_id = userDetails.role_id
 
-function DownloadResume(id) {
-    window.location.href = id
+function DownloadFillTemplate(id) {
+    window.location.href = '/media/filled_user_template/'+id+'.pdf'
     GetPermissions()
 }
 function DownloadPanCard(id) {
@@ -153,23 +153,24 @@ $("#profile_picture_edit").change(function () {
 
 
 
-function DeleteReport(id) {
-    url = '/usermanagement/edituserform/' + id
+function DeleteFillTemplate(id) {
+    url = '/dashboard/fill_template_detail/'+id
 
     $.ajax({
         url: url,
         method: 'DELETE',
-        headers: { Authorization: 'Bearer ' + localStorage.getItem("Token") },
+        headers: { Authorization: 'Bearer ' + userDetails.access },
         dataType: 'text',
         async: false,
         success: function (jsonData) {
             var token = localStorage.getItem("Token");
             parsed_jsondata = JSON.parse(jsonData)
             M.toast({ html: parsed_jsondata.message, classes: 'green rounded' })
-            setTimeout(function () {
+            window.location.reload();
+            // setTimeout(function () {
 
-                window.location.href = "/dashboard/?token=" + token
-            }, 2000);
+            //     window.location.href = "/dashboard/?token=" + token
+            // }, 2000);
         },
         error: function (xhr, status, error) {
             console.log(xhr)
@@ -189,10 +190,10 @@ function DeleteReport(id) {
     GetPermissions()
 }
 
-function getDeleteReport(id) {
-    var confirmation = confirm("Are you sure?\nDo you want to delete this user?");
+function getDeleteFillTemplate(id) {
+    var confirmation = confirm("Are you sure?\nDo you want to delete this filled template?");
     if (confirmation == true) {
-        DeleteReport(id)
+        DeleteFillTemplate(id)
     }
     else {
         return false
@@ -240,70 +241,19 @@ function getDashboardDatatable() {
     })
 }
 
-function getViewReport(id) {
-    url = '/usermanagement/edituserform/' + id
+function getViewFilledTemplate(id) {
+    alert('hi')
+    url = '/dashboard/fill_template_detail/'+id
     window.localStorage.setItem('editedUserId', id)
     $.ajax({
         url: url,
         method: 'GET',
-        headers: { Authorization: 'Bearer ' + localStorage.getItem("Token") },
+        headers: { Authorization: 'Bearer ' + userDetails.access },
         dataType: 'text',
         async: false,
         success: function (jsonData) {
             console.log(jsonData)
-            parsed_json = JSON.parse(jsonData)
-            data = parsed_json.message
-            console.log(data)
-            for (i = 0; i < data.length; i++) {
-                user_name = data[i].user_name
-                first_name = data[i].first_name
-                middle_name = data[i].middle_name
-                last_name = data[i].last_name
-                dob = data[i].dob
-                email = data[i].email
-                telephone = data[i].telephone
-                gender = data[i].gender
-                address = data[i].address
-                indian = data[i].indian
-                option = data[i].option
-                profile_picture = data[i].profile_picture
-                resume = data[i].resume
-                pan_card = data[i].pan_card
-                adhar_card = data[i].adhar_card
-                role = data[i].role
-            }
-            $('#HideProfileUpload').hide();
-            $('#submit_form').hide();
-            $('#hideUploadResume').hide();
-            $('#hideUploadPancard').hide();
-            $('#hideUploadAdharcard').hide();
-            $('.helper-text').hide();
-            $("#DisableDiv").find("*").prop('disabled', true);
-            $('#SubmitEditUser').hide();
-            $('#Dashboard_main').hide();
-            $('#dashboardRegisterForm').show();
-            $("#view_image").attr('src', '/media/' + profile_picture);
-            $('#profile_picture_edit_text').val(profile_picture);
-            $('#user_name_edit').val(user_name);
-            $('#first_name_edit').val(first_name);
-            $('#middle_name_edit').val(middle_name);
-            $('#last_name_edit').val(last_name);
-            $('#dob_edit').val(dob);
-            $('#email_edit').val(email);
-            $('#telephone_edit').val(telephone);
-            $('#textarea1_edit').val(address);
-            $('#indian').prop('checked', indian);
-            $('#' + gender + '').prop('checked', true);
-            $('#resume_edit_file').val(resume);
-            $('#pan_card_edit_file').val(pan_card);
-            $('#adhar_card_edit_file').val(adhar_card);
-            $('#dropdownid').find('option[value=' + option + ']').prop('selected', true);
-            $('select').not('.disabled').formSelect();
-            $('#role_drop_down').prop("disabled", true);
-            $('#role_drop_down').find('option[value=' + role + ']').prop('selected', true);
-
-
-            $('select').not('.disabled').formSelect();
+            
         },
         error: function (xhr, status, error) {
             if (xhr.status == 401) {
@@ -319,7 +269,7 @@ function getViewReport(id) {
 }
 
 function getEditReport(id) {
-    url = '/usermanagement/edituserform/' + id
+    url = '/usermanagement/edituserform/'+id
     window.localStorage.setItem('editedUserId', id)
     $.ajax({
         url: url,
@@ -590,7 +540,7 @@ function getaccessTokenViewUser() {
             localStorage.setItem("Token", result.access);
             var token = localStorage.getItem("Token");
             id = window.localStorage.getItem("editedUserId")
-            getViewReport(id)
+            getViewFilledTemplate(id)
         },
         error: function (data) {
             obj = JSON.parse(data.responseText)
@@ -637,7 +587,7 @@ function getaccessTokenDeleteUser() {
             localStorage.setItem("Token", result.access);
             var token = localStorage.getItem("Token");
             id = window.localStorage.getItem("editedUserId")
-            DeleteReport(id)
+            DeleteFillTemplate(id)
         },
         error: function (data) {
             obj = JSON.parse(data.responseText)
@@ -680,6 +630,9 @@ function GetTemplateDropdown() {
 
 
 function GetSelectedTemplateId() {
+    var templateName = $("#Template-dropdown-select option:selected").text();
+    alert(templateName)
+    window.localStorage.setItem('selected_template_name',templateName)
     $("#templateDropdownForm").empty();
 
     var templateId = $("#Template-dropdown-select option:selected").val();
@@ -741,7 +694,7 @@ function SaveFilledForm(){
     var fd = new FormData();
     var retrievedData = localStorage.getItem("FillId");
     var id = JSON.parse(retrievedData);
-
+    var selected_template_name_retrieve = window.localStorage.getItem('selected_template_name')
     $.each(id, function( i, l ){
         console.log(l)
         var id_name = $($.trim('#')+$.trim(l)).val()
@@ -750,7 +703,7 @@ function SaveFilledForm(){
     })
 
     fd.append('filename', filename)
-   
+    fd.append('templatename', selected_template_name_retrieve)
 
     console.log(fd)
     $.ajax({

@@ -6,15 +6,14 @@ var tableLoad = $(document).ready(function() {
     if (localStorage.getItem("Supseruser") === "true") {
         localStorage.removeItem("Superuser");
     }
-    alert('1')
-    $('#Dashboard-Datatable').DataTable({
+    // alert('1')
+    $('#Dashboard-Datatable').removeAttr('width').DataTable({
         dom: 'frtlip',
+        "autoWidth": false,
         "processing": true,
         "serverSide": true,
-        "scrollX": true,
-        "scrollY" : true,
         "ajax": {
-            "url": "getallfilltemplate",
+            "url": "/dashboard/getallfilltemplate",
             "type": "GET",
             "headers": { Authorization: 'Bearer ' + userDetails.access },
             "error" : function(data){
@@ -33,43 +32,32 @@ var tableLoad = $(document).ready(function() {
                         render: function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }},
-                        {"data" : "profile_picture",
-                        "render": function(data, type, row) {
-                            return '<img style="height:50px; width:50px; border-radius:50%" src='+data+' />';
-                        }},
-                        {"data" : "user_name"},
-                        {"data" : "email"},
-                        {"data" : 'resume',
+                        {"data" : "employee_name"},
+                        {"data" : "template_name"},
+                        {"data" : 'docx_name',
                         "render" : function (data, type, row, meta) {
-                            return '<button id='+data+' onclick=DownloadResume(id)><i class="material-icons prefix">file_download</i></button>'
+                            return '<button id='+data+' onclick=DownloadFillTemplate(id)><i class="material-icons prefix">file_download</i></button>'
                         }},
-                        {"data" : 'pan_card',
-                        "render" : function (data, type, row, meta) {
-                            return '<button id='+data+' onclick=DownloadPanCard(id)><i class="material-icons prefix">file_download</i></button>'
-                        }},
-                        {"data" : 'adhar_card',
-                        "render" : function (data, type, row, meta) {
-                            return '<button id='+data+' onclick=DownloadAdharCard(id)><i class="material-icons prefix">file_download</i></button>'
-                        }},
-                        {"data" : "user_id",
+                        {"data" : "id",
                         "render" : function(data){
-                            var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditReport(id)><i class="material-icons prefix">mode_edit</i></button> <button class="delete_btn" id='+data+' onclick=getDeleteReport(id)><i class="material-icons prefix">delete</i></button> <button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button>'
-                            var edit_view = '<button class="edit_btn" id='+data+' onclick=getEditReport(id)><i class="material-icons prefix">mode_edit</i></button> <button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button>'
-                            var only_view = '<button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button>'
-                            // alert(window.localStorage.getItem('delete_user'))
-                            delete_user_flag = window.localStorage.getItem('delete_user')
-                            edit_user_flag = window.localStorage.getItem('edit_user')
-                            view_user_flag = window.localStorage.getItem('view_user')
+                            var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditReport(id)><i class="material-icons prefix">mode_edit</i></button> <button class="delete_btn" id='+data+' onclick=getDeleteFillTemplate(id)><i class="material-icons prefix">delete</i></button> <button class="view_btn" id='+data+' onclick=getViewFilledTemplate(id)><i class="material-icons prefix">visibility</i></button>'
+                            // var edit_view = '<button class="edit_btn" id='+data+' onclick=getEditReport(id)><i class="material-icons prefix">mode_edit</i></button> <button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button>'
+                            // var only_view = '<button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button>'
+                            // // alert(window.localStorage.getItem('delete_user'))
+                            // delete_user_flag = window.localStorage.getItem('delete_user')
+                            // edit_user_flag = window.localStorage.getItem('edit_user')
+                            // view_user_flag = window.localStorage.getItem('view_user')
                             
-                            if(delete_user_flag == 'true' && edit_user_flag == 'true' && view_user_flag == 'true'){
-                                return all_perms
-                            }
-                            else if(delete_user_flag == 'false' && edit_user_flag == 'true' && view_user_flag == 'true'){
-                                return edit_view
-                            }
-                            else if(delete_user_flag == 'false' && edit_user_flag == 'false' && view_user_flag == 'true' ){
-                                return only_view
-                            }
+                            // if(delete_user_flag == 'true' && edit_user_flag == 'true' && view_user_flag == 'true'){
+                            //     return all_perms
+                            // }
+                            // else if(delete_user_flag == 'false' && edit_user_flag == 'true' && view_user_flag == 'true'){
+                            //     return edit_view
+                            // }
+                            // else if(delete_user_flag == 'false' && edit_user_flag == 'false' && view_user_flag == 'true' ){
+                            //     return only_view
+                            // }
+                            return all_perms
                         }},
                         
             ],
@@ -89,7 +77,7 @@ var tableLoad = $(document).ready(function() {
     $(".dataTables_info").css('padding', '0');
     // Call datatables, and return the API to the variable for use in our code
     // Binds datatables to all elements with a class of datatable
-    var table = $("#example").dataTable().api();
+    var table = $("#Dashboard-Datatable").dataTable().api();
 
     // Grab the datatables input box and alter how it is bound to events
     $(".dataTables_filter input")
