@@ -5,11 +5,19 @@ from ..config import perms_config
 
 
 def format_path(raw_path, pk):
+    path_list = []
     print('pk', pk)
     media_pdf = ['media', '.pdf']
     path = raw_path.split("?")[0]
+    path_list.append(path)
+    print('path_list', path_list)
     if pk or any(x in path for x in media_pdf):
         path = path.rsplit("/", 1)[0]
+        print('path', path)
+        path_list.append(path)
+        
+        return path
+    
     return path
 
 
@@ -70,10 +78,10 @@ def has_permission():
                             print("#"*20)
                             return func(self, request, view_function, view_args, view_kwargs)
 
-                    print("403")
+                    print("403 for loop")
                     return HttpResponse(status=403)
                 else:
-                    print("403")
+                    print("403 if session key")
                     return HttpResponse(status=403)
 
             except Exception as e:
