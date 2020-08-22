@@ -3,10 +3,12 @@ $(document).ready(function () {
     $(".add_user").hide();
     getUserRoleDropDown();
     SetPermissionsUserDashboard();
+    get_labels('user_dashboard')
 })
 
 var userDetails = getValues('UserDetails')
 var access = userDetails.access
+
 
 function getUserRoleDropDown() {
 
@@ -21,7 +23,7 @@ function getUserRoleDropDown() {
 
             var next_id = $("#role_drop_down");
             $.each(response, function (key, value) {
-                role = '<span class="role_option_' + value.id + '">' + value.role_name + '</span>'
+                let role = '<span class="role_option_' + value.id + '">' + value.role_name + '</span>'
                 $(next_id).append($("<option></option>").attr("value", value.id).html(role));
             });
             $(next_id).not('.disabled').formSelect();
@@ -30,7 +32,7 @@ function getUserRoleDropDown() {
             if (data.status == 401) {
                 getaccessToken(getUserRoleDropDown);
             }
-            obj = JSON.parse(data.responseText)
+            let obj = JSON.parse(data.responseText)
             M.toast({ html: obj.error, classes: 'red rounded' })
         }
 
@@ -40,12 +42,12 @@ function getUserRoleDropDown() {
 // Get Main dashboard
 function getdashboard() {
     var token = access;
-    var get_url = "/dashboard/?token="
+    var get_url = "/dashboard/"
     $.ajax({
         method: 'GET',
-        url: get_url + token,
+        url: get_url,
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = get_url
         },
         error: function (xhr) {
             if (xhr.status == 401) {
@@ -59,13 +61,13 @@ function getdashboard() {
 function GetAddUserPage() {
 
     var token = access;
-    var get_url = '/dashboard/user_management/add_user/?token='
+    var get_url = '/dashboard/user_management/add_user/'
     $.ajax({
         type: 'GET',
         url: '/dashboard/user_management/add_user/',
         headers: { Authorization: 'Bearer ' + access },
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = get_url
         },
         error: function (data) {
             if (data.status == 401) {
@@ -82,12 +84,12 @@ function GetAddUserPage() {
 // get user management dashboard
 function getUserDashboardDatatable() {
     var token = access;
-    var get_url = "/dashboard/user_management/?token="
+    var get_url = "/dashboard/user_management/"
     $.ajax({
         method: 'GET',
-        url: get_url + token,
+        url: get_url,
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = get_url
         },
         error: function (xhr) {
             if (xhr.status == 401) {
@@ -116,7 +118,7 @@ function DeleteReport(id) {
             M.toast({ html: parsed_jsondata.message, classes: 'green rounded' })
             setTimeout(function () {
 
-                window.location.href = "/dashboard/user_management/?token=" + token
+                window.location.href = "/dashboard/user_management/"
             }, 2000);
         },
         error: function (xhr, status, error) {
@@ -155,12 +157,12 @@ function getDeleteReport(id) {
 //Get Datatable for user management
 function getDashboardDatatable() {
     var token = access;
-    var get_url = "/dashboard/?token="
+    var get_url = "/dashboard/"
     $.ajax({
         method: 'GET',
         url: get_url + token,
         success: function (data) {
-            window.location.href = get_url + token
+            window.location.href = get_url
         },
         error: function (xhr) {
             if (xhr.status == 401) {
@@ -284,7 +286,7 @@ function getEditReport(id) {
 
 }
 
-// Save the edited user 
+// Save the edited user
 function EditUserSave(user_name, first_name,
     last_name, email,
     user_status, role) {
@@ -333,7 +335,7 @@ function EditUserSave(user_name, first_name,
     })
 }
 
-// Validation of user edit 
+// Validation of user edit
 function EditUserValidation() {
     $("#submit_edit_form").attr("disabled", true);
 
@@ -387,7 +389,7 @@ function EditUserValidation() {
     }
 }
 
-// Get the permissions from LocalStorge 
+// Get the permissions from LocalStorge
 function SetPermissionsUserDashboard() {
     var userPermissions = getValues('UserPermissions')
 
@@ -398,5 +400,3 @@ function SetPermissionsUserDashboard() {
 
     }
 }
-
-

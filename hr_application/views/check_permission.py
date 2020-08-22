@@ -17,11 +17,11 @@ def has_permission():
 
             # Exact url from the function
             raw_path = request.path
-            
+
             path = raw_path.split("?")[0]
             if pk or any(x in path for x in media_pdf):
                 path = path.rsplit("/", 1)[0]
-                
+
             # Exact method from the function
             method = request.method.lower()
             print("Get requested url path: ", path)
@@ -33,21 +33,21 @@ def has_permission():
                 if path in perms_config.pass_urls or 'django.contrib.admin' in view_function.__module__:
                     print("passing the url without permission check", path)
                     return func(self, request, view_function, view_args, view_kwargs)
-                
-                # Get the Global Permission key 
+
+                # Get the Global Permission key
                 session_perm_key = perms_config.session_perm_key
                 print("session perm key", session_perm_key)
 
-                #Check if permission key is in session
+                # Check if permission key is in session
                 if session_perm_key in request.session:
 
                     # Get permissions list value from the session
                     session_perms_list = request.session[session_perm_key]
                     print('session_perms_list', session_perms_list)
 
-                    # Looping through the list of session perms 
+                    # Looping through the list of session perms
                     for session_perms in session_perms_list:
-                        
+
                         # Compare the method and path
                         if session_perms['api_method'] == method and session_perms['url_identifier'] == path:
                             print('+'*20)
@@ -56,9 +56,10 @@ def has_permission():
                             print('+'*20)
                             print("@"*20)
                             return func(self, request, view_function, view_args, view_kwargs)
-                    
-                    # if no condition matches then return status = 403
-                    # request.session.flush()
+                    print("403")
+                    return HttpResponse(status=403)
+                else:
+                    print("403")
                     return HttpResponse(status=403)
 
             except Exception as e:

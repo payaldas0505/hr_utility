@@ -1,5 +1,6 @@
 jQuery(document).ready(function ($) {
-
+    localStorage.setItem('language',1)
+    get_labels('login')
     // on Change language from dropdown
     // $(function() {
     //     $("#language_drop_down").on('change', function() {
@@ -44,10 +45,10 @@ jQuery(document).ready(function ($) {
 });
 
 // function get_labels(language_id){
-//     var language_id = localStorage.getItem('language')
+//     language_id = localStorage.getItem('language')
 //     $.ajax({
 //         type: 'POST',
-//         url: '/v2s/get_labels/',
+//         url: '/get_labels/',
 //         data : {
 //         	'page_name' : 'login',
 //         	'language_id' : language_id,
@@ -59,14 +60,14 @@ jQuery(document).ready(function ($) {
 //                 $('.'+value.page_label_class_name).text(value.page_label_text);
 //               }
 //         },
-//         error: function(data){
-//             obj = JSON.parse(data.responseText)
+//         error: function(xhr){
+//             let obj = JSON.parse(xhr.responseText)
 //             M.toast({html: obj.error, classes: 'red rounded'})
 //         }
 //     });
 // }
 
-// Get toast messages from backend 
+// Get toast messages from backend
 function get_toast(label) {
 
     $.ajax({
@@ -82,7 +83,7 @@ function get_toast(label) {
 
         },
         error: function (xhr) {
-            parsed_jsondata = JSON.parse(xhr.responseText)
+            let parsed_jsondata = JSON.parse(xhr.responseText)
             // alert(parsed_jsondata.error)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
         }
@@ -121,8 +122,8 @@ function checkValidations(event) {
 // submit login credentials
 function submit() {
     
-    username = $('#username').val()
-    password = $('#password').val()
+   let username = $('#username').val()
+   let password = $('#password').val()
 
     // localStorage.setItem("User", username)
     $.ajax({
@@ -139,14 +140,14 @@ function submit() {
                 return false
             }
             localStorage.setItem("UserDetails", JSON.stringify(result));
-            window.location.href = "/dashboard/?token=" + result.access;
-         
-            
+            window.location.href = "/dashboard/";
+
+
             // GetPermissions()
         },
         error: function (data) {
             localStorage.removeItem("User");
-            obj = JSON.parse(data.responseText)
+            let obj = JSON.parse(data.responseText)
             M.toast({ html: obj.detail, classes: 'red rounded' })
         }
     })
@@ -165,6 +166,3 @@ function submit() {
      document.getElementById("login_btn").click();
    }
  });
-
-
-    

@@ -17,7 +17,7 @@ var tableLoad = $(document).ready(function() {
             "headers": { Authorization: 'Bearer ' + access },
             "error": function(data) {
                 if (data.status == 401) {
-                    let get_url = "/dashboard/user_management/?token="
+                    let get_url = "/dashboard/user_management/"
                     getaccessTokenForUrl(get_url);
 
                     // } else if (data.status == 403) {

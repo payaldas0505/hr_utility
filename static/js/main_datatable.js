@@ -2,7 +2,7 @@ var tableLoad = $(document).ready(function() {
     // GetPermissions()
     $('#dashboardRegisterForm').hide();
     $('#dropdownid').not('.disabled').formSelect();
-    
+
     if (localStorage.getItem("Supseruser") === "true") {
         localStorage.removeItem("Superuser");
     }
@@ -23,11 +23,11 @@ var tableLoad = $(document).ready(function() {
                 }
                 else{
                     M.toast({html:JSON.parse(data.responseText).message, classes: 'red rounded'})
-                }                
+                }
             }
         },
-        
-        "columns" : [   
+
+        "columns" : [
                         {"data" : null,
                         render: function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
@@ -59,7 +59,7 @@ var tableLoad = $(document).ready(function() {
                             delete_user_flag = window.localStorage.getItem('delete_user')
                             edit_user_flag = window.localStorage.getItem('edit_user')
                             view_user_flag = window.localStorage.getItem('view_user')
-                            
+
                             if(delete_user_flag == 'true' && edit_user_flag == 'true' && view_user_flag == 'true'){
                                 return all_perms
                             }
@@ -70,7 +70,7 @@ var tableLoad = $(document).ready(function() {
                                 return only_view
                             }
                         }},
-                        
+
             ],
             columnDefs: [
                 {
@@ -79,7 +79,7 @@ var tableLoad = $(document).ready(function() {
                 }
             ]
     });
-        //lengthmenu -> add a margin to the right and reset clear 
+        //lengthmenu -> add a margin to the right and reset clear
     $(".dataTables_length").css('clear', 'none');
     $(".dataTables_length").css('margin-right', '20px');
 
@@ -105,11 +105,11 @@ var tableLoad = $(document).ready(function() {
             }
             return;
     });
-    
-   
+
+
 } );
 
-$.fn.dataTable.ext.errMode = function ( settings, helpPage, message ) { 
+$.fn.dataTable.ext.errMode = function ( settings, helpPage, message ) {
     console.log(message);
     M.toast({html: message, classes: 'red rounded'})
 };
@@ -129,7 +129,7 @@ function getaccessTokenDatatable(){
             // location.reload();
             var token = localStorage.getItem("Token");
             setTimeout(function() {
-                window.location.href = "/v2s/dashboard/?token="+token;
+                window.location.href = "/v2s/dashboard/";
             }, 200);
             // tableLoad()
          },

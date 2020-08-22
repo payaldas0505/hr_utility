@@ -20,7 +20,7 @@ function SubmitUploadWordTemplate() {
     fd.append('word_name', word_name);
 
     $.ajax({
-        url: '',
+        url: '/dashboard/template_management/add_template_data/',
         headers: { Authorization: 'Bearer ' + access },
         type: 'post',
         data: fd,
@@ -106,12 +106,12 @@ $('#word_template').change(function() {
 
 function getTemplateDashboard() {
     var token = access;
-    var get_url = "/dashboard/template_management/?token="
+    var get_url = "/dashboard/template_management/"
     $.ajax({
-        method: 'GET',
-        url: get_url + token,
-        success: function(data) {
-            window.location.href = get_url + token
+        method : 'GET',
+        url : get_url,
+        success: function(data){
+            window.location.href = get_url
         },
         error: function(xhr) {
             if (xhr.status == 401) {

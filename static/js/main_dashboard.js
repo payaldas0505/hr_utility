@@ -139,11 +139,11 @@ function DeleteReport(id) {
         success: function (jsonData) {
             var token = localStorage.getItem("Token");
             parsed_jsondata = JSON.parse(jsonData)
-            M.toast({ html: parsed_jsondata.message, classes: 'green rounded' })
-            setTimeout(function () {
+            M.toast({html: parsed_jsondata.message, classes: 'green rounded'})
+            setTimeout(function() {
 
-                window.location.href = "/dashboard/?token=" + token
-            }, 2000);
+                window.location.href = "/dashboard/"
+              }, 2000);
         },
         error: function (xhr, status, error) {
             console.log(xhr)
@@ -182,11 +182,11 @@ function GetAccessTokenForBackButton() {
             'refresh': localStorage.getItem("Refresh"),
         },
         success: function (result) {
-            localStorage.setItem("Token", result.access);
-            token = localStorage.getItem("Token")
+           localStorage.setItem("Token", result.access);
+           token = localStorage.getItem("Token")
 
-            setTimeout(function () {
-                window.location.href = "/dashboard/?token=" + token;
+            setTimeout(function() {
+                window.location.href = "/dashboard/";
             }, 500);
 
         },
@@ -201,10 +201,10 @@ function GetAccessTokenForBackButton() {
 function getDashboardDatatable() {
     var token = localStorage.getItem("Token");
     $.ajax({
-        method: 'GET',
-        url: "/dashboard/?token=" + token,
-        success: function (data) {
-            window.location.href = "/dashboard/?token=" + token
+        method : 'GET',
+        url : "/dashboard/",
+        success: function(data){
+            window.location.href = "/dashboard/"
         },
         error: function (xhr) {
             if (xhr.status == 401) {
@@ -541,7 +541,7 @@ function getaccessTokenDashboard() {
             localStorage.setItem("Token", result.access);
             // location.reload();
             var token = localStorage.getItem("Token");
-            window.location.href = "/dashboard/?token=" + token;
+            window.location.href = "/dashboard/";
 
         },
         error: function (data) {
@@ -597,8 +597,6 @@ function getaccessTokenEditUser() {
         }
     })
 }
-
-
 
 function getaccessTokenDeleteUser() {
     $.ajax({

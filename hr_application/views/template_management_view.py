@@ -27,6 +27,13 @@ from docxtpl import DocxTemplate
 import uuid
 from hr_utility.settings import BASE_DIR
 
+
+class AddTemplatePageView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    def get(self, request):
+        return render(request, 'template_management/add_template.html')
+
+
 class NewGenDocxView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)

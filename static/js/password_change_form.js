@@ -1,49 +1,27 @@
 
 var userDetails = getValues('UserDetails')
 var access = userDetails.access
-
+get_labels('change_password')
 function getdashboard(){
     var token = access;
-    var get_url = "/dashboard/?token="
+    var get_url = "/dashboard/"
     $.ajax({
         method : 'GET',
-        url : "/dashboard/?token="+token,
+        url : "/dashboard/",
         success: function(data){
-            window.location.href = get_url+token
+            window.location.href = get_url
         },
         error : function(xhr){
             if(xhr.status == 401){
                 getaccessTokenForUrl(get_url);
             }
         }
-    })  
+    })
 }
 
-// function GetAccessTokenForBackButton(){
-//     $.ajax({
-//         type: 'POST',
-//         url: '/refresh_token/',
-//         data : {
-//           'refresh' : localStorage.getItem("Refresh"),
-//         },
-//         success: function (result) {
-//            localStorage.setItem("Token", result.access);
-//            token = localStorage.getItem("Token")
-        
-//         setTimeout(function() {
-//             window.location.href = "/dashboard/?token="+token;
-//           }, 500);
 
-//         },
-//         error: function(data){
-//            obj = JSON.parse(data.responseText)
-//            M.toast({html: obj.detail})
-//         }
-//   })
 
-// }
-
-// submit changed password 
+// submit changed password
 function save_password() {
     $('#password_change_btn').attr("disabled", true);
     var old_password = $('#old_password').val()
@@ -72,25 +50,14 @@ function save_password() {
 
                 getaccessToken(save_password);
             }
-            parsed_jsondata = JSON.parse(xhr.responseText)
-            // alert(parsed_jsondata.error)
+            let parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({html: parsed_jsondata.error, classes: 'red rounded'})
             setTimeout(function() {
                 $("#password_change_btn").attr("disabled", false);
               }, 2000);
             return false
         }
-        // error: function (data) {
-        //     // localStorage.removeItem("User");
-        //     if (data.status == 401) {
 
-        //         getaccessToken(save_password);
-        //     }
-        //     $('#password_change_btn').attr("disabled", false);
-        //     obj = JSON.parse(data.responseText)
-        //     M.toast({ html: obj.error, classes: 'red rounded' })
-        //     return false;
-        // }
     })
 }
 
@@ -133,7 +100,7 @@ function changepassword(){
         // alert("check match condition")
         $('#password_change_btn').attr("disabled", false);
         M.toast({ html: 'New password and confirm password fields do not match', classes: 'red rounded' })
-        
+
         return false;
     }
 
@@ -141,24 +108,3 @@ function changepassword(){
         save_password();
     }
 }
-
-// function getaccessChangePassword(){
-//     $.ajax({
-//          type: 'POST',
-//          url: '/refresh_token/',
-//          data : {
-//            'refresh' : localStorage.getItem("Refresh"),
-//          },
-//          success: function (result) {
-//             localStorage.setItem("Token", result.access);
-//             // location.reload();
-//             save_password()
-//             // return false
-
-//          },
-//          error: function(data){
-//             obj = JSON.parse(data.responseText)
-//             M.toast({html: obj.detail})
-//          }
-//    })
-//  }
