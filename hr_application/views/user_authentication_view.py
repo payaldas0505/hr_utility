@@ -1,4 +1,5 @@
 import datetime
+import pprint
 import uuid
 import json
 from django.contrib.auth.models import User
@@ -291,7 +292,7 @@ class GetPermissions(APIView):
                 'role__permissions__permission_name',
                 'role__permissions__api_method',
                 'role__permissions__url_identifier')
-            print(perms)
+            # print(perms)
 
             # Permissions setting in session
             perms_list_font_end = []
@@ -317,8 +318,10 @@ class GetPermissions(APIView):
 
             print()
             request.session[perms_config.session_perm_key] = permission_list_backend
-            print("storing permissions for users in session {}:{}".format(
+            print("&"*20+"  Start perms  "+"&"*20)
+            pprint.pprint("storing permissions for users in session {}:{}".format(
                 perms_config.session_perm_key, permission_list_backend))
+            print("&"*20+"  End perms  "+"&"*20)
             return JsonResponse(perms_list_font_end, safe=False)
 
         except Exception as error:
