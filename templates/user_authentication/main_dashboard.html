@@ -3,42 +3,93 @@
 
 {% block content %}
 <div id="Dashboard_main">
-    <div id="Document-Dashboard-header">
-        <h3 class="dashboard_label header">Document Dashboard</h3>
-    </div>
-    <div id="Template-Dropdown-Header">
-        <h3 class="header">Template Dropdown</h3>
-    </div>
-    <div id="RenderTemplateDropdown">
-        <button class="waves-light btn" onclick="GetTemplateDropdown()"><i
-                class="material-icons left">add_circle</i><span class="add_user_button">Document</span></button>
-    </div>
+    <div id="HideDivForView">
+        <div id="Document-Dashboard-header">
+            <h3 class="dashboard_label header">Document Dashboard</h3>
+        </div>
+        <div id="Template-Dropdown-Header">
+            <h3 class="header">Template Dropdown</h3>
+        </div>
+        <div id="RenderTemplateDropdown">
+            <!-- <a href="/usermanagement/add_user_page/" class="add_user waves-effect waves-light btn"><i
+                class="material-icons left">add_circle</i><span class="add_user_button">Document</span></a> -->
 
-    <div class="input-field col s12" id="Template-dropdown">
-        <select>
-            <option value="" disabled selected>Choose your option</option>
-        </select>
-        <label>Select Template</label>
-    </div>
+            <button class="waves-light btn" onclick="GetTemplateDropdown()"><i
+                    class="material-icons left">add_circle</i><span class="add_user_button">Document</span></button>
+        </div>
 
-    <div id="templateDropdownForm">
-        <form action="" id="templateDropdownFormAppend" onSubmit="return false;">
-            <h1>hi</h1>
-        </form>
-    </div>
+        <div class="input-field col s12" id="Template-dropdown">
+            <select id="Template-dropdown-select" onchange="GetSelectedTemplateId()">
+                <option value="" disabled selected>Choose your option</option>
+            </select>
+            <label>Select Template</label>
+        </div>
 
-    <div id="Dashboard-Datatable-Div">
-        <table id="Dashboard-Datatable" class="display" style="width:auto;">
-            <thead>
-                <tr>
-                    <th class="dt_sr_no_label">Sr No.</th>
-                    <th class="dt_doc_name_label">Document Name</th>
-                    <th class="dt_template_name_label">Template Name</th>
-                    <th class="dt_preview_label">Preview</th>
-                    <th class="action_btn_label" style="width: 150px;">Action</th>
-                </tr>
-            </thead>
-        </table>
+        <div class="dropdown-back-button">
+            <button class="btn waves-light" onclick="GotoDashboard()">Back</button>
+        </div>
+
+        <div id="templateDropdownForm">
+            <!-- <form action="" id="templateDropdownFormAppend" onSubmit="return false;">
+            
+        </form> -->
+        </div>
+
+
+        <div class="row save-cancel-button">
+            <button class="btn  waves-light" onclick="SaveFillTemplate()">Preview</button>
+            <button class="btn  waves-light" onclick="GetTemplateDropdown()">Cancel</button>
+        </div>
+
+
+        <div id="Dashboard-Datatable-Div">
+            <table id="Dashboard-Datatable" class="display" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th class="dt_sr_no_label">Sr No.</th>
+                        <th class="dt_doc_name_label">Employee Name</th>
+                        <th class="dt_doc_name_label">Template Name</th>
+                        <th class="action_btn_label" style="width: 150px;">Download</th>
+                        <th class="action_btn_label" style="width: 150px;">Action</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <div id="ViewDivTemplate">
+        <div id="viewFillTemplate">
+
+        </div>
+        <div>
+            <button class="btn waves-light" onclick="GotoDashboard()">Back</button>
+        </div>
+    </div>
+    <div id="EditDivTemplate">
+        <div id="editFillTemplate">
+
+        </div>
+        <div class="row">
+            <button class="btn waves-light" onclick="GotoDashboard()">Back</button>
+            <button class="btn waves-light" onclick="SaveEditedTemplate()">Preview</button>
+        </div>
+    </div>
+    <div id="pdf_fill">
+        <span id="pdf_label_fill"><i class="material-icons left">visibility</i>PDF Preview</span>
+        <object id="pdf_preview_fill" data='' type='application/pdf' width='100%' height='700px' aria-label="pdf_label">
+            <p style="display: none;">This object has no text.</p>
+        </object>
+    </div>
+    <div id="pdf_save_cancel">
+        
+    </div>
+    <div id="pdf_edit">
+        <span id="pdf_label_edit"><i class="material-icons left">visibility</i>PDF Preview</span>
+        <object id="pdf_preview_edit" data='' type='application/pdf' width='100%' height='700px' aria-label="pdf_label">
+            <p style="display: none;">This object has no text.</p>
+        </object>
+    </div>
+    <div id="pdf_save_cancel_edit">
+        
     </div>
 </div>
 

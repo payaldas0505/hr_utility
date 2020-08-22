@@ -14,7 +14,7 @@ from .views import (LoginView, CustomTokenObtainPairView,
                     GetAllUsersView, UserDatatableView,
                     NewGenDocxView, GetPermissions,
                     FillDocument, GetAllTemplatesView,
-                    WordTemplateDataView, GetLabels)
+                    WordTemplateDataView, DocumentTeamplateDropdown, SelectTemplate, FillDropdownTemplate, GetAllFillTemplate ,GetFillTemplateDetails)
 
 urlpatterns = [
     path('api/rest-auth/', include('rest_auth.urls')),
@@ -85,4 +85,15 @@ urlpatterns = [
 
     path('get_labels/', GetLabels.as_view(), name="get_labels"),
 
+    path('dashboard/template_management/delete_template/<int:pk>', WordTemplateDataView.as_view(), name='delete_template'),
+
+    path('dashboard/document_template_dropdown/', DocumentTeamplateDropdown.as_view(), name='document_template_dropdown'),
+
+    path('dashboard/select_template/<int:pk>', SelectTemplate.as_view(), name = 'select_template'),
+
+    path('dashboard/fill_dropdown_template/', FillDropdownTemplate.as_view(), name= 'fill_dropdown_template'),
+
+    path('dashboard/getallfilltemplate', GetAllFillTemplate.as_view(), name = 'get_all_fill_template'),
+
+    path('dashboard/fill_template_detail/<int:pk>', GetFillTemplateDetails.as_view(), name = 'fill_template_detail')
 ]
