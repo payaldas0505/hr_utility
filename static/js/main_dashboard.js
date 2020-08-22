@@ -256,11 +256,14 @@ function getViewFilledTemplate(id) {
         dataType: 'text',
         async: false,
         success: function (jsonData) {
+            console.log('####################################')
             console.log(jsonData)
             parsed_json = JSON.parse(jsonData)
             console.log(parsed_json)
             console.log(typeof (parsed_json))
-            $.each(parsed_json['message'], function (key, value) {
+            $.each(parsed_json['message'][0], function (key, value) {
+                // alert(key)
+                // alert(value)
                 input = '<input class="validate" required="" aria-required="true" value='+value+'>'
                 label = '<label>'+key+'</label>'
                 $('#viewFillTemplate').append(input)
@@ -294,13 +297,16 @@ function getEditFillTemplate(id) {
         dataType: 'text',
         async: false,
         success: function (jsonData) {
-            console.log(jsonData)
+            console.log('***********************************')
             console.log(jsonData)
             parsed_json = JSON.parse(jsonData)
+            console.log('***********************************')
             console.log(parsed_json)
             console.log(typeof (parsed_json))
+            window.localStorage.setItem('editedTemplateName', parsed_json['message'][2]['templatename'])
+            window.localStorage.setItem('editedFileName', parsed_json['message'][1]['filename'])
             var EditTemplateId = []
-            $.each(parsed_json['message'], function (key, value) {
+            $.each(parsed_json['message'][0], function (key, value) {
                 // alert(value)
                 // alert(key)
                 input = '<input class="validate" id='+key+' required="" aria-required="true" value='+value+'>'
@@ -329,6 +335,7 @@ function getEditFillTemplate(id) {
     })
     GetPermissions()
 }
+
 
 function EditUserSave(user_name, first_name, last_name,
     middle_name, password, dob, email,
@@ -772,12 +779,16 @@ function SaveEditedTemplateValidate(){
     var fd = new FormData();
     edittemplateid = window.localStorage.getItem('editedUserId')
     retrievedEditTemplateId = window.localStorage.getItem('EditTemplateId')
+    retrievedEditTemplateName = window.localStorage.getItem('editedTemplateName')
+    retrievedEditFilename = window.localStorage.getItem('editedFileName')
     parsedEditTemplateId = JSON.parse(retrievedEditTemplateId)
     for(i=0; i<parsedEditTemplateId.length; i++)
     {
         var str = $('#' + parsedEditTemplateId[i]).val();
         fd.append(parsedEditTemplateId[i], str)
     }
+    fd.append('filename', retrievedEditFilename)
+    fd.append('templatename', retrievedEditTemplateName)
     console.log(fd)
     $.ajax({
         url: '/dashboard/fill_template_detail/'+edittemplateid,
@@ -840,7 +851,7 @@ function SaveEditedTemplate(){
     for(i=0; i<parsedEditTemplateId.length; i++)
     {
         var str = $('#' + parsedEditTemplateId[i]).val();
-        alert(str);
+        // alert(str);
     }
     SaveEditedTemplateValidate()
 }

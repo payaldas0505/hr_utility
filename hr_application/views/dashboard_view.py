@@ -456,7 +456,8 @@ class GetAllFillTemplate(APIView):
 
 
 class GetFillTemplateDetails(APIView):
-
+        authentication_classes = [CustomJWTAuthentication]
+        permission_classes = (IsAuthenticated,)
         def get(self, request, pk):
             try:
                 print('10'*50)
@@ -465,11 +466,18 @@ class GetFillTemplateDetails(APIView):
                 print('T'*80)
                 
                 template_detail = template[0]['fill_values']
+                file_name = template_detail['filename']
+                template_name = template_detail['templatename']
                 remove_template_name = template_detail.pop('templatename', None)
                 remove_file_name = template_detail.pop('filename', None)
+                print(file_name)
                 print(template_detail)
                 print('T'*80)
-                return JsonResponse({'message' : template_detail})
+                new_template_detal = []
+                new_template_detal.append(template_detail)
+                new_template_detal.append({'filename': file_name})
+                new_template_detal.append({'templatename' : template_name})
+                return JsonResponse({'message' : new_template_detal})
             except Exception as error:
                 print("get", error)
 
@@ -507,8 +515,61 @@ class GetFillTemplateDetails(APIView):
                 print('p'*80)
                 edited_template = FilledTemplateData.objects.get(id=pk)
                 print(edited_template)
-                return HttpResponse('hi')
+                new_docx_file_name = FilledTemplateData.objects.filter(id=pk).values('docx_name')[0]['docx_name']
+                templatejsonnew = {'fill_values': request.POST, 'template_name': request.POST['templatename'], 'employee_name': request.POST['Name'], 'docx_name': new_docx_file_name}
+                edit_serializer = FilledTemplateDataSerializer(edited_template, data=templatejsonnew)
+                try:
+                    print('1'*80)
+                    with transaction.atomic():
+                        if edit_serializer.is_valid():
+                            edit_serializer.save()
+                            file_name = BASE_DIR + '/media/' + request.POST['filename']
+                            print('file_name', file_name)
+                            template_dict = request.POST
+                            if type(template_dict) != dict:
+                                templatejson = dict(template_dict)
+
+                            for k in templatejson:
+                                if len(templatejson[k]) == 1:
+                                    templatejson[k] = templatejson[k][0]
+
+                            document = generateNew.from_template(file_name, templatejson)
+                            document.seek(0)
+
+                            file_name_split = file_name.split('/')[-1].split('.')[0]
+                            print('file_name_split', file_name_split)
+
+                            bytesio_object = document
+                            dir_path_ft = BASE_DIR + '/media/filled_user_template/'
+
+                            print('A'*20)
+                            print(new_docx_file_name)
+                            with open(dir_path_ft + "{}.docx".format(new_docx_file_name), 'wb') as f:
+                                f.write(bytesio_object.getbuffer())
+
+                            print("1"*20)
+                            output = subprocess.check_output(
+                                ['libreoffice', '--convert-to', 'pdf', '{}.docx'.format(new_docx_file_name)], cwd=dir_path_ft)
+                            print(type(output))
+
+                            pdf_file = '/media/filled_user_template/' + \
+                                '{}.pdf'.format(new_docx_file_name)
+                            print('pdf_file', pdf_file)
+                            return JsonResponse({'success': pdf_file})
+
+
+                            # return HttpResponse('hi')
+                        else:
+                            print(edit_serializer.errors)
+                except Exception as e:
+                    print('2'*80)
+                    print("exception in saving data rollback error", e)
+
+                    info_message = "Please try again saving the data"
+                    print(info_message)
+                    return JsonResponse({'message': str(info_message)}, status=422)
             except Exception as error:
+                print('3'*80)
                 print("update", error)
 
                 info_message = "Internal Server Error"
