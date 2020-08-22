@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (UserRegisterationModel, UserRole,
                      WordTemplateNew, RolePermissions,
-                     WordTemplateData, PageLabel, PageName, Language)
+                     WordTemplateData, PageLabel, PageName, Language, FilledTemplateData)
 import nested_admin
 
 # Register your models here.
@@ -17,7 +17,7 @@ class UserRoleAdmin(admin.ModelAdmin):
 
 
 admin.site.register(UserRole, UserRoleAdmin)
-
+admin.site.register(FilledTemplateData)
 
 class PageLabelInline(nested_admin.NestedTabularInline):
     extra = 0

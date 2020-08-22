@@ -1,23 +1,25 @@
 from rest_framework import serializers
-from .models import UserRegisterationModel, WordTemplateNew, WordTemplateData
+from .models import UserRegisterationModel, WordTemplateNew, WordTemplateData, FilledTemplateData
 from django.contrib.auth.models import User
 
+
 class AuthUserSerializer(serializers.ModelSerializer):
-    class Meta :
+    class Meta:
         model = User
         fields = (
             'username',
             'email',)
 
+
 class UserRegisterationModelSerializer(serializers.ModelSerializer):
-    class Meta :
+    class Meta:
         model = UserRegisterationModel
         exclude = (
-        'user',)
+            'user',)
 
 
 class DatatableSerializer(serializers.ModelSerializer):
-    class Meta :
+    class Meta:
         model = UserRegisterationModel
         fields = (
             'user_name',
@@ -28,19 +30,32 @@ class DatatableSerializer(serializers.ModelSerializer):
 
 
 class WordTemplateUploadSerializer(serializers.ModelSerializer):
-    class Meta :
+    class Meta:
         model = WordTemplateNew
         fields = (
-                    'word_template',
-                    'word_name'
-                )
+            'word_template',
+            'word_name'
+        )
+
 
 class WordTemplateDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = WordTemplateData
         fields = (
-                    'id',
-                    'pdf_name',
-                    'dummy_values',
-                    'pdf'
-                )
+            'id',
+            'pdf_name',
+            'dummy_values',
+            'pdf'
+        )
+
+
+class FilledTemplateDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FilledTemplateData
+        fields = (
+            'id',
+            'fill_values',
+            'template_name',
+            'employee_name',
+            'docx_name'
+        )
