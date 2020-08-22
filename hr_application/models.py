@@ -142,46 +142,14 @@ class FilledTemplateData(models.Model):
     )
 
 
-def query_templates_by_args(request, **kwargs):
-    check_user_is_superuser = User.objects.filter(
-        username=request.user.username).values('is_superuser')
-    draw = int(kwargs.get('draw', None)[0])
-    length = int(kwargs.get('length', None)[0])
-    start = int(kwargs.get('start', None)[0])
-    search_value = kwargs.get('search[value]', None)[0]
-    order_column = kwargs.get('order[0][column]', None)[0]
-    order = kwargs.get('order[0][dir]', None)[0]
-
-    order_column = ORDER_COLUMN_CHOICES[order_column]
-    if order == 'desc':
-        order_column = '-' + order_column
-
-    queryset = WordTemplateData.objects.all()
-    total = queryset.count()
-
-    if search_value:
-        queryset = queryset.filter(Q(id__icontains=search_value) |
-                                   Q(pdf_name__icontains=search_value)
-                                   )
-
-    count = queryset.count()
-
-    queryset = queryset[start:start + length]
-
-    return {
-        'items': queryset,
-        'count': count,
-        'total': total,
-        'draw': draw
-    }
-
-
 class FilledTemplateData(models.Model):
 
     fill_values = jsonfield.JSONField()
+    template_name = models.CharField(max_length=100, null=False)
+    employee_name = models.CharField(max_length=100, null=False)
+    docx_name = models.CharField(max_length=100, null=False)
 
     class Meta:
-
         verbose_name_plural = "6. Fill Template Details"
 
     def __str__(self):
@@ -246,6 +214,40 @@ def query_fill_templates_by_args(request, **kwargs):
         queryset = queryset.filter(Q(id__icontains=search_value) |
                                    Q(employee_name__icontains=search_value) |
                                    Q(template_name__icontains=search_value)
+                                   )
+
+    count = queryset.count()
+
+    queryset = queryset[start:start + length]
+
+    return {
+        'items': queryset,
+        'count': count,
+        'total': total,
+        'draw': draw
+    }
+
+
+def query_templates_by_args(request, **kwargs):
+    check_user_is_superuser = User.objects.filter(
+        username=request.user.username).values('is_superuser')
+    draw = int(kwargs.get('draw', None)[0])
+    length = int(kwargs.get('length', None)[0])
+    start = int(kwargs.get('start', None)[0])
+    search_value = kwargs.get('search[value]', None)[0]
+    order_column = kwargs.get('order[0][column]', None)[0]
+    order = kwargs.get('order[0][dir]', None)[0]
+
+    order_column = ORDER_COLUMN_CHOICES[order_column]
+    if order == 'desc':
+        order_column = '-' + order_column
+
+    queryset = WordTemplateData.objects.all()
+    total = queryset.count()
+
+    if search_value:
+        queryset = queryset.filter(Q(id__icontains=search_value) |
+                                   Q(pdf_name__icontains=search_value)
                                    )
 
     count = queryset.count()
