@@ -458,15 +458,23 @@ class GetFillTemplateDetails(APIView):
             """Delete template using Template Id"""
 
             try:
-                message = "Template not found"
-                status = 404
                 template = FilledTemplateData.objects.filter(id = pk)
                 if template:
-                    template.delete()
-                    message = "Template deleted successfully"
-                    status = 200
+                    try:
+                        with transaction.atomic():
+                            template.delete()
+                            success_msg = "Template deleted successfully"
+                            print(success_msg)
+                            return JsonResponse({'message': success_msg})
+                    except Exception as e:
+                        info_message = "Please try again"
+                        print(info_message)
+                        print("exception in saving data rollback error", e)
+                        return JsonResponse({'error': str(info_message)}, status=422)
+                else:
+                    message = 'No Template Found'
+                    status = 404
                 return JsonResponse({'message' : message},status = status)
-
 
             except Exception as error:
                 print("delete", error)

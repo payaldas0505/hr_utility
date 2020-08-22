@@ -264,10 +264,11 @@ function getViewFilledTemplate(id) {
             $.each(parsed_json['message'][0], function (key, value) {
                 // alert(key)
                 // alert(value)
-                input = '<input class="validate" required="" aria-required="true" value='+value+'>'
+                input = '<input class="validate" id='+key+' required="" aria-required="true" value='+value+'>'
                 label = '<label>'+key+'</label>'
                 $('#viewFillTemplate').append(input)
                 $('#viewFillTemplate').append(label)
+                $("#"+key).val(value);
             });
             $('#viewFillTemplate').prop("disabled", true);
             $("input").prop("disabled", true);
@@ -313,6 +314,7 @@ function getEditFillTemplate(id) {
                 label = '<label>'+key+'</label>'
                 $('#editFillTemplate').append(input)
                 $('#editFillTemplate').append(label)
+                $("#"+key).val(value);
                 EditTemplateId.push(key)
                 console.log(EditTemplateId)
                 localStorage.setItem("EditTemplateId", JSON.stringify(EditTemplateId));
@@ -851,7 +853,7 @@ function SaveEditedTemplate(){
     for(i=0; i<parsedEditTemplateId.length; i++)
     {
         var str = $('#' + parsedEditTemplateId[i]).val();
-        // alert(str);
+        alert(str);
     }
     SaveEditedTemplateValidate()
 }
