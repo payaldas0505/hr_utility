@@ -37,7 +37,7 @@
 
 
         <div class="row save-cancel-button">
-            <button class="btn  waves-light" onclick="SaveFillTemplate()">Save</button>
+            <button class="btn  waves-light" onclick="SaveFillTemplate()">Preview</button>
             <button class="btn  waves-light" onclick="GetTemplateDropdown()">Cancel</button>
         </div>
 
@@ -70,8 +70,26 @@
         </div>
         <div class="row">
             <button class="btn waves-light" onclick="GotoDashboard()">Back</button>
-            <button class="btn waves-light" onclick="SaveEditedTemplate()">Save</button>
+            <button class="btn waves-light" onclick="SaveEditedTemplate()">Preview</button>
         </div>
+    </div>
+    <div id="pdf_fill">
+        <span id="pdf_label_fill"><i class="material-icons left">visibility</i>PDF Preview</span>
+        <object id="pdf_preview_fill" data='' type='application/pdf' width='100%' height='700px' aria-label="pdf_label">
+            <p style="display: none;">This object has no text.</p>
+        </object>
+    </div>
+    <div id="pdf_save_cancel">
+        
+    </div>
+    <div id="pdf_edit">
+        <span id="pdf_label_edit"><i class="material-icons left">visibility</i>PDF Preview</span>
+        <object id="pdf_preview_edit" data='' type='application/pdf' width='100%' height='700px' aria-label="pdf_label">
+            <p style="display: none;">This object has no text.</p>
+        </object>
+    </div>
+    <div id="pdf_save_cancel_edit">
+        
     </div>
 </div>
 

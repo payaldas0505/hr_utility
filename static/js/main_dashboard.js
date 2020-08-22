@@ -8,6 +8,9 @@ $(document).ready(function () {
     $('.save-cancel-button').hide();
     $('#ViewDivTemplate').hide();
     $('#EditDivTemplate').hide();
+    $('#pdf_fill').hide();
+    $('#pdf_edit').hide();
+    $('#pdf_save_cancel').hide();
 
     $('select').formSelect();
 
@@ -246,7 +249,7 @@ function getDashboardDatatable() {
 function getViewFilledTemplate(id) {
     $('#HideDivForView').hide();
     $('#ViewDivTemplate').show();
-    
+
     url = '/dashboard/fill_template_detail/' + id
     window.localStorage.setItem('editedUserId', id)
     $.ajax({
@@ -264,11 +267,11 @@ function getViewFilledTemplate(id) {
             $.each(parsed_json['message'][0], function (key, value) {
                 // alert(key)
                 // alert(value)
-                input = '<input class="validate" id='+key+' required="" aria-required="true" value='+value+'>'
-                label = '<label>'+key+'</label>'
+                input = '<input class="validate" id=' + key + ' required="" aria-required="true" value=' + value + '>'
+                label = '<label>' + key + '</label>'
                 $('#viewFillTemplate').append(input)
                 $('#viewFillTemplate').append(label)
-                $("#"+key).val(value);
+                $("#" + key).val(value);
             });
             $('#viewFillTemplate').prop("disabled", true);
             $("input").prop("disabled", true);
@@ -310,11 +313,11 @@ function getEditFillTemplate(id) {
             $.each(parsed_json['message'][0], function (key, value) {
                 // alert(value)
                 // alert(key)
-                input = '<input class="validate" id='+key+' required="" aria-required="true" value='+value+'>'
-                label = '<label>'+key+'</label>'
+                input = '<input class="validate" id=' + key + ' required="" aria-required="true" value=' + value + '>'
+                label = '<label>' + key + '</label>'
                 $('#editFillTemplate').append(input)
                 $('#editFillTemplate').append(label)
-                $("#"+key).val(value);
+                $("#" + key).val(value);
                 EditTemplateId.push(key)
                 console.log(EditTemplateId)
                 localStorage.setItem("EditTemplateId", JSON.stringify(EditTemplateId));
@@ -609,6 +612,8 @@ function getaccessTokenDatatable() {
 }
 
 function GetTemplateDropdown() {
+    // alert('hi')
+    // window.location.reload();
     $('#Template-dropdown').show();
     $('#templateDropdownForm').show();
     $('#RenderTemplateDropdown').hide();
@@ -621,9 +626,13 @@ function GetTemplateDropdown() {
 }
 
 
+function CancelPdfPreview() {
+    window.location.reload();
+}
+
 function GetSelectedTemplateId() {
     var templateName = $("#Template-dropdown-select option:selected").text();
-    alert(templateName)
+    // alert(templateName)
     window.localStorage.setItem('selected_template_name', templateName)
     $("#templateDropdownForm").empty();
 
@@ -679,8 +688,8 @@ function GotoDashboard() {
 }
 
 
-function SaveFilledForm() {
-    // alert('hi')
+function SaveFilledForm(event) {
+    alert(event)
     // $('#UploadTemplate').prop('disabled', true);
     var filename = localStorage.getItem('fill_filename')
     var fd = new FormData();
@@ -696,6 +705,7 @@ function SaveFilledForm() {
 
     fd.append('filename', filename)
     fd.append('templatename', selected_template_name_retrieve)
+    fd.append('save', event)
 
     console.log(fd)
     $.ajax({
@@ -708,30 +718,48 @@ function SaveFilledForm() {
         processData: false,
         async: false,
         success: function (response) {
-            M.toast({ html: 'Template is successfully filled', classes: 'green rounded' })
+            if (response.status == 201) {
+                alert('hi')
+                window.location.reload();
+            }
+            else {
+                M.toast({ html: 'Template is successfully filled', classes: 'green rounded' })
 
-            $('#templateForm *').attr("disabled", true);
-            $('#templateForm *').fadeTo('slow', .8);
+                $('#templateForm *').attr("disabled", true);
+                $('#templateForm *').fadeTo('slow', .8);
 
-            setTimeout(function () {
-                var object = document.getElementById('pdf_preview');
-                // alert(response['success'])
-                object.setAttribute('data', response['success']);
+                setTimeout(function () {
+                    var object = document.getElementById('pdf_preview_fill');
+                    // alert(response['success'])
+                    object.setAttribute('data', response['success']);
 
-                var clone = object.cloneNode(true);
-                var parent = object.parentNode;
+                    var clone = object.cloneNode(true);
+                    var parent = object.parentNode;
 
-                parent.removeChild(object);
-                parent.appendChild(clone);
-            }, 3000);
+                    parent.removeChild(object);
+                    parent.appendChild(clone);
+                }, 3000);
 
-            // $("#pdf_preview").setAttribute("data", response['success']) 
+                // $("#pdf_preview").setAttribute("data", response['success']) 
 
-            $('#pdf').show();
-            window.location.reload();
-            return false
+                $('#pdf_fill').show();
+                $('#pdf_save_cancel').show();
+                $('.preview_pdf_div').hide();
+                $('.save-cancel-button').hide();
+                submit_button = `<div class="row">\
+                            <div class="col push-s3">\
+                                <button id="file_cancel_btn" class="btn btn-primary" type="reset" onclick="CancelPdfPreview()">Cancel<i class="material-icons right">cancel</i>\
+                                </button>\
+                                <button id="file_save_btn" class="btn btn-primary" type="submit" onclick="SaveFilledForm(true)">Save<i class="material-icons right">save</i>\
+                                </button>\
+                            </div>\
+                        </div>`
+                $('#pdf_save_cancel').append(submit_button);
+                $('#pdf_save_cancel').show();
+                // window.location.reload();
+                return false
 
-
+            }
         },
         error: function (xhr) {
             if (xhr.status == 401) {
@@ -756,7 +784,7 @@ function SaveFilledForm() {
 function SaveFillTemplate() {
     var retrievedData = localStorage.getItem("FillId");
     var FillId = JSON.parse(retrievedData);
-
+    $('#HideDivForView').hide();
     values = []
     $.each(FillId, function (i, l) {
         console.log(l)
@@ -764,36 +792,36 @@ function SaveFillTemplate() {
         console.log(id_name)
         if (id_name == "") {
             M.toast({ html: "Please fill the " + l + "field", classes: 'red rounded' })
-            $('#field_save_btn').prop('disabled', false)
+            // $('#field_save_btn').prop('disabled', false)
             return false;
         }
 
 
     });
-    SaveFilledForm();
+    SaveFilledForm(false);
 }
 
-function GotoDashboard(){
+function GotoDashboard() {
     window.location.reload();
 }
 
-function SaveEditedTemplateValidate(){
+function SaveEditedTemplateValidate(event) {
     var fd = new FormData();
     edittemplateid = window.localStorage.getItem('editedUserId')
     retrievedEditTemplateId = window.localStorage.getItem('EditTemplateId')
     retrievedEditTemplateName = window.localStorage.getItem('editedTemplateName')
     retrievedEditFilename = window.localStorage.getItem('editedFileName')
     parsedEditTemplateId = JSON.parse(retrievedEditTemplateId)
-    for(i=0; i<parsedEditTemplateId.length; i++)
-    {
+    for (i = 0; i < parsedEditTemplateId.length; i++) {
         var str = $('#' + parsedEditTemplateId[i]).val();
         fd.append(parsedEditTemplateId[i], str)
     }
     fd.append('filename', retrievedEditFilename)
     fd.append('templatename', retrievedEditTemplateName)
+    fd.append('save', event)
     console.log(fd)
     $.ajax({
-        url: '/dashboard/fill_template_detail/'+edittemplateid,
+        url: '/dashboard/fill_template_detail/' + edittemplateid,
         headers: { Authorization: 'Bearer ' + userDetails.access },
         method: "PUT",
         enctype: 'multipart/form-data',
@@ -802,30 +830,46 @@ function SaveEditedTemplateValidate(){
         processData: false,
         async: false,
         success: function (response) {
-            M.toast({ html: 'Template is successfully filled', classes: 'green rounded' })
+            if (response.status == 201) {
+                alert('hi')
+                window.location.reload();
+            }
+            else {
+                M.toast({ html: 'Template is successfully filled', classes: 'green rounded' })
 
-            $('#templateForm *').attr("disabled", true);
-            $('#templateForm *').fadeTo('slow', .8);
+                $('#templateForm *').attr("disabled", true);
+                $('#templateForm *').fadeTo('slow', .8);
 
-            setTimeout(function () {
-                var object = document.getElementById('pdf_preview');
-                // alert(response['success'])
-                object.setAttribute('data', response['success']);
+                setTimeout(function () {
+                    var object = document.getElementById('pdf_preview_edit');
+                    // alert(response['success'])
+                    object.setAttribute('data', response['success']);
 
-                var clone = object.cloneNode(true);
-                var parent = object.parentNode;
+                    var clone = object.cloneNode(true);
+                    var parent = object.parentNode;
 
-                parent.removeChild(object);
-                parent.appendChild(clone);
-            }, 3000);
+                    parent.removeChild(object);
+                    parent.appendChild(clone);
+                }, 3000);
 
-            // $("#pdf_preview").setAttribute("data", response['success']) 
+                // $("#pdf_preview").setAttribute("data", response['success']) 
 
-            $('#pdf').show();
-            window.location.reload();
-            return false
+                $('#pdf_edit').show();
+                $('#EditDivTemplate').hide();
+                // window.location.reload();
+                submit_button = `<div class="row">\
+                            <div class="col push-s3">\
+                                <button id="file_cancel_btn" class="btn btn-primary" type="reset" onclick="CancelPdfPreview()">Cancel<i class="material-icons right">cancel</i>\
+                                </button>\
+                                <button id="file_save_btn" class="btn btn-primary" type="submit" onclick="SaveEditedTemplateValidate(true)">Save<i class="material-icons right">save</i>\
+                                </button>\
+                            </div>\
+                        </div>`
+                $('#pdf_save_cancel_edit').append(submit_button);
+                $('#pdf_save_cancel_edit').show();
+                return false
 
-
+            }
         },
         error: function (xhr) {
             if (xhr.status == 401) {
@@ -847,13 +891,12 @@ function SaveEditedTemplateValidate(){
 
 }
 
-function SaveEditedTemplate(){
+function SaveEditedTemplate() {
     retrievedEditTemplateId = window.localStorage.getItem('EditTemplateId')
     parsedEditTemplateId = JSON.parse(retrievedEditTemplateId)
-    for(i=0; i<parsedEditTemplateId.length; i++)
-    {
+    for (i = 0; i < parsedEditTemplateId.length; i++) {
         var str = $('#' + parsedEditTemplateId[i]).val();
-        alert(str);
+        // alert(str);
     }
-    SaveEditedTemplateValidate()
+    SaveEditedTemplateValidate(false)
 }

@@ -347,7 +347,9 @@ class FillDropdownTemplate(APIView):
         """
         try:
             template_dict = request.POST
-
+            print('T'*80)
+            print(template_dict)
+            print('T'*80)
             raw_file_name = request.POST['filename']
             new_raw_file_name = uuid.uuid4().hex
 
@@ -357,23 +359,25 @@ class FillDropdownTemplate(APIView):
             for k in templatejson:
                 if len(templatejson[k]) == 1:
                     templatejson[k] = templatejson[k][0]
-
+            save_fill_template = templatejson.pop('save', None)
+            print(save_fill_template)
             new_docx_file_name = new_raw_file_name
             templatejsonnew = {'fill_values': templatejson, 'template_name': templatejson[
                 'templatename'], 'employee_name': templatejson['Name'], 'docx_name': new_docx_file_name}
             fill_form_serializer = FilledTemplateDataSerializer(
                 data=templatejsonnew)
 
-            if fill_form_serializer.is_valid():
+            if fill_form_serializer.is_valid() and save_fill_template == 'true':
                 fill_form_serializer.validated_data['fill_values'] = templatejson
                 fill_form_serializer.validated_data['template_name'] = templatejson['templatename']
                 fill_form_serializer.validated_data['employee_name'] = templatejson['Name']
                 fill_form_serializer.save()
-            else:
-                info_message = "Internal Server Error"
-                print("serializer error", fill_form_serializer.errors)
-                print(info_message)
-                return JsonResponse({'message': str(info_message)}, status=422)
+                return JsonResponse({"success": "saved successfully","status": 201})
+            # else:
+            #     info_message = "Internal Server Error"
+            #     print("serializer error", fill_form_serializer.errors)
+            #     print(info_message)
+            #     return JsonResponse({'message': str(info_message)}, status=422)
 
             file_name = BASE_DIR + '/media/' + raw_file_name
 
@@ -487,43 +491,62 @@ class GetFillTemplateDetails(APIView):
             '''update template using template id'''
             
             try:
+                print('x'*80)
+                template_dict = request.POST
+                print('T'*80)
+                print(template_dict)
+                print('T'*80)
+                # raw_file_name = request.POST['filename']
+                # new_raw_file_name = uuid.uuid4().hex
+
+                if type(template_dict) != dict:
+                    templatejson = dict(template_dict)
+
+                for k in templatejson:
+                    if len(templatejson[k]) == 1:
+                        templatejson[k] = templatejson[k][0]
+                save_fill_template = templatejson.pop('save', None)
+                print(save_fill_template)
+                print(templatejson)
                 edited_template = FilledTemplateData.objects.get(id=pk)
+                
                 new_docx_file_name = FilledTemplateData.objects.filter(id=pk).values('docx_name')[0]['docx_name']
-                templatejsonnew = {'fill_values': request.POST, 'template_name': request.POST['templatename'], 'employee_name': request.POST['Name'], 'docx_name': new_docx_file_name}
+                templatejsonnew = {'fill_values': templatejson, 'template_name': request.POST['templatename'], 'employee_name': request.POST['Name'], 'docx_name': new_docx_file_name}
                 edit_serializer = FilledTemplateDataSerializer(edited_template, data=templatejsonnew)
                 try:
                     with transaction.atomic():
-                        if edit_serializer.is_valid():
+                        if edit_serializer.is_valid() and save_fill_template == 'true':
                             edit_serializer.save()
-                            file_name = BASE_DIR + '/media/' + request.POST['filename']
-                            template_dict = request.POST
-                            if type(template_dict) != dict:
-                                templatejson = dict(template_dict)
+                            return JsonResponse({"success": "saved successfully","status": 201})
+                        file_name = BASE_DIR + '/media/' + request.POST['filename']
+                        template_dict = request.POST
+                        if type(template_dict) != dict:
+                            templatejson = dict(template_dict)
 
-                            for k in templatejson:
-                                if len(templatejson[k]) == 1:
-                                    templatejson[k] = templatejson[k][0]
+                        for k in templatejson:
+                            if len(templatejson[k]) == 1:
+                                templatejson[k] = templatejson[k][0]
 
-                            document = generateNew.from_template(file_name, templatejson)
-                            document.seek(0)
+                        document = generateNew.from_template(file_name, templatejson)
+                        document.seek(0)
 
-                            bytesio_object = document
-                            dir_path_ft = BASE_DIR + '/media/filled_user_template/'
+                        bytesio_object = document
+                        dir_path_ft = BASE_DIR + '/media/filled_user_template/'
 
-                            with open(dir_path_ft + "{}.docx".format(new_docx_file_name), 'wb') as f:
-                                f.write(bytesio_object.getbuffer())
+                        with open(dir_path_ft + "{}.docx".format(new_docx_file_name), 'wb') as f:
+                            f.write(bytesio_object.getbuffer())
 
-                            output = subprocess.check_output(
-                                ['libreoffice', '--convert-to', 'pdf', '{}.docx'.format(new_docx_file_name)], cwd=dir_path_ft)
+                        output = subprocess.check_output(
+                            ['libreoffice', '--convert-to', 'pdf', '{}.docx'.format(new_docx_file_name)], cwd=dir_path_ft)
 
-                            pdf_file = '/media/filled_user_template/' + \
-                                '{}.pdf'.format(new_docx_file_name)
-                            return JsonResponse({'success': pdf_file})
-                        else:
-                            info_message = "Internal Server Error"
-                            print("serializer error", edit_serializer.errors)
-                            print(info_message)
-                            return JsonResponse({'message': str(info_message)}, status=422)
+                        pdf_file = '/media/filled_user_template/' + \
+                            '{}.pdf'.format(new_docx_file_name)
+                        return JsonResponse({'success': pdf_file})
+                        # else:
+                        #     info_message = "Internal Server Error"
+                        #     print("serializer error", edit_serializer.errors)
+                        #     print(info_message)
+                        #     return JsonResponse({'message': str(info_message)}, status=422)
                 except Exception as e:
                     print("exception in saving data rollback error", e)
                     info_message = "Please try again saving the data"
