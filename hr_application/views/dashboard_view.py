@@ -440,16 +440,17 @@ class GetAllFillTemplate(APIView):
     def get(self, request):
         '''Get list of filled template for datatable'''
         try:
-            datatable_server_processing = query_fill_templates_by_args(
-                request, **request.query_params)
-            serializer = FilledTemplateDataSerializer(
-                datatable_server_processing['items'], many=True)
-
+            datatable_server_processing = query_fill_templates_by_args(request, **request.query_params)
+            print(datatable_server_processing)
+            serializer = FilledTemplateDataSerializer(datatable_server_processing['items'], many=True)
+            print('1'*80)
+            print(serializer.data)
             result = dict()
             result['data'] = serializer.data
             result['draw'] = datatable_server_processing['draw']
             result['recordsTotal'] = datatable_server_processing['total']
             result['recordsFiltered'] = datatable_server_processing['count']
+            print(result)
             return Response(result)
         except Exception as e:
             print("Exception in getting  all templates", e)
