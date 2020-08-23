@@ -23,55 +23,10 @@ $(document).ready(function () {
 
     DocumentTemplateDropdown()
 
-    // var language_id = localStorage.getItem('language')
-    // $.ajax({
-    //     type: 'POST',
-    //     url: '/get_labels/',
-    //     data : {
-    //     	'page_name' : 'Add_user',
-    //     	'language_id' : language_id,
-    // 	    },
-    //     success: function (jsondata) {
-    //         console.log(jsondata)
-    //         for (const [key, value] of Object.entries(jsondata)) {
-    //             console.log(key, value);
-    //             $('.'+value.page_label_class_name).text(value.page_label_text);
-    //           }
-    //     },
-    //     error: function(data){
-    //         obj = JSON.parse(data.responseText)
-    //         M.toast({html: obj.error, classes: 'red rounded'})
-    //     }
-    // });
-
-    // Get and set all the labels from backend
-    // $.ajax({
-    //     type: 'POST',
-    //     url: '/get_labels/',
-    //     data : {
-    //         'page_name' : 'Dashboard',
-    //         'language_id' : language_id,
-    //         },
-    //     success: function (jsondata) {
-    //         console.log(jsondata)
-    //         for (const [key, value] of Object.entries(jsondata)) {
-    //             console.log(key, value);
-    //             $('.'+value.page_label_class_name).text(value.page_label_text);
-    //         }
-    //     },
-    //     error: function(data){
-    //         obj = JSON.parse(data.responseText)
-    //         M.toast({html: obj.error, classes: 'red rounded'})
-    //     }
-    // });
-
-
 })
 
-//add this js script into the web page,
-//you want reload once after first load
 window.onload = function() {
-    //considering there aren't any hashes in the urls already
+    
     if(!window.location.hash) {
         //setting window location
         window.location = window.location + '#loaded';
@@ -142,15 +97,15 @@ var user_role_id = userDetails.role_id
 
 function DownloadFillTemplate(id) {
     window.location.href = '/media/filled_user_template/' + id + '.pdf'
-    GetPermissions()
+    // GetPermissions()
 }
 function DownloadPanCard(id) {
     window.location.href = id
-    GetPermissions()
+    // GetPermissions()
 }
 function DownloadAdharCard(id) {
     window.location.href = id
-    GetPermissions()
+    // GetPermissions()
 }
 
 function readURL(input) {
@@ -203,7 +158,7 @@ function DeleteFillTemplate(id) {
         }
 
     })
-    GetPermissions()
+    // GetPermissions()
 }
 
 function getDeleteFillTemplate(id) {
@@ -214,7 +169,7 @@ function getDeleteFillTemplate(id) {
     else {
         return false
     }
-    GetPermissions();
+    // GetPermissions();
 }
 
 function GetAccessTokenForBackButton() {
@@ -297,7 +252,7 @@ function getViewFilledTemplate(id) {
             return false
         }
     })
-    GetPermissions();
+    // GetPermissions();
 }
 
 function getEditFillTemplate(id) {
@@ -349,7 +304,7 @@ function getEditFillTemplate(id) {
             return false
         }
     })
-    GetPermissions()
+    // GetPermissions()
 }
 
 
@@ -423,7 +378,7 @@ function EditUserSave(user_name, first_name, last_name,
             return false
         }
     })
-    GetPermissions();
+    // GetPermissions();
 }
 
 
