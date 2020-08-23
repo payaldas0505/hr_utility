@@ -345,6 +345,7 @@ class FillDropdownTemplate(APIView):
         """
         Filling the document and convert it into PDF.
         """
+
         try:
             template_dict = request.POST
             print('T'*80)
@@ -365,7 +366,7 @@ class FillDropdownTemplate(APIView):
             print(save_fill_template)
             new_docx_file_name = new_raw_file_name
             templatejsonnew = {'fill_values': templatejson, 'template_name': templatejson[
-                'templatename'], 'employee_name': templatejson['Name'], 'docx_name': new_docx_file_name}
+                'templatename'], 'employee_name': templatejson['Name'], 'docx_name': new_docx_file_name, 'created_by' : request.user.id}
             fill_form_serializer = FilledTemplateDataSerializer(
                 data=templatejsonnew)
 
@@ -374,6 +375,7 @@ class FillDropdownTemplate(APIView):
                 fill_form_serializer.validated_data['template_name'] = templatejson['templatename']
                 fill_form_serializer.validated_data['employee_name'] = templatejson['Name']
                 fill_form_serializer.validated_data['docx_name'] = new_docx_file_name
+                fill_form_serializer.validated_data['created_by'] = request.user.id
                 fill_form_serializer.save()
                 file_name = BASE_DIR + '/media/' + raw_file_name
 

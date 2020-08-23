@@ -133,6 +133,7 @@ class FilledTemplateData(models.Model):
     template_name = models.CharField(max_length=100, null=False)
     employee_name = models.CharField(max_length=100, null=False)
     docx_name = models.CharField(max_length=100, null=False)
+    created_by = models.CharField(max_length=20, null=False)
 
     class Meta:
         verbose_name_plural = "6. Fill Template Details"
@@ -202,8 +203,12 @@ def query_fill_templates_by_args(request,**kwargs):
     if order == 'desc':
         order_column = '-' + order_column
 
+    if check_user_is_superuser[0]['is_superuser'] == True:
+        queryset = FilledTemplateData.objects.all()
+    else:
+        queryset = FilledTemplateData.objects.filter(created_by = request.user.id)
 
-    queryset = FilledTemplateData.objects.all()
+    # queryset = FilledTemplateData.objects.all()
     total = queryset.count()
 
     if search_value:
