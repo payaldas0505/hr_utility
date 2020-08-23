@@ -1,71 +1,51 @@
 jQuery(document).ready(function ($) {
     localStorage.setItem('language',1)
-    get_labels('login')
+    var page_name = 'login'
+    // get_labels(page_name)
+
     // on Change language from dropdown
-    // $(function() {
-    //     $("#language_drop_down").on('change', function() {
-    //         language_id = $("#language_drop_down option:selected").val()
-    //             localStorage.setItem("language", language_id)
-    //             get_labels(language_id)
-    //             $('#language_drop_down').not('.disabled').formSelect();
+    $(function() {
+        $("#language_drop_down").on('change', function() {
+                let language_id = $("#language_drop_down option:selected").val()
+                localStorage.setItem("language", language_id)
+                get_labels(page_name)
+                $('#language_drop_down').not('.disabled').formSelect();
 
-    //     });
-    // });
+        });
+    });
 
-    //Get the languages
-    // $.ajax({
-    //     url: '/v2s/get_languages/',
-    //     type: 'GET',
+    // Get the languages
+    $.ajax({
+        url: '/get_languages/',
+        type: 'GET',
 
-    //     success:function(response){
-    //         console.log(response)
+        success:function(response){
+            console.log(response)
 
-    //         var next_id = $("#language_drop_down");
-    //         $.each(response, function(key, value) {
-    //             $(next_id).append($("<option></option>").attr("value", value.id).text(value.language_name));
-    //         });
-    //         $(next_id).not('.disabled').formSelect();
-    //         var language_id = localStorage.getItem('language')
-    //         if (language_id == null){
-    //             var language_id = 1
-    //             localStorage.setItem("language", language_id)
-    //         }
-    //         get_labels(language_id)
-    //         $('#language_drop_down').find('option[value='+language_id+']').prop('selected', true);
-    //         $('select').not('.disabled').formSelect();
+            var next_id = $("#language_drop_down");
+            $.each(response, function(key, value) {
+                $(next_id).append($("<option></option>").attr("value", value.id).text(value.language_name));
+            });
+            $(next_id).not('.disabled').formSelect();
+            var language_id = localStorage.getItem('language')
+            if (language_id == null){
+                language_id = 1
+                localStorage.setItem("language", language_id)
+            }
+            get_labels(page_name)
+            $('#language_drop_down').find('option[value='+language_id+']').prop('selected', true);
+            $('select').not('.disabled').formSelect();
 
-    //     },
-    //     error: function(data){
-    //         obj = JSON.parse(data.responseText)
-    //         M.toast({html: obj.error, classes: 'red rounded'})
-    //     }
+        },
+        error: function(data){
+            let obj = JSON.parse(data.responseText)
+            M.toast({html: obj.error, classes: 'red rounded'})
+        }
 
-    // });
+    });
 
 });
 
-// function get_labels(language_id){
-//     language_id = localStorage.getItem('language')
-//     $.ajax({
-//         type: 'POST',
-//         url: '/get_labels/',
-//         data : {
-//         	'page_name' : 'login',
-//         	'language_id' : language_id,
-// 		    },
-//         success: function (jsondata) {
-//             console.log(jsondata)
-//             for (const [key, value] of Object.entries(jsondata)) {
-//                 console.log(key, value);
-//                 $('.'+value.page_label_class_name).text(value.page_label_text);
-//               }
-//         },
-//         error: function(xhr){
-//             let obj = JSON.parse(xhr.responseText)
-//             M.toast({html: obj.error, classes: 'red rounded'})
-//         }
-//     });
-// }
 
 // Get toast messages from backend
 function get_toast(label) {

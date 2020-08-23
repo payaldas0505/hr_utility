@@ -5,16 +5,12 @@ from ..config import perms_config
 
 
 def format_path(raw_path, pk):
-    path_list = []
     print('pk', pk)
     media_pdf = ['media', '.pdf']
     path = raw_path.split("?")[0]
-    path_list.append(path)
-    print('path_list', path_list)
     if pk or any(x in path for x in media_pdf):
         path = path.rsplit("/", 1)[0]
         print('path', path)
-        path_list.append(path)
         
         return path
     

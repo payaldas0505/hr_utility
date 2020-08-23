@@ -49,3 +49,25 @@ class GetLabels(APIView):
             print(info_message)
             print("exception in getting label", e)
             return JsonResponse({"success": False, "error": str(info_message)}, status=404)
+
+
+class GetLangauges(APIView):
+    """Gets labels from the database."""
+    def get(self, request):
+        # get_language = set_session_language(request)
+        try:
+            get_languages = Language.objects.all().values('id','language_name')
+            print('lan', get_languages[0])
+            # request.session['language'] = get_languages[0]['id']
+
+            # print("set language ", request.session['language'] )
+            language_list = []
+            for language in get_languages:
+                language_list.append(language)
+            print(language_list)
+            return JsonResponse(language_list, safe=False)
+        except Exception as e:
+            info_message = '"Cannot fetch languages from database"'
+            print(info_message)
+            print("exception in getting label", e)
+            return JsonResponse({"success": False, "error": str(info_message)}, status=404)
