@@ -2,7 +2,7 @@ from django.http.response import HttpResponse, JsonResponse
 from django.http import HttpResponseRedirect
 from functools import partial, update_wrapper, wraps
 from ..config import perms_config
-
+import re
 
 def format_path(raw_path, pk):
     print('pk', pk)
@@ -18,7 +18,7 @@ def format_path(raw_path, pk):
 
 
 def check_url_pass(path, view_function):
-    if path in perms_config.pass_urls or 'django.contrib.admin' in view_function.__module__:
+    if path in perms_config.pass_urls or 'django.contrib.admin' in view_function.__module__  or re.search(r"^/static/.*\.(css|js)$", path):
         print("^"*20)
         print("passing the url without permission check", path)
         print("^"*20)
