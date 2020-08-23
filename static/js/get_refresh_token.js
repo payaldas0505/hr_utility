@@ -92,6 +92,30 @@ function getaccessTokenUserDashboard(fn){
     })
  }
 
+
+ function getaccessTokenFormEvent(fn){
+
+    $.ajax({
+            type: 'POST',
+            url: '/refresh_token/',
+            data : {
+                'refresh' : refresh,
+            },
+            success: function (result) {
+                updateItem('UserDetails', 'access', result.access);
+                var userDetails = getValues('UserDetails')
+                var token = userDetails.access
+                
+                id = window.localStorage.getItem("fill_form_event")
+                fn(id)
+            },
+            error: function(data){
+                obj = JSON.parse(data.responseText)
+                M.toast({html: obj.detail})
+            }
+    })
+ }
+
 function getObject(key) {
     return JSON.parse(localStorage.getItem(key));
 }

@@ -57,5 +57,6 @@ class FilledTemplateDataSerializer(serializers.ModelSerializer):
             'fill_values',
             'template_name',
             'employee_name',
-            'docx_name'
+            'docx_name',
+            'created_by'
         )
