@@ -134,12 +134,12 @@ class FilledTemplateData(models.Model):
     def __str__(self):
         return '{}'.format(self.fill_values)
 
-    ORDER_COLUMN_CHOICES = Choices(
-        ('0', 'pdf_name'),
-        ('1', 'dummy_values'),
-        ('2', 'id'),
-        ('3', 'pdf')
-    )
+ORDER_COLUMN_CHOICES = Choices(
+    ('0', 'pdf_name'),
+    ('1', 'dummy_values'),
+    ('2', 'id'),
+    ('3', 'pdf')
+)
 
 
 class FilledTemplateData(models.Model):

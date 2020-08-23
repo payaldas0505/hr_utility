@@ -624,7 +624,11 @@ function GetTemplateDropdown() {
 
 
 function CancelPdfPreview() {
-    window.location.reload();
+    $('#HideDivForView').show();
+    $('#pdf_fill').hide();
+    $('#pdf_save_cancel').hide()
+    $('.save-cancel-button').show()
+    // window.location.reload();
 }
 
 function GetSelectedTemplateId() {
@@ -686,7 +690,7 @@ function GotoDashboard() {
 
 
 function SaveFilledForm(event) {
-    alert(event)
+    // alert(event)
     // $('#UploadTemplate').prop('disabled', true);
     var filename = localStorage.getItem('fill_filename')
     var fd = new FormData();
@@ -715,9 +719,24 @@ function SaveFilledForm(event) {
         processData: false,
         async: false,
         success: function (response) {
+            $('#pdf_save_cancel').empty();
             if (response.status == 201) {
-                alert('hi')
-                window.location.reload();
+                M.toast({ html: 'Template is saved successfully', classes: 'green rounded' })
+                $('#HideDivForView').show();
+                $('#pdf_fill').hide();
+                $('#pdf_save_cancel').hide()
+                $('.save-cancel-button').show()
+                $('#Template-dropdown').show();
+                $('#templateDropdownForm').show();
+                $('#RenderTemplateDropdown').hide();
+                $('#Document-Dashboard-header').hide();
+                $('#Template-Dropdown-Header').show();
+                $('#Dashboard-Datatable-Div').hide();
+                $('#templateDropdownForm').hide();
+                $('.dropdown-back-button').show();
+                $('.save-cancel-button').hide();
+
+
             }
             else {
                 M.toast({ html: 'Template is successfully filled', classes: 'green rounded' })
@@ -782,24 +801,47 @@ function SaveFillTemplate() {
     var retrievedData = localStorage.getItem("FillId");
     var FillId = JSON.parse(retrievedData);
     $('#HideDivForView').hide();
+    console.log('******************')
+    console.log(retrievedData)
     values = []
+    // alert(FillId.length)
+    var all_validated = true
+
     $.each(FillId, function (i, l) {
+        // alert(i)
         console.log(l)
         var id_name = $($.trim('#') + $.trim(l)).val()
         console.log(id_name)
         if (id_name == "") {
             M.toast({ html: "Please fill the " + l + "field", classes: 'red rounded' })
             // $('#field_save_btn').prop('disabled', false)
-            return false;
+            all_validated = false
+            // return false;
         }
 
 
+
     });
-    SaveFilledForm(false);
+    if (all_validated == true) {
+        SaveFilledForm(false);
+    }
+    else {
+        $('#HideDivForView').show();
+        return false
+    }
+    // alert('hi')
+
 }
 
 function GotoDashboard() {
     window.location.reload();
+}
+
+function CancelPdfPreviewEdit() {
+    // alert('hi')
+    $('#pdf_edit').hide();
+    $('#EditDivTemplate').show();
+    $('#pdf_save_cancel_edit').hide();
 }
 
 function SaveEditedTemplateValidate(event) {
@@ -827,9 +869,13 @@ function SaveEditedTemplateValidate(event) {
         processData: false,
         async: false,
         success: function (response) {
+            $("#pdf_save_cancel_edit").empty();
             if (response.status == 201) {
-                alert('hi')
-                window.location.reload();
+                M.toast({ html: 'Template Edited successfully', classes: 'green rounded' })
+
+                setTimeout(function () {
+                    window.location.reload();
+                }, 3000);
             }
             else {
                 M.toast({ html: 'Template is successfully filled', classes: 'green rounded' })
@@ -856,7 +902,7 @@ function SaveEditedTemplateValidate(event) {
                 // window.location.reload();
                 submit_button = `<div class="row">\
                             <div class="col push-s3">\
-                                <button id="file_cancel_btn" class="btn btn-primary" type="reset" onclick="CancelPdfPreview()">Cancel<i class="material-icons right">cancel</i>\
+                                <button id="file_cancel_btn" class="btn btn-primary" type="reset" onclick="CancelPdfPreviewEdit()">Cancel<i class="material-icons right">cancel</i>\
                                 </button>\
                                 <button id="file_save_btn" class="btn btn-primary" type="submit" onclick="SaveEditedTemplateValidate(true)">Save<i class="material-icons right">save</i>\
                                 </button>\
@@ -891,9 +937,16 @@ function SaveEditedTemplateValidate(event) {
 function SaveEditedTemplate() {
     retrievedEditTemplateId = window.localStorage.getItem('EditTemplateId')
     parsedEditTemplateId = JSON.parse(retrievedEditTemplateId)
+    var all_validated = true
     for (i = 0; i < parsedEditTemplateId.length; i++) {
         var str = $('#' + parsedEditTemplateId[i]).val();
-        // alert(str);
+        if (str == '') {
+            M.toast({ html: "Please fill the " + parsedEditTemplateId[i] + "field", classes: 'red rounded' })
+            all_validated = false
+            return false
+        }
     }
-    SaveEditedTemplateValidate(false)
+    if (all_validated == true) {
+        SaveEditedTemplateValidate(false)
+    }
 }
