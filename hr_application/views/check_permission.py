@@ -18,7 +18,7 @@ def format_path(raw_path, pk):
 
 
 def check_url_pass(path, view_function):
-    if path in perms_config.pass_urls or 'django.contrib.admin' in view_function.__module__  or re.search(r"^/static/.*\.(css|js)$", path):
+    if path in perms_config.pass_urls or 'django.contrib.admin' in view_function.__module__  or re.search(r"^/static/.*\.(css|js|svg|jpeg|jpg|png)$", path):
         print("^"*20)
         print("passing the url without permission check", path)
         print("^"*20)
