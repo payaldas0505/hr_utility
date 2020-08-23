@@ -68,6 +68,18 @@ $(document).ready(function () {
 
 })
 
+//add this js script into the web page,
+//you want reload once after first load
+window.onload = function() {
+    //considering there aren't any hashes in the urls already
+    if(!window.location.hash) {
+        //setting window location
+        window.location = window.location + '#loaded';
+        //using reload() method to reload web page
+        window.location.reload();
+    }
+}
+
 function DocumentTemplateDropdown() {
     $.ajax({
         url: '/dashboard/document_template_dropdown/',
@@ -721,22 +733,8 @@ function SaveFilledForm(event) {
         success: function (response) {
             $('#pdf_save_cancel').empty();
             if (response.status == 201) {
-                M.toast({ html: 'Template is saved successfully', classes: 'green rounded' })
-                $('#HideDivForView').show();
-                $('#pdf_fill').hide();
-                $('#pdf_save_cancel').hide()
-                $('.save-cancel-button').show()
-                $('#Template-dropdown').show();
-                $('#templateDropdownForm').show();
-                $('#RenderTemplateDropdown').hide();
-                $('#Document-Dashboard-header').hide();
-                $('#Template-Dropdown-Header').show();
-                $('#Dashboard-Datatable-Div').hide();
-                $('#templateDropdownForm').hide();
-                $('.dropdown-back-button').show();
-                $('.save-cancel-button').hide();
-
-
+                // alert('hi')
+                window.location.reload();
             }
             else {
                 M.toast({ html: 'Template is successfully filled', classes: 'green rounded' })
@@ -871,11 +869,8 @@ function SaveEditedTemplateValidate(event) {
         success: function (response) {
             $("#pdf_save_cancel_edit").empty();
             if (response.status == 201) {
-                M.toast({ html: 'Template Edited successfully', classes: 'green rounded' })
-
-                setTimeout(function () {
-                    window.location.reload();
-                }, 3000);
+                // alert('hi')
+                window.location.reload();
             }
             else {
                 M.toast({ html: 'Template is successfully filled', classes: 'green rounded' })

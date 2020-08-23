@@ -132,7 +132,7 @@ class FilledTemplateData(models.Model):
         verbose_name_plural = "6. Fill Template Details"
 
     def __str__(self):
-        return '{}'.format(self.fill_values)
+        return '{}'.format(self.employee_name)
 
 ORDER_COLUMN_CHOICES = Choices(
     ('0', 'pdf_name'),
@@ -140,20 +140,6 @@ ORDER_COLUMN_CHOICES = Choices(
     ('2', 'id'),
     ('3', 'pdf')
 )
-
-
-class FilledTemplateData(models.Model):
-
-    fill_values = jsonfield.JSONField()
-    template_name = models.CharField(max_length=100, null=False)
-    employee_name = models.CharField(max_length=100, null=False)
-    docx_name = models.CharField(max_length=100, null=False)
-
-    class Meta:
-        verbose_name_plural = "6. Fill Template Details"
-
-    def __str__(self):
-        return '{}'.format(self.fill_values)
 
 
 class Language(models.Model):

@@ -4,34 +4,51 @@ from functools import partial, update_wrapper, wraps
 from ..config import perms_config
 
 
+def format_path(raw_path, pk):
+    print('pk', pk)
+    media_pdf = ['media', '.pdf']
+    path = raw_path.split("?")[0]
+    if pk or any(x in path for x in media_pdf):
+        path = path.rsplit("/", 1)[0]
+        print('path', path)
+        
+        return path
+    
+    return path
+
+
+def check_url_pass(path, view_function):
+    if path in perms_config.pass_urls or 'django.contrib.admin' in view_function.__module__:
+        print("^"*20)
+        print("passing the url without permission check", path)
+        print("^"*20)
+        return True
+    return None
+
+
 def has_permission():
     """
     Decorder checks permission for requested url and method with session. 
     """
     def inner(func):
         def wrap(self, request, view_function, view_args, view_kwargs):
-            print("@"*20)
+
+            print("@"*20+"  START PATH  "+"@"*20)
             pk = view_kwargs.get('pk')
-            print('pk', pk)
-            media_pdf = ['media', '.pdf']
 
             # Exact url from the function
             raw_path = request.path
-
-            path = raw_path.split("?")[0]
-            if pk or any(x in path for x in media_pdf):
-                path = path.rsplit("/", 1)[0]
+            path = format_path(raw_path, pk)
 
             # Exact method from the function
             method = request.method.lower()
             print("Get requested url path: ", path)
             print("Get requested method: ", method)
-            print("@"*20)
+            print("@"*20+"  END PATH  "+"@"*20)
 
             try:
                 # Check for passing urls without any check for permissions and return function
-                if path in perms_config.pass_urls or 'django.contrib.admin' in view_function.__module__:
-                    print("passing the url without permission check", path)
+                if check_url_pass(path, view_function):
                     return func(self, request, view_function, view_args, view_kwargs)
 
                 # Get the Global Permission key
@@ -54,12 +71,13 @@ def has_permission():
                             print('API method: {}, Url_identifier: {}'.format(
                                 session_perms['api_method'], session_perms['url_identifier']))
                             print('+'*20)
-                            print("@"*20)
+                            print("#"*20)
                             return func(self, request, view_function, view_args, view_kwargs)
-                    print("403")
+
+                    print("403 for loop")
                     return HttpResponse(status=403)
                 else:
-                    print("403")
+                    print("403 if session key")
                     return HttpResponse(status=403)
 
             except Exception as e:
