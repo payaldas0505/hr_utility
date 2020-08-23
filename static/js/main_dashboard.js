@@ -68,6 +68,18 @@ $(document).ready(function () {
 
 })
 
+//add this js script into the web page,
+//you want reload once after first load
+window.onload = function() {
+    //considering there aren't any hashes in the urls already
+    if(!window.location.hash) {
+        //setting window location
+        window.location = window.location + '#loaded';
+        //using reload() method to reload web page
+        window.location.reload();
+    }
+}
+
 function DocumentTemplateDropdown() {
     $.ajax({
         url: '/dashboard/document_template_dropdown/',
@@ -686,7 +698,7 @@ function GotoDashboard() {
 
 
 function SaveFilledForm(event) {
-    alert(event)
+    // alert(event)
     // $('#UploadTemplate').prop('disabled', true);
     var filename = localStorage.getItem('fill_filename')
     var fd = new FormData();
@@ -716,7 +728,7 @@ function SaveFilledForm(event) {
         async: false,
         success: function (response) {
             if (response.status == 201) {
-                alert('hi')
+                // alert('hi')
                 window.location.reload();
             }
             else {
@@ -828,7 +840,7 @@ function SaveEditedTemplateValidate(event) {
         async: false,
         success: function (response) {
             if (response.status == 201) {
-                alert('hi')
+                // alert('hi')
                 window.location.reload();
             }
             else {
