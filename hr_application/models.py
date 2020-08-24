@@ -181,8 +181,6 @@ ORDER_COLUMN_CHOICES_FILL = Choices(
 
 
 def query_fill_templates_by_args(request, **kwargs):
-    check_user_is_superuser = User.objects.filter(
-        username=request.user.username).values('is_superuser')
     draw = int(kwargs.get('draw', None)[0])
     length = int(kwargs.get('length', None)[0])
     start = int(kwargs.get('start', None)[0])
@@ -220,8 +218,6 @@ def query_fill_templates_by_args(request, **kwargs):
 
 
 def query_templates_by_args(request, **kwargs):
-    check_user_is_superuser = User.objects.filter(
-        username=request.user.username).values('is_superuser')
     draw = int(kwargs.get('draw', None)[0])
     length = int(kwargs.get('length', None)[0])
     start = int(kwargs.get('start', None)[0])
@@ -247,7 +243,6 @@ def query_templates_by_args(request, **kwargs):
     count = queryset.count()
 
     queryset = queryset[start:start + length]
-    print('8'*80)
     return {
         'items': queryset,
         'count': count,
