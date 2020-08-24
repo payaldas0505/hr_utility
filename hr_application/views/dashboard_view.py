@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http.response import HttpResponse, JsonResponse
 from ..serializer import DatatableSerializer, AuthUserSerializer, UserRegisterationModelSerializer, FilledTemplateDataSerializer
-from ..models import query_users_by_args, UserRegisterationModel, WordTemplateNew, query_fill_templates_by_args, FilledTemplateData
+from ..models import query_users_by_args, UserRegisterationModel, WordTemplateNew, query_fill_templates_by_args, FilledTemplateData, WordTemplateData
 from django.db import transaction
 from .check_permission import has_permission
 import re
@@ -17,12 +17,12 @@ from hr_utility.settings import BASE_DIR
 import subprocess
 
 
-
 class DashboardPageView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
 
     def get(self, request):
         return Response(template_name="user_authentication/main_dashboard.html")
+
 
 class Dashboard(APIView):
     """
@@ -62,10 +62,10 @@ class UserManagementDashboardPageView(APIView):
     Get user management dashboard
     """
     renderer_classes = [TemplateHTMLRenderer]
+
     def get(self, request):
         print("user management")
         return Response(template_name="user_authentication/user_dashboard.html")
-
 
 
 class UserManagementDashboard(APIView):
@@ -107,6 +107,7 @@ class TemplateManagementDashboardPageView(APIView):
     Get template management dashboard
     """
     renderer_classes = [TemplateHTMLRenderer]
+
     def get(self, request):
         print("user management")
         return Response(template_name="user_authentication/manage_template_dasboard.html")
@@ -205,7 +206,6 @@ class UserDatatableView(APIView):
             print(info_message)
             return JsonResponse({'message': str(info_message)}, status=422)
 
-
     def delete(self, request, pk):
         """Delete user using User Id"""
 
@@ -224,7 +224,8 @@ class UserDatatableView(APIView):
                     user.delete()
                     register.delete()
 
-                    success_msg = "User {} deleted successfully".format(user.username)
+                    success_msg = "User {} deleted successfully".format(
+                        user.username)
                     print(success_msg)
                     return JsonResponse({'message': success_msg})
             except Exception as e:
@@ -232,7 +233,7 @@ class UserDatatableView(APIView):
                 info_message = "Please try again"
                 print(info_message)
                 print("exception in saving data rollback error", e)
-                return JsonResponse({'error' : str(info_message)}, status=422)
+                return JsonResponse({'error': str(info_message)}, status=422)
 
         except Exception as error:
             print("delete", error)
@@ -240,7 +241,6 @@ class UserDatatableView(APIView):
             info_message = "Internal Server Error"
             print(info_message)
             return JsonResponse({'message': str(info_message)}, status=422)
-
 
     def put(self, request, pk):
         """Update user details using User Id"""
@@ -295,7 +295,7 @@ class UserDatatableView(APIView):
 
                 info_message = "Please try again saving the data"
                 print(info_message)
-                return JsonResponse({'message' : str(info_message)}, status=422)
+                return JsonResponse({'message': str(info_message)}, status=422)
 
         except Exception as error:
 
@@ -335,18 +335,32 @@ class SelectTemplate(APIView):
         '''Get placeholders list using template id'''
         try:
             template_form = WordTemplateNew.objects.filter(id=pk)
+            template_name = template_form[0].word_name
+            print('-'*80)
+            print(template_name)
+            print('-'*80)
+            dummy_values = WordTemplateData.objects.filter(
+                pdf_name=template_name).values('dummy_values')
+            dummy_values_dict = dummy_values[0]['dummy_values']
 
-            text_list = []
-            regex = "(?<={{)[^}}]*(?=}})"
-            text = docx2txt.process(template_form[0].word_template)
-            used = set()
-            text_list = [x for x in re.findall(
-                regex, text) if x not in used and (used.add(x) or True)]
+            dummy_values_dict.pop('filename', None)
+
+            key_list = []
+            dummy_values_list = []
+
+            for each in dummy_values_dict.values():
+                dummy_values_list.append(each)
+
+            for each in dummy_values_dict.keys():
+                key_list.append(each)
 
             test = [
-                {"placeholder_list": text_list},
+                {"placeholder_list": key_list},
                 {'filename': template_form[0].word_template.file.name.split(
-                    '/media/')[1]}
+                    '/media/')[1]},
+                {
+                    'dummy_values': dummy_values_list
+                }
             ]
             return JsonResponse(test, safe=False)
         except Exception as e:
@@ -384,7 +398,7 @@ class FillDropdownTemplate(APIView):
             print(save_fill_template)
             new_docx_file_name = new_raw_file_name
             templatejsonnew = {'fill_values': templatejson, 'template_name': templatejson[
-                'templatename'], 'employee_name': templatejson['Name'], 'docx_name': new_docx_file_name, 'created_by' : request.user.id}
+                'templatename'], 'employee_name': templatejson['Name'], 'docx_name': new_docx_file_name, 'created_by': request.user.id}
             fill_form_serializer = FilledTemplateDataSerializer(
                 data=templatejsonnew)
 
@@ -413,7 +427,7 @@ class FillDropdownTemplate(APIView):
 
                 pdf_file = '/media/filled_user_template/' + \
                     '{}.pdf'.format(new_raw_file_name)
-                return JsonResponse({"success": "saved successfully","status": 201})
+                return JsonResponse({"success": "saved successfully", "status": 201})
 
             file_name = BASE_DIR + '/media/' + raw_file_name
 
@@ -448,11 +462,12 @@ class GetAllFillTemplate(APIView):
     def get(self, request):
         '''Get list of filled template for datatable'''
         try:
-            datatable_server_processing = query_fill_templates_by_args(request, **request.query_params)
+            datatable_server_processing = query_fill_templates_by_args(
+                request, **request.query_params)
             print(datatable_server_processing)
-            serializer = FilledTemplateDataSerializer(datatable_server_processing['items'], many=True)
-            print('1'*80)
-            print(serializer.data)
+            serializer = FilledTemplateDataSerializer(
+                datatable_server_processing['items'], many=True)
+
             result = dict()
             result['data'] = serializer.data
             result['draw'] = datatable_server_processing['draw']
@@ -468,122 +483,126 @@ class GetAllFillTemplate(APIView):
 
 
 class GetFillTemplateDetails(APIView):
-        authentication_classes = [CustomJWTAuthentication]
-        permission_classes = (IsAuthenticated,)
-        def get(self, request, pk):
-            '''Get filled template detail using id'''
+    authentication_classes = [CustomJWTAuthentication]
+    permission_classes = (IsAuthenticated,)
 
-            try:
+    def get(self, request, pk):
+        '''Get filled template detail using id'''
 
-                template = FilledTemplateData.objects.filter(id=pk).values('fill_values')
+        try:
 
-                template_detail = template[0]['fill_values']
-                file_name = template_detail['filename']
-                template_name = template_detail['templatename']
-                template_detail.pop('templatename', None)
-                template_detail.pop('filename', None)
+            template = FilledTemplateData.objects.filter(
+                id=pk).values('fill_values')
 
-                new_template_detail = []
-                new_template_detail.append(template_detail)
-                new_template_detail.append({'filename': file_name})
-                new_template_detail.append({'templatename' : template_name})
-                return JsonResponse({'message' : new_template_detail})
-            except Exception as error:
-                print("get", error)
-                info_message = "Internal Server Error"
-                print(info_message)
-                return JsonResponse({'message' : str(info_message)},status = 422)
+            template_detail = template[0]['fill_values']
+            file_name = template_detail['filename']
+            template_name = template_detail['templatename']
+            template_detail.pop('templatename', None)
+            template_detail.pop('filename', None)
 
+            new_template_detail = []
+            new_template_detail.append(template_detail)
+            new_template_detail.append({'filename': file_name})
+            new_template_detail.append({'templatename': template_name})
+            return JsonResponse({'message': new_template_detail})
+        except Exception as error:
+            print("get", error)
+            info_message = "Internal Server Error"
+            print(info_message)
+            return JsonResponse({'message': str(info_message)}, status=422)
 
-        def delete(self, request, pk):
-            """Delete template using Template Id"""
+    def delete(self, request, pk):
+        """Delete template using Template Id"""
 
-            try:
-                template = FilledTemplateData.objects.filter(id = pk)
-                if template:
-                    try:
-                        with transaction.atomic():
-                            template.delete()
-                            success_msg = "Template deleted successfully"
-                            print(success_msg)
-                            return JsonResponse({'message': success_msg})
-                    except Exception as e:
-                        info_message = "Please try again"
-                        print(info_message)
-                        print("exception in saving data rollback error", e)
-                        return JsonResponse({'error': str(info_message)}, status=422)
-                else:
-                    message = 'No Template Found'
-                    status = 404
-                return JsonResponse({'message' : message},status = status)
-
-            except Exception as error:
-                print("delete", error)
-                info_message = "Internal Server Error"
-                print(info_message)
-                return JsonResponse({'message' : str(info_message)},status = 422)
-
-
-        def put(self, request, pk):
-            '''update template using template id'''
-
-            try:
-                print('x'*80)
-                template_dict = request.POST
-                print('T'*80)
-                print(template_dict)
-                print('T'*80)
-
-                if type(template_dict) != dict:
-                    templatejson = dict(template_dict)
-
-                for k in templatejson:
-                    if len(templatejson[k]) == 1:
-                        templatejson[k] = templatejson[k][0]
-                save_fill_template = templatejson.pop('save', None)
-                print(save_fill_template)
-                print(templatejson)
-                edited_template = FilledTemplateData.objects.get(id=pk)
-
-                new_docx_file_name = FilledTemplateData.objects.filter(id=pk).values('docx_name')[0]['docx_name']
-                templatejsonnew = {'fill_values': templatejson, 'template_name': request.POST['templatename'], 'employee_name': request.POST['Name'], 'docx_name': new_docx_file_name}
-                edit_serializer = FilledTemplateDataSerializer(edited_template, data=templatejsonnew)
+        try:
+            template = FilledTemplateData.objects.filter(id=pk)
+            if template:
                 try:
                     with transaction.atomic():
-                        if edit_serializer.is_valid() and save_fill_template == 'true':
-                            edit_serializer.save()
-                            return JsonResponse({"success": "saved successfully","status": 201})
-                        file_name = BASE_DIR + '/media/' + request.POST['filename']
-                        template_dict = request.POST
-                        if type(template_dict) != dict:
-                            templatejson = dict(template_dict)
-
-                        for k in templatejson:
-                            if len(templatejson[k]) == 1:
-                                templatejson[k] = templatejson[k][0]
-
-                        document = generateNew.from_template(file_name, templatejson)
-                        document.seek(0)
-
-                        bytesio_object = document
-                        dir_path_ft = BASE_DIR + '/media/filled_user_template/'
-
-                        with open(dir_path_ft + "{}.docx".format(new_docx_file_name), 'wb') as f:
-                            f.write(bytesio_object.getbuffer())
-
-                        output = subprocess.check_output(
-                            ['libreoffice', '--convert-to', 'pdf', '{}.docx'.format(new_docx_file_name)], cwd=dir_path_ft)
-
-                        pdf_file = '/media/filled_user_template/' + \
-                            '{}.pdf'.format(new_docx_file_name)
-                        return JsonResponse({'success': pdf_file})
+                        template.delete()
+                        success_msg = "Template deleted successfully"
+                        print(success_msg)
+                        return JsonResponse({'message': success_msg})
                 except Exception as e:
-                    print("exception in saving data rollback error", e)
-                    info_message = "Please try again saving the data"
+                    info_message = "Please try again"
                     print(info_message)
-                    return JsonResponse({'message': str(info_message)}, status=422)
-            except Exception as error:
-                print("update", error)
-                info_message = "Internal Server Error"
+                    print("exception in saving data rollback error", e)
+                    return JsonResponse({'error': str(info_message)}, status=422)
+            else:
+                message = 'No Template Found'
+                status = 404
+            return JsonResponse({'message': message}, status=status)
+
+        except Exception as error:
+            print("delete", error)
+            info_message = "Internal Server Error"
+            print(info_message)
+            return JsonResponse({'message': str(info_message)}, status=422)
+
+    def put(self, request, pk):
+        '''update template using template id'''
+
+        try:
+            print('x'*80)
+            template_dict = request.POST
+            print('T'*80)
+            print(template_dict)
+            print('T'*80)
+
+            if type(template_dict) != dict:
+                templatejson = dict(template_dict)
+
+            for k in templatejson:
+                if len(templatejson[k]) == 1:
+                    templatejson[k] = templatejson[k][0]
+            save_fill_template = templatejson.pop('save', None)
+            print(save_fill_template)
+            print(templatejson)
+            edited_template = FilledTemplateData.objects.get(id=pk)
+
+            new_docx_file_name = FilledTemplateData.objects.filter(
+                id=pk).values('docx_name')[0]['docx_name']
+            templatejsonnew = {'fill_values': templatejson, 'template_name': request.POST[
+                'templatename'], 'employee_name': request.POST['Name'], 'docx_name': new_docx_file_name}
+            edit_serializer = FilledTemplateDataSerializer(
+                edited_template, data=templatejsonnew)
+            try:
+                with transaction.atomic():
+                    if edit_serializer.is_valid() and save_fill_template == 'true':
+                        edit_serializer.save()
+                        return JsonResponse({"success": "saved successfully", "status": 201})
+                    file_name = BASE_DIR + '/media/' + request.POST['filename']
+                    template_dict = request.POST
+                    if type(template_dict) != dict:
+                        templatejson = dict(template_dict)
+
+                    for k in templatejson:
+                        if len(templatejson[k]) == 1:
+                            templatejson[k] = templatejson[k][0]
+
+                    document = generateNew.from_template(
+                        file_name, templatejson)
+                    document.seek(0)
+
+                    bytesio_object = document
+                    dir_path_ft = BASE_DIR + '/media/filled_user_template/'
+
+                    with open(dir_path_ft + "{}.docx".format(new_docx_file_name), 'wb') as f:
+                        f.write(bytesio_object.getbuffer())
+
+                    output = subprocess.check_output(
+                        ['libreoffice', '--convert-to', 'pdf', '{}.docx'.format(new_docx_file_name)], cwd=dir_path_ft)
+
+                    pdf_file = '/media/filled_user_template/' + \
+                        '{}.pdf'.format(new_docx_file_name)
+                    return JsonResponse({'success': pdf_file})
+            except Exception as e:
+                print("exception in saving data rollback error", e)
+                info_message = "Please try again saving the data"
                 print(info_message)
-                return JsonResponse({'message' : str(info_message)},status = 422)
+                return JsonResponse({'message': str(info_message)}, status=422)
+        except Exception as error:
+            print("update", error)
+            info_message = "Internal Server Error"
+            print(info_message)
+            return JsonResponse({'message': str(info_message)}, status=422)

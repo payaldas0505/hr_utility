@@ -12,7 +12,9 @@ $(document).ready(function () {
     $('#pdf_edit').hide();
     $('#pdf_save_cancel').hide();
     $('select').formSelect();
+    $('#RenderTemplateDropdown').hide();
     get_labels('main_dashboard_page')
+
     if (localStorage.getItem("UserPermissions") === null) {
         GetPermissions()
     }
@@ -82,6 +84,9 @@ function SetPermissionsUserDashboard() {
         }
         if (userPermissions.includes('template_management_page_get')) {
             $(".template_management").show();
+        }
+        if (userPermissions.includes('select_template_get')){
+            $('#RenderTemplateDropdown').show();
         }
     }
 }
@@ -232,6 +237,7 @@ function GetSelectedTemplateId() {
         url: "/dashboard/select_template/" + templateId,
         headers: { Authorization: 'Bearer ' + userDetails.access },
         success: function (result) {
+            console.log(result)
             localStorage.setItem('fill_filename', result[1].filename)
             var FillId = []
             for (i = 0; i < result[0].placeholder_list.length; i++) {
@@ -242,7 +248,7 @@ function GetSelectedTemplateId() {
                     input_type = 'text'
                 }
                 div_class_start = '<div class="row"><div class="input-field col s12"><i class="material-icons prefix">edit</i>'
-                input = '<input id=' + result[0].placeholder_list[i] + ' type=' + input_type + ' class="validate" required="" aria-required="true">'
+                input = '<input id=' + result[0].placeholder_list[i] + ' type=' + input_type + ' class="validate" required="" aria-required="true" value='+result[2].dummy_values[i]+'>'
                 label = '<label for=' + result[0].placeholder_list[i] + '>' + result[0].placeholder_list[i] + '</label>'
                 div_class_end = '</div></div>'
                 $('#templateDropdownForm').append(div_class_start)
@@ -253,6 +259,7 @@ function GetSelectedTemplateId() {
                 $('#templateDropdownForm').show();
                 $('.dropdown-back-button').hide();
                 $('.save-cancel-button').show();
+                $("#" + result[0].placeholder_list[i]).val(result[2].dummy_values[i]);
 
             }
 
@@ -301,17 +308,10 @@ function SaveFilledForm(event) {
             $('#pdf_save_cancel').empty();
             if (response.status == 201) {
                 M.toast({ html: 'Template is saved successfully', classes: 'green rounded' })
-                $('#HideDivForView').show();
-                $('#pdf_fill').hide();
-                $('#pdf_save_cancel').hide()
-                $('#Template-dropdown').show();
-                $('#RenderTemplateDropdown').hide();
-                $('#Document-Dashboard-header').hide();
-                $('#Template-Dropdown-Header').show();
-                $('#Dashboard-Datatable-Div').hide();
-                $('#templateDropdownForm').hide();
-                $('.dropdown-back-button').show();
-                $('.save-cancel-button').hide();
+
+                setTimeout(function () {
+                    window.location.reload();
+                }, 3000);
             }
             else {
                 M.toast({ html: 'Template is successfully filled', classes: 'green rounded' })

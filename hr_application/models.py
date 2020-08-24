@@ -181,8 +181,6 @@ ORDER_COLUMN_CHOICES_FILL = Choices(
 
 
 def query_fill_templates_by_args(request, **kwargs):
-    check_user_is_superuser = User.objects.filter(
-        username=request.user.username).values('is_superuser')
     draw = int(kwargs.get('draw', None)[0])
     length = int(kwargs.get('length', None)[0])
     start = int(kwargs.get('start', None)[0])
@@ -194,7 +192,11 @@ def query_fill_templates_by_args(request, **kwargs):
     if order == 'desc':
         order_column = '-' + order_column
 
-    queryset = FilledTemplateData.objects.all()
+    if UserRole.objects.filter(userregisterationmodel = request.user.id)[0] == 'Admin':
+        queryset = FilledTemplateData.objects.all()
+    else:
+        queryset = FilledTemplateData.objects.filter(created_by = request.user.id)
+
     total = queryset.count()
 
     if search_value:
@@ -216,8 +218,6 @@ def query_fill_templates_by_args(request, **kwargs):
 
 
 def query_templates_by_args(request, **kwargs):
-    check_user_is_superuser = User.objects.filter(
-        username=request.user.username).values('is_superuser')
     draw = int(kwargs.get('draw', None)[0])
     length = int(kwargs.get('length', None)[0])
     start = int(kwargs.get('start', None)[0])
@@ -229,12 +229,10 @@ def query_templates_by_args(request, **kwargs):
     if order == 'desc':
         order_column = '-' + order_column
 
-    # if check_user_is_superuser[0]['is_superuser'] == True:
-    #     queryset = FilledTemplateData.objects.all()
-    # else:
-    #     queryset = FilledTemplateData.objects.filter(created_by = request.user.id)
-
-    queryset = WordTemplateData.objects.all()
+    if UserRole.objects.filter(userregisterationmodel = request.user.id)[0] == 'Admin':
+        queryset = WordTemplateData.objects.all()
+    else:
+        queryset = WordTemplateData.objects.filter(created_by = request.user.id)
     total = queryset.count()
 
     if search_value:
@@ -245,7 +243,6 @@ def query_templates_by_args(request, **kwargs):
     count = queryset.count()
 
     queryset = queryset[start:start + length]
-
     return {
         'items': queryset,
         'count': count,
