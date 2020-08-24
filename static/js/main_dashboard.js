@@ -25,7 +25,7 @@ $(document).ready(function () {
 })
 
 window.onload = function() {
-    
+
     if(!window.location.hash) {
         //setting window location
         window.location = window.location + '#loaded';
@@ -227,7 +227,10 @@ function GetSelectedTemplateId() {
     window.localStorage.setItem('selected_template_name', templateName)
     $("#templateDropdownForm").empty();
     var templateId = $("#Template-dropdown-select option:selected").val();
+<<<<<<< HEAD
+=======
 
+>>>>>>> f113a222e478e7ff3202297f51abb2c34c9e07b1
     $.ajax({
         type: 'GET',
         url: "/dashboard/select_template/" + templateId,
@@ -274,7 +277,10 @@ function GotoDashboard() {
 }
 
 function SaveFilledForm(event) {
+<<<<<<< HEAD
+=======
     window.localStorage.setItem('fill_form_event', event)
+>>>>>>> f113a222e478e7ff3202297f51abb2c34c9e07b1
     var filename = localStorage.getItem('fill_filename')
     var fd = new FormData();
     var retrievedData = localStorage.getItem("FillId");
@@ -301,6 +307,9 @@ function SaveFilledForm(event) {
         success: function (response) {
             $('#pdf_save_cancel').empty();
             if (response.status == 201) {
+<<<<<<< HEAD
+                window.location.reload();
+=======
                 M.toast({ html: 'Template is saved successfully', classes: 'green rounded' })
                 $('#HideDivForView').show();
                 $('#pdf_fill').hide();
@@ -313,6 +322,7 @@ function SaveFilledForm(event) {
                 $('#templateDropdownForm').hide();
                 $('.dropdown-back-button').show();
                 $('.save-cancel-button').hide();
+>>>>>>> f113a222e478e7ff3202297f51abb2c34c9e07b1
             }
             else {
                 M.toast({ html: 'Template is successfully filled', classes: 'green rounded' })
@@ -322,7 +332,6 @@ function SaveFilledForm(event) {
 
                 setTimeout(function () {
                     var object = document.getElementById('pdf_preview_fill');
-                    // alert(response['success'])
                     object.setAttribute('data', response['success']);
 
                     var clone = object.cloneNode(true);

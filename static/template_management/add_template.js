@@ -29,9 +29,6 @@ function SubmitUploadWordTemplate() {
         success: function(response) {
             $('#uploadTemplateDiv *').attr("disabled", true);
             $('#uploadTemplateDiv *').fadeTo('slow', .8);
-            // console.log(response)
-            // $('#uploadTemplateDiv').hide();
-            // alert(response[0].filename)
             localStorage.setItem('filename', response[1].filename)
             var id = []
             for (i = 0; i < response[0].placeholder_list.length; i++) {
@@ -43,7 +40,6 @@ function SubmitUploadWordTemplate() {
                     input_type = 'text'
                 }
                 div_class_start = '<div class="row"><div class="input-field col s12"><i class="material-icons prefix">edit</i>'
-                    // temp = '<p>'+response[0].placeholder_list[i]+'</p>'
                 input = '<input id=' + response[0].placeholder_list[i] + ' type=' + input_type + ' class="validate" required="" aria-required="true">'
                 label = '<label for=' + response[0].placeholder_list[i] + '>' + response[0].placeholder_list[i] + '</label>'
                 div_class_end = '</div></div>'
@@ -67,7 +63,6 @@ function SubmitUploadWordTemplate() {
                 logout()
             }
             parsed_jsondata = JSON.parse(xhr.responseText)
-                // alert(parsed_jsondata.error)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
             setTimeout(function() {
                 $("#UploadTemplate").attr("disabled", false);
@@ -170,7 +165,6 @@ function SaveFields(save = false) {
 
                 setTimeout(function() {
                     var object = document.getElementById('pdf_preview');
-                    // alert(response['success'])
                     object.setAttribute('data', response['success']);
 
                     var clone = object.cloneNode(true);
@@ -179,7 +173,6 @@ function SaveFields(save = false) {
                     parent.removeChild(object);
                     parent.appendChild(clone);
                 }, 3000);
-                // $("#pdf_preview").setAttribute("data", response['success'])
 
 
                 $('#pdf').show();
@@ -197,7 +190,6 @@ function SaveFields(save = false) {
             }
 
             parsed_jsondata = JSON.parse(xhr.responseText)
-                // alert(parsed_jsondata.error)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
             setTimeout(function() {
                 $('#field_save_btn').prop('disabled', true)
@@ -247,14 +239,11 @@ function FieldUploadWordTemplate(event) {
         $('#save').show();
     }
 
-    //   alert(values)
-
 
 }
 
 
 function SavePdfFile(event) {
-    // $('#file_save_btn').prop('disabled', true)
     event.preventDefault();
     SaveFields(save = true);
 }

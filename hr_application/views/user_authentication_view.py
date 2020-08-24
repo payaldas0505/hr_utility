@@ -125,7 +125,6 @@ class CustomJWTAuthentication(JWTAuthentication):
             decoded = jwt.decode(raw_token, settings.SECRET_KEY)
             username = decoded['username']
             user_id = decoded['user_id']
-            # print('username', username, user_id)
 
             # get user object from database
             user_obj = UserRegisterationModel.objects.filter(
@@ -136,7 +135,7 @@ class CustomJWTAuthentication(JWTAuthentication):
             for obj in user_obj:
                 for key, value in obj.items():
                     request.session[key] = value
-                  
+
             validated_token = self.get_validated_token(raw_token)
 
             return self.get_user(validated_token), validated_token
@@ -292,7 +291,6 @@ class GetPermissions(APIView):
                 'role__permissions__permission_name',
                 'role__permissions__api_method',
                 'role__permissions__url_identifier')
-            # print(perms)
 
             # Permissions setting in session
             perms_list_font_end = []

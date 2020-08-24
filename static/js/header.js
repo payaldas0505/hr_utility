@@ -11,30 +11,9 @@ jQuery(document).ready(function ($) {
     $(".brand-logo").sideNav();
 
 
-    // alert(localStorage.getItem("User"))
-
 
     $('#user').html('<i class="material-icons left">account_circle</i>' + userDetails.username);
-    // var language_id = localStorage.getItem('language')
-    // $.ajax({
-    //     type: 'POST',
-    //     url: '/get_labels/a',
-    //     data : {
-    //     	'page_name' : 'Nav_bar',
-    //     	'language_id' : language_id,
-    // 	    },
-    //     success: function (jsondata) {
-    //         console.log(jsondata)
-    //         for (const [key, value] of Object.entries(jsondata)) {
-    //             console.log(key, value);
-    //             $('.'+value.page_label_class_name).text(value.page_label_text);
-    //           }
-    //     },
-    //     error: function(data){
-    //         obj = JSON.parse(data.responseText)
-    //         M.toast({html: obj.error, classes: 'red rounded'})
-    //     }
-    // });
+
 });
 
 function changepassword() {
@@ -56,47 +35,6 @@ function changepassword() {
     })
 };
 
-//     $.ajax({
-//         type: 'GET',
-//         url: '/logout/',
-//         headers: { Authorization: 'Bearer '+ localStorage.getItem("Token")},
-//         success: function (result) {
-
-//             localStorage.setItem("Token", result.access);
-//             token = localStorage.getItem("Token")
-
-//             setTimeout(function() {
-//             window.location.href = "/dashboard/get_change_password/?token="+token;
-//             }, 500);
-
-//         },
-//             error: function(data){
-//             if (data.status == 401) {
-//                 getaccessTokenlogout();
-
-//             }
-//         }
-//     })
-// }
-// get access token when expired
-// function getaccessTokenChangePassword(){
-
-//     $.ajax({
-//          type: 'POST',
-//          url: '/refresh_token/',
-//          data : {
-//            'refresh' : localStorage.getItem("Refresh"),
-//          },
-//          success: function (result) {
-//           localStorage.setItem("Token", result.access);
-//           changepassword();
-//          },
-//          error: function(data){
-//             obj = JSON.parse(data.responseText)
-//             M.toast({html: obj.detail})
-//          }
-//    })
-//   }
 
 function getUserDashboard() {
 
@@ -120,28 +58,6 @@ function getUserDashboard() {
     })
 }
 
-// function getaccessTokenForUserDashboard(){
-//     $.ajax({
-//         type: 'POST',
-//         url: '/refresh_token/',
-//         data : {
-//             'refresh' : localStorage.getItem("Refresh"),
-//         },
-//         success: function (result) {
-//             localStorage.setItem("Token", result.access);
-//             token = localStorage.getItem("Token")
-
-//             setTimeout(function() {
-//                 window.location.href = "/dashboard/user_management/?token="+token;
-//             }, 500);
-
-//         },
-//         error: function(data){
-//             obj = JSON.parse(data.responseText)
-//             M.toast({html: obj.detail})
-//         }
-//     })
-// }
 
 function getTemplateDashboard() {
 
@@ -165,28 +81,6 @@ function getTemplateDashboard() {
     })
 }
 
-// function getaccessTokenForTemplateDashboard(){
-//     $.ajax({
-//         type: 'POST',
-//         url: '/refresh_token/',
-//         data : {
-//             'refresh' : localStorage.getItem("Refresh"),
-//         },
-//         success: function (result) {
-//             localStorage.setItem("Token", result.access);
-//             token = localStorage.getItem("Token")
-
-//             setTimeout(function() {
-//                 window.location.href = "/dashboard/template_management/?token="+token;
-//                 }, 500);
-
-//         },
-//         error: function(data){
-//             obj = JSON.parse(data.responseText)
-//             M.toast({html: obj.detail})
-//         }
-//     })
-// }
 
 function closeSideBar() {
 
@@ -205,27 +99,3 @@ function closeSideBar() {
         }
     })
 }
-
-// function GetAccessTokenForcloseSideBar(){
-//     $.ajax({
-//         type: 'POST',
-//         url: '/refresh_token/',
-//         data : {
-//           'refresh' : localStorage.getItem("Refresh"),
-//         },
-//         success: function (result) {
-//            localStorage.setItem("Token", result.access);
-//            token = localStorage.getItem("Token")
-
-//         setTimeout(function() {
-//             window.location.href = "/dashboard/?token="+token;
-//           }, 500);
-
-//         },
-//         error: function(data){
-//            obj = JSON.parse(data.responseText)
-//            M.toast({html: obj.detail})
-//         }
-//   })
-
-// }

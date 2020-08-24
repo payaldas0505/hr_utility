@@ -6,7 +6,6 @@ import nested_admin
 
 # Register your models here.
 admin.site.register(UserRegisterationModel)
-# admin.site.register(UserRole)
 admin.site.register(RolePermissions)
 admin.site.register(WordTemplateData)
 admin.site.register(WordTemplateNew)

@@ -64,7 +64,6 @@ function get_toast(label) {
         },
         error: function (xhr) {
             let parsed_jsondata = JSON.parse(xhr.responseText)
-            // alert(parsed_jsondata.error)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
         }
     })
@@ -74,21 +73,15 @@ function get_toast(label) {
 function checkValidations(event) {
     if (!$('#username').val() && !$('#password').val()) {
 
-        // get_toast('username_password_toast');
-
         M.toast({ html: 'Please enter username and password', classes: 'red rounded' })
         return false;
     }
     else if (!$('#username').val()) {
 
-        // get_toast('user_name_toast');
-
         M.toast({ html: 'Please enter username', classes: 'red rounded' })
         return false;
     }
     else if (!$('#password').val()) {
-
-        // get_toast('password_toast');
 
         M.toast({ html: 'Please enter password', classes: 'red rounded' })
         return false;
@@ -101,11 +94,10 @@ function checkValidations(event) {
 
 // submit login credentials
 function submit() {
-    
+
    let username = $('#username').val()
    let password = $('#password').val()
 
-    // localStorage.setItem("User", username)
     $.ajax({
         type: 'POST',
         url: '/access_token/',
@@ -114,16 +106,12 @@ function submit() {
             'password': password,
         },
         success: function (result) {
-            //  alert(result.role_id)
             if (result.error){
                 M.toast({ html: result.error, classes: 'red rounded' })
                 return false
             }
             localStorage.setItem("UserDetails", JSON.stringify(result));
             window.location.href = "/dashboard/";
-
-
-            // GetPermissions()
         },
         error: function (data) {
             localStorage.removeItem("User");

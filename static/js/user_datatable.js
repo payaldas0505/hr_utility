@@ -1,5 +1,4 @@
 var tableLoad = $(document).ready(function() {
-    // GetPermissions()
     var userDetails = getValues('UserDetails')
     var access = userDetails.access
     $('#dashboardRegisterForm').hide();
@@ -17,7 +16,6 @@ var tableLoad = $(document).ready(function() {
             "type": "GET",
             "headers": { Authorization: 'Bearer ' + access },
             "error": function(data) {
-                // alert(data.status)
                 if (data.status == 401) {
                     let get_url = "/dashboard/user_management/"
                     getaccessTokenForUrl(get_url);
@@ -73,8 +71,6 @@ var tableLoad = $(document).ready(function() {
                     } else {
                         return 'no action'
                     }
-                    // var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditReport(id)><i class="material-icons prefix">mode_edit</i></button> <button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button><button class="delete_btn" id='+data+' onclick=getDeleteReport(id)><i class="material-icons prefix">delete</i></button> '
-                    // return all_perms
                 }
             },
 
@@ -93,9 +89,6 @@ var tableLoad = $(document).ready(function() {
     // Call datatables, and return the API to the variable for use in our code
     // Binds datatables to all elements with a class of datatable
     var table = $("#user_datatable").dataTable().api();
-    // var table = $('#user_datatable').DataTable();
-
-    // table.columns.adjust().draw();
     // Grab the datatables input box and alter how it is bound to events
     $(".dataTables_filter input")
         .unbind() // Unbind previous default bindings

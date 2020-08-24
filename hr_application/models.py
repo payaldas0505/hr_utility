@@ -147,7 +147,7 @@ class Language(models.Model):
     language_name = models.CharField(max_length=100, null=False)
 
     class Meta:
-        verbose_name_plural = "4 Add Languages"
+        verbose_name_plural = "7 Add Languages"
 
     def __str__(self):
         return '{}' .format(self.language_name)

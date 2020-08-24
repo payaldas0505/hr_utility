@@ -43,7 +43,6 @@ jQuery(document).ready(function ($) {
                     getaccessTokenForUrl(get_url);
                 }
                 let parsed_jsondata = JSON.parse(xhr.responseText)
-                // alert(parsed_jsondata.error)
                 M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
             }
         });
@@ -83,7 +82,6 @@ jQuery(document).ready(function ($) {
                     getaccessTokenForUrl(get_url);
                 }
                 let parsed_jsondata = JSON.parse(xhr.responseText)
-                // alert(parsed_jsondata.error)
                 M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
             }
         });
@@ -148,8 +146,6 @@ function RegisterUserForm() {
         async: false,
         success: function (jsonData) {
             M.toast({ html: jsonData['message'], outDuration: 2000, classes: 'green rounded' })
-            // var userDetails = getValues('UserDetails')
-            // var token = userDetails.access;
             setTimeout(function() {
                 window.location.href = "/dashboard/user_management/";
               }, 3000);
@@ -160,7 +156,6 @@ function RegisterUserForm() {
                 getaccessToken(RegisterUserForm);
             }
             parsed_jsondata = JSON.parse(xhr.responseText)
-            // alert(parsed_jsondata.error)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
             setTimeout(function () {
                 $("#submit_form").attr("disabled", false);
@@ -190,15 +185,11 @@ function RegisterUser() {
         user_status = false
     }
     if (user_name == "") {
-
-        // get_toast('user_name_toast');
         $("#submit_form").attr("disabled", false);
         M.toast({ html: 'Username must be filled out!', classes: 'red rounded' })
         return false;
     }
     else if (first_name == "") {
-
-        // get_toast('first_name_toast');
         $("#submit_form").attr("disabled", false);
         M.toast({ html: 'First name must be filled out!', classes: 'red rounded' })
         return false;
@@ -207,42 +198,32 @@ function RegisterUser() {
     else if (last_name == "") {
 
         $("#submit_form").attr("disabled", false);
-        // get_toast('last_name_toast');
 
         M.toast({ html: 'Last name must be filled out!', classes: 'red rounded' })
         return false;
     }
     else if (email == "") {
-
-        // get_toast('email_toast');
         $("#submit_form").attr("disabled", false);
         M.toast({ html: 'Email address must be filled out!', classes: 'red rounded' })
         return false;
     }
     else if (password == "") {
-
-        // get_toast('password_toast');
         $("#submit_form").attr("disabled", false);
         M.toast({ html: 'Password must be filled out!', classes: 'red rounded' })
         return false;
     }
     else if (confirm_password == "") {
-
-        // get_toast('confirm_password_toast');
         $("#submit_form").attr("disabled", false);
         M.toast({ html: 'Confirm Password must be filled out!', classes: 'red rounded' })
         return false;
     }
     else if (password != confirm_password) {
-        // alert("check match condition")
         $("#submit_form").attr("disabled", false);
         M.toast({ html: 'Password and confirm password fields do not match', classes: 'red rounded' })
         return false;
     }
 
     else if (role == "") {
-
-        // get_toast('role_toast');
         $("#submit_form").attr("disabled", false);
         M.toast({ html: 'Please assign role for the user from the dropdown!', classes: 'red rounded' })
         return false;
@@ -254,8 +235,6 @@ function RegisterUser() {
 }
 
 function getUserDashboardDatatable() {
-    // var userDetails = getValues('UserDetails')
-    // var token = userDetails.access;
     var get_url = "/dashboard/user_management/"
     $.ajax({
     method : 'GET',
@@ -271,4 +250,3 @@ function getUserDashboardDatatable() {
     }
 })
 }
-
