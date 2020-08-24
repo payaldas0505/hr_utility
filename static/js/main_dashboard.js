@@ -242,6 +242,17 @@ function GetSelectedTemplateId() {
             console.log(result)
             localStorage.setItem('fill_filename', result[1].filename)
             var FillId = []
+            FillId.push('Document_Name')
+            div_class_start = '<div class="row"><div class="input-field col s12"><i class="material-icons prefix">edit</i>'
+            input = '<input id="Document_Name" type=text class="validate" required="" aria-required="true">'
+            label = '<label for="Document_Name">Document Name</label>'
+            div_class_end = '</div></div>'
+            $('#templateDropdownForm').append(div_class_start)
+            $('#templateDropdownForm').append(input)
+            $('#templateDropdownForm').append(label)
+            $('#templateDropdownForm').append(div_class_end)
+
+
             for (i = 0; i < result[0].placeholder_list.length; i++) {
                 if (result[0].placeholder_list[i].includes('image')) {
                     input_type = 'file'
@@ -264,6 +275,7 @@ function GetSelectedTemplateId() {
                 $("#" + result[0].placeholder_list[i]).val(result[2].dummy_values[i]);
 
             }
+            
 
             localStorage.setItem("FillId", JSON.stringify(FillId));
         },
