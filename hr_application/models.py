@@ -232,8 +232,7 @@ def query_templates_by_args(request, **kwargs):
     order_column = ORDER_COLUMN_CHOICES[order_column]
     if order == 'desc':
         order_column = '-' + order_column
-    print('#'*80)
-    print('#'*80)
+
     if UserRole.objects.filter(userregisterationmodel = request.user.id)[0] == 'Admin':
         queryset = WordTemplateNew.objects.all()
     else:

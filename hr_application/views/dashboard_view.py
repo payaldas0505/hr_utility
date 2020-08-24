@@ -341,33 +341,18 @@ class SelectTemplate(APIView):
             print('-'*80)
             dummy_values = WordTemplateData.objects.filter(
                 pdf_name=template_name).values('dummy_values')
-            a = dummy_values[0]['dummy_values']
+            dummy_values_dict = dummy_values[0]['dummy_values']
 
-            a.pop('filename', None)
-            # print(a)
-            # print(type(a))
-            # print(a.values())
-            # print(type(a.values()))
-            # for each in a.values():
-            #     print(each)
+            dummy_values_dict.pop('filename', None)
 
-            # text_list = []
             key_list = []
             dummy_values_list = []
 
-            for each in a.values():
+            for each in dummy_values_dict.values():
                 dummy_values_list.append(each)
 
-            for each in a.keys():
+            for each in dummy_values_dict.keys():
                 key_list.append(each)
-
-            print(key_list)
-
-            # regex = "(?<={{)[^}}]*(?=}})"
-            # text = docx2txt.process(template_form[0].word_template)
-            # used = set()
-            # text_list = [x for x in re.findall(
-            #     regex, text) if x not in used and (used.add(x) or True)]
 
             test = [
                 {"placeholder_list": key_list},
@@ -482,8 +467,7 @@ class GetAllFillTemplate(APIView):
             print(datatable_server_processing)
             serializer = FilledTemplateDataSerializer(
                 datatable_server_processing['items'], many=True)
-            print('1'*80)
-            print(serializer.data)
+
             result = dict()
             result['data'] = serializer.data
             result['draw'] = datatable_server_processing['draw']
