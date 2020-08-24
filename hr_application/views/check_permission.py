@@ -73,10 +73,11 @@ def has_permission():
                             print('+'*20)
                             print("#"*20)
                             return func(self, request, view_function, view_args, view_kwargs)
-
+                    request.session.flush()
                     print("403 for loop")
                     return HttpResponse(status=403)
                 else:
+                    request.session.flush()
                     print("403 if session key")
                     return HttpResponse(status=403)
 
