@@ -566,13 +566,14 @@ class GetFillTemplateDetails(APIView):
 
             edit_serializer = FilledTemplateDataSerializer(
                 edited_template, data=templatejsonnew)
+            print(edit_serializer)
             try:
                 with transaction.atomic():
                     if edit_serializer.is_valid() and save_fill_template == 'true':
                         edit_serializer.save()
+                        print('1'*80)
                         return JsonResponse({"success": "saved successfully", "status": 201})
-                    else:
-                        return JsonResponse({'message' : edit_serializer.errors, "status": 422})
+                    
                     file_name = BASE_DIR + '/media/' + request.POST['filename']
                     template_dict = request.POST
                     if type(template_dict) != dict:
