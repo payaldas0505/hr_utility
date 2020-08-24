@@ -12,6 +12,7 @@ $(document).ready(function () {
     $('#pdf_edit').hide();
     $('#pdf_save_cancel').hide();
     $('select').formSelect();
+    $('#RenderTemplateDropdown').hide();
 
     if (localStorage.getItem("UserPermissions") === null) {
         GetPermissions()
@@ -82,6 +83,9 @@ function SetPermissionsUserDashboard() {
         }
         if (userPermissions.includes('template_management_page_get')) {
             $(".template_management").show();
+        }
+        if (userPermissions.includes('select_template_get')){
+            $('#RenderTemplateDropdown').show();
         }
     }
 }

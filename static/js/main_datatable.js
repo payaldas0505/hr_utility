@@ -37,7 +37,19 @@ var tableLoad = $(document).ready(function() {
                         }},
                         {"data" : "id",
                         "render" : function(data){
-                            var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditFillTemplate(id)><i class="material-icons prefix">mode_edit</i></button> <button class="delete_btn" id='+data+' onclick=getDeleteFillTemplate(id)><i class="material-icons prefix">delete</i></button> <button class="view_btn" id='+data+' onclick=getViewFilledTemplate(id)><i class="material-icons prefix">visibility</i></button>'
+                            var userPermissions = getValues('UserPermissions')
+                            console.log('*******************')
+                            console.log(userPermissions)
+                            if (userPermissions.includes('fill_template_detail_get') && userPermissions.includes('fill_template_detail_put') && userPermissions.includes('fill_template_detail_delete')) {
+                                var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditFillTemplate(id)><i class="material-icons prefix">mode_edit</i></button> <button class="delete_btn" id='+data+' onclick=getDeleteFillTemplate(id)><i class="material-icons prefix">delete</i></button> <button class="view_btn" id='+data+' onclick=getViewFilledTemplate(id)><i class="material-icons prefix">visibility</i></button>'
+                            }
+                            else if (userPermissions.includes('fill_template_detail_get') && userPermissions.includes('fill_template_detail_put')) {
+                                var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditFillTemplate(id)><i class="material-icons prefix">mode_edit</i></button> <button class="view_btn" id='+data+' onclick=getViewFilledTemplate(id)><i class="material-icons prefix">visibility</i></button>'
+                            }
+                            else if (userPermissions.includes('fill_template_detail_get')) {
+                                var all_perms = '<button class="view_btn" id='+data+' onclick=getViewFilledTemplate(id)><i class="material-icons prefix">visibility</i></button>'
+                            }
+                            
                             return all_perms
                         }},
 
