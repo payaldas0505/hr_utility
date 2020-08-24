@@ -175,9 +175,12 @@ class WordTemplateDataView(APIView):
         try:
             message = "Template not found"
             status = 404
-            template = WordTemplateData.objects.filter(id = pk)
+            template = WordTemplateData.objects.get(id = pk)
+            template_new = WordTemplateNew.objects.filter(word_name = template.pdf_name)
             if template:
                 template.delete()
+                if template_new:
+                    template_new.delete()
                 message = "Template deleted successfully"
                 status = 200
             return JsonResponse({'message' : message},status = status)

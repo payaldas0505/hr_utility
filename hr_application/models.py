@@ -229,12 +229,12 @@ def query_templates_by_args(request, **kwargs):
     if order == 'desc':
         order_column = '-' + order_column
 
-    if check_user_is_superuser[0]['is_superuser'] == True:
-        queryset = FilledTemplateData.objects.all()
-    else:
-        queryset = FilledTemplateData.objects.filter(created_by = request.user.id)
+    # if check_user_is_superuser[0]['is_superuser'] == True:
+    #     queryset = FilledTemplateData.objects.all()
+    # else:
+    #     queryset = FilledTemplateData.objects.filter(created_by = request.user.id)
 
-    # queryset = FilledTemplateData.objects.all()
+    queryset = WordTemplateData.objects.all()
     total = queryset.count()
 
     if search_value:

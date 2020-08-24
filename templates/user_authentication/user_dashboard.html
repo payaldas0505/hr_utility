@@ -175,6 +175,7 @@ function getData(){
       error: function(xhr) {
           if (xhr.status == 401) {
               getaccessTokenForMainDashboard();
+              window.location.href = "/dashboard/user_management/"
           }
           if (xhr.status == 403) {
               logout();
