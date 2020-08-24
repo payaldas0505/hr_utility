@@ -11,9 +11,9 @@ def format_path(raw_path, pk):
     if pk or any(x in path for x in media_pdf):
         path = path.rsplit("/", 1)[0]
         print('path', path)
-        
+
         return path
-    
+
     return path
 
 
@@ -28,7 +28,7 @@ def check_url_pass(path, view_function):
 
 def has_permission():
     """
-    Decorder checks permission for requested url and method with session. 
+    Decorder checks permission for requested url and method with session.
     """
     def inner(func):
         def wrap(self, request, view_function, view_args, view_kwargs):
@@ -82,7 +82,6 @@ def has_permission():
 
             except Exception as e:
                 print(e)
-                # request.session.flush()
                 return HttpResponse(status=403)
         return wrap
     return inner

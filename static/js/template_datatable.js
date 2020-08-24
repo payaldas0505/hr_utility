@@ -1,5 +1,4 @@
 var tableLoad = $(document).ready(function() {
-    // GetPermissions()
     var userDetails = getValues('UserDetails')
     var access = userDetails.access
 
@@ -19,9 +18,6 @@ var tableLoad = $(document).ready(function() {
                 if (data.status == 401) {
                     let get_url = "/dashboard/user_management/"
                     getaccessTokenForUrl(get_url);
-
-                    // } else if (data.status == 403) {
-                    //     logout()
                 } else {
                     M.toast({ html: JSON.parse(data.responseText).message, classes: 'red rounded' })
                 }
@@ -77,9 +73,6 @@ var tableLoad = $(document).ready(function() {
     // Call datatables, and return the API to the variable for use in our code
     // Binds datatables to all elements with a class of datatable
     var table = $("#template_datatable").dataTable().api();
-    // var table = $('#user_datatable').DataTable();
-
-    // table.columns.adjust().draw();
     // Grab the datatables input box and alter how it is bound to events
     $(".dataTables_filter input")
         .unbind() // Unbind previous default bindings

@@ -1,16 +1,11 @@
 from .user_authentication_view import CustomJWTAuthentication, IsAuthenticated, TemplateHTMLRenderer
 from django.shortcuts import render
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
 from django.http.response import HttpResponse, JsonResponse
-
 from django.contrib.auth.models import User
-
 from django.db import transaction
 from django.core.files import File
-
 from ..import generate, generateNew
 from .check_permission import has_permission
 from django.core.files.storage import FileSystemStorage
@@ -39,7 +34,6 @@ class NewGenDocxView(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    # @has_permission()
     def get(self, request):
         """Renders Upload document form."""
         try:
@@ -52,7 +46,6 @@ class NewGenDocxView(APIView):
             print(info_message)
             return  JsonResponse({"error": str(info_message)}, status=5)
 
-    # @has_permission()
     def post(self,request):
         """Save the upload document and returns the placeholder and filename"""
         try:
@@ -152,7 +145,6 @@ class GetAllTemplatesView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
-    # @has_permission()
     def get(self, request):
         try:
             datatable_server_processing = query_templates_by_args(request, **request.query_params)
@@ -177,7 +169,6 @@ class WordTemplateDataView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
-    # @has_permission()
     def delete(self, request, pk):
         """Delete template using Template Id"""
 

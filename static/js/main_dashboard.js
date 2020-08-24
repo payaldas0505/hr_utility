@@ -23,49 +23,6 @@ $(document).ready(function () {
 
     DocumentTemplateDropdown()
 
-    // var language_id = localStorage.getItem('language')
-    // $.ajax({
-    //     type: 'POST',
-    //     url: '/get_labels/',
-    //     data : {
-    //     	'page_name' : 'Add_user',
-    //     	'language_id' : language_id,
-    // 	    },
-    //     success: function (jsondata) {
-    //         console.log(jsondata)
-    //         for (const [key, value] of Object.entries(jsondata)) {
-    //             console.log(key, value);
-    //             $('.'+value.page_label_class_name).text(value.page_label_text);
-    //           }
-    //     },
-    //     error: function(data){
-    //         obj = JSON.parse(data.responseText)
-    //         M.toast({html: obj.error, classes: 'red rounded'})
-    //     }
-    // });
-
-    // Get and set all the labels from backend
-    // $.ajax({
-    //     type: 'POST',
-    //     url: '/get_labels/',
-    //     data : {
-    //         'page_name' : 'Dashboard',
-    //         'language_id' : language_id,
-    //         },
-    //     success: function (jsondata) {
-    //         console.log(jsondata)
-    //         for (const [key, value] of Object.entries(jsondata)) {
-    //             console.log(key, value);
-    //             $('.'+value.page_label_class_name).text(value.page_label_text);
-    //         }
-    //     },
-    //     error: function(data){
-    //         obj = JSON.parse(data.responseText)
-    //         M.toast({html: obj.error, classes: 'red rounded'})
-    //     }
-    // });
-
-
 })
 
 //add this js script into the web page,
@@ -276,8 +233,6 @@ function getViewFilledTemplate(id) {
             console.log(parsed_json)
             console.log(typeof (parsed_json))
             $.each(parsed_json['message'][0], function (key, value) {
-                // alert(key)
-                // alert(value)
                 input = '<input class="validate" id=' + key + ' required="" aria-required="true" value=' + value + '>'
                 label = '<label>' + key + '</label>'
                 $('#viewFillTemplate').append(input)
@@ -322,8 +277,6 @@ function getEditFillTemplate(id) {
             window.localStorage.setItem('editedFileName', parsed_json['message'][1]['filename'])
             var EditTemplateId = []
             $.each(parsed_json['message'][0], function (key, value) {
-                // alert(value)
-                // alert(key)
                 input = '<input class="validate" id=' + key + ' required="" aria-required="true" value=' + value + '>'
                 label = '<label>' + key + '</label>'
                 $('#editFillTemplate').append(input)
@@ -521,7 +474,6 @@ function getaccessTokenDashboard() {
         },
         success: function (result) {
             localStorage.setItem("Token", result.access);
-            // location.reload();
             var token = localStorage.getItem("Token");
             window.location.href = "/dashboard/";
 
@@ -567,9 +519,7 @@ function getaccessTokenEditUser() {
         },
         success: function (result) {
             localStorage.setItem("Token", result.access);
-            // location.reload();
             var token = localStorage.getItem("Token");
-            // window.location.href = "/dashboard/?token="+token;
             id = window.localStorage.getItem("editedUserId")
             getEditFillTemplate(id)
         },
@@ -621,8 +571,6 @@ function getaccessTokenDatatable() {
 }
 
 function GetTemplateDropdown() {
-    // alert('hi')
-    // window.location.reload();
     $('#Template-dropdown').show();
     $('#templateDropdownForm').show();
     $('#RenderTemplateDropdown').hide();
@@ -640,18 +588,14 @@ function CancelPdfPreview() {
     $('#pdf_fill').hide();
     $('#pdf_save_cancel').hide()
     $('.save-cancel-button').show()
-    // window.location.reload();
 }
 
 function GetSelectedTemplateId() {
     var templateName = $("#Template-dropdown-select option:selected").text();
-    // alert(templateName)
     window.localStorage.setItem('selected_template_name', templateName)
     $("#templateDropdownForm").empty();
 
     var templateId = $("#Template-dropdown-select option:selected").val();
-    // alert(templateId)
-    // $('#dashboard-template-form').show();
     $.ajax({
         type: 'GET',
         url: "/dashboard/select_template/" + templateId,
@@ -671,7 +615,6 @@ function GetSelectedTemplateId() {
                     input_type = 'text'
                 }
                 div_class_start = '<div class="row"><div class="input-field col s12"><i class="material-icons prefix">edit</i>'
-                // temp = '<p>'+response[0].placeholder_list[i]+'</p>'
                 input = '<input id=' + result[0].placeholder_list[i] + ' type=' + input_type + ' class="validate" required="" aria-required="true">'
                 label = '<label for=' + result[0].placeholder_list[i] + '>' + result[0].placeholder_list[i] + '</label>'
                 div_class_end = '</div></div>'
@@ -702,8 +645,6 @@ function GotoDashboard() {
 
 
 function SaveFilledForm(event) {
-    // alert(event)
-    // $('#UploadTemplate').prop('disabled', true);
     var filename = localStorage.getItem('fill_filename')
     var fd = new FormData();
     var retrievedData = localStorage.getItem("FillId");
@@ -733,7 +674,6 @@ function SaveFilledForm(event) {
         success: function (response) {
             $('#pdf_save_cancel').empty();
             if (response.status == 201) {
-                // alert('hi')
                 window.location.reload();
             }
             else {
@@ -744,7 +684,6 @@ function SaveFilledForm(event) {
 
                 setTimeout(function () {
                     var object = document.getElementById('pdf_preview_fill');
-                    // alert(response['success'])
                     object.setAttribute('data', response['success']);
 
                     var clone = object.cloneNode(true);
@@ -753,8 +692,6 @@ function SaveFilledForm(event) {
                     parent.removeChild(object);
                     parent.appendChild(clone);
                 }, 3000);
-
-                // $("#pdf_preview").setAttribute("data", response['success']) 
 
                 $('#pdf_fill').show();
                 $('#pdf_save_cancel').show();
@@ -770,7 +707,6 @@ function SaveFilledForm(event) {
                         </div>`
                 $('#pdf_save_cancel').append(submit_button);
                 $('#pdf_save_cancel').show();
-                // window.location.reload();
                 return false
 
             }
@@ -782,7 +718,6 @@ function SaveFilledForm(event) {
             }
 
             parsed_jsondata = JSON.parse(xhr.responseText)
-            // alert(parsed_jsondata.error)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
             setTimeout(function () {
                 $('#field_save_btn').prop('disabled', true)
@@ -802,19 +737,15 @@ function SaveFillTemplate() {
     console.log('******************')
     console.log(retrievedData)
     values = []
-    // alert(FillId.length)
     var all_validated = true
 
     $.each(FillId, function (i, l) {
-        // alert(i)
         console.log(l)
         var id_name = $($.trim('#') + $.trim(l)).val()
         console.log(id_name)
         if (id_name == "") {
             M.toast({ html: "Please fill the " + l + "field", classes: 'red rounded' })
-            // $('#field_save_btn').prop('disabled', false)
             all_validated = false
-            // return false;
         }
 
 
@@ -827,7 +758,6 @@ function SaveFillTemplate() {
         $('#HideDivForView').show();
         return false
     }
-    // alert('hi')
 
 }
 
@@ -836,7 +766,6 @@ function GotoDashboard() {
 }
 
 function CancelPdfPreviewEdit() {
-    // alert('hi')
     $('#pdf_edit').hide();
     $('#EditDivTemplate').show();
     $('#pdf_save_cancel_edit').hide();
@@ -869,7 +798,6 @@ function SaveEditedTemplateValidate(event) {
         success: function (response) {
             $("#pdf_save_cancel_edit").empty();
             if (response.status == 201) {
-                // alert('hi')
                 window.location.reload();
             }
             else {
@@ -880,7 +808,6 @@ function SaveEditedTemplateValidate(event) {
 
                 setTimeout(function () {
                     var object = document.getElementById('pdf_preview_edit');
-                    // alert(response['success'])
                     object.setAttribute('data', response['success']);
 
                     var clone = object.cloneNode(true);
@@ -890,11 +817,8 @@ function SaveEditedTemplateValidate(event) {
                     parent.appendChild(clone);
                 }, 3000);
 
-                // $("#pdf_preview").setAttribute("data", response['success']) 
-
                 $('#pdf_edit').show();
                 $('#EditDivTemplate').hide();
-                // window.location.reload();
                 submit_button = `<div class="row">\
                             <div class="col push-s3">\
                                 <button id="file_cancel_btn" class="btn btn-primary" type="reset" onclick="CancelPdfPreviewEdit()">Cancel<i class="material-icons right">cancel</i>\
@@ -916,7 +840,6 @@ function SaveEditedTemplateValidate(event) {
             }
 
             parsed_jsondata = JSON.parse(xhr.responseText)
-            // alert(parsed_jsondata.error)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
             setTimeout(function () {
                 $('#field_save_btn').prop('disabled', true)
