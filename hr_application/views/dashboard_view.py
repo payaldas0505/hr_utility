@@ -504,6 +504,9 @@ class GetFillTemplateDetails(APIView):
             new_template_detail.append(template_detail)
             new_template_detail.append({'filename': file_name})
             new_template_detail.append({'templatename': template_name})
+            print('*'*80)
+            print(new_template_detail)
+            print('*'*80)
             return JsonResponse({'message': new_template_detail})
         except Exception as error:
             print("get", error)
@@ -543,11 +546,7 @@ class GetFillTemplateDetails(APIView):
         '''update template using template id'''
 
         try:
-            print('x'*80)
             template_dict = request.POST
-            print('T'*80)
-            print(template_dict)
-            print('T'*80)
 
             if type(template_dict) != dict:
                 templatejson = dict(template_dict)
@@ -563,7 +562,8 @@ class GetFillTemplateDetails(APIView):
             new_docx_file_name = FilledTemplateData.objects.filter(
                 id=pk).values('docx_name')[0]['docx_name']
             templatejsonnew = {'fill_values': templatejson, 'template_name': request.POST[
-                'templatename'], 'employee_name': request.POST['Name'], 'docx_name': new_docx_file_name}
+                'templatename'], 'employee_name': request.POST['Name'], 'docx_name': new_docx_file_name, 'created_by' : request.user.id}
+
             edit_serializer = FilledTemplateDataSerializer(
                 edited_template, data=templatejsonnew)
             try:
@@ -571,6 +571,8 @@ class GetFillTemplateDetails(APIView):
                     if edit_serializer.is_valid() and save_fill_template == 'true':
                         edit_serializer.save()
                         return JsonResponse({"success": "saved successfully", "status": 201})
+                    else:
+                        return JsonResponse({'message' : edit_serializer.errors, "status": 422})
                     file_name = BASE_DIR + '/media/' + request.POST['filename']
                     template_dict = request.POST
                     if type(template_dict) != dict:
