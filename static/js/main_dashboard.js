@@ -11,7 +11,6 @@ $(document).ready(function () {
     $('#pdf_fill').hide();
     $('#pdf_edit').hide();
     $('#pdf_save_cancel').hide();
-
     $('select').formSelect();
 
     if (localStorage.getItem("UserPermissions") === null) {
@@ -25,10 +24,8 @@ $(document).ready(function () {
 
 })
 
-//add this js script into the web page,
-//you want reload once after first load
 window.onload = function() {
-    //considering there aren't any hashes in the urls already
+
     if(!window.location.hash) {
         //setting window location
         window.location = window.location + '#loaded';
@@ -44,16 +41,16 @@ function DocumentTemplateDropdown() {
         type: 'GET',
 
         success: function (response) {
-            console.log(response)
-            console.log(response.message.length)
             for (i = 0; i < response.message.length; i++) {
                 temp = '<option value=' + response.message[i].id + '>' + response.message[i].word_name + '</option>'
                 $('#Template-dropdown-select').append(temp)
                 $('select').formSelect();
             }
-
         },
         error: function (xhr) {
+            if (xhr.status == 401) {
+                getaccessToken(DocumentTemplateDropdown);
+            }
             parsed_json = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_json.message, classes: 'red rounded' })
         }
@@ -65,14 +62,9 @@ function GetPermissions() {
         url: 'permission',
         headers: { Authorization: 'Bearer ' + userDetails.access },
         type: 'GET',
-
         success: function (response) {
-
             localStorage.setItem("UserPermissions", JSON.stringify(response));
-            console.log(response)
-
             SetPermissionsUserDashboard();
-
         },
         error: function (xhr) {
             parsed_json = JSON.parse(xhr.responseText)
@@ -99,33 +91,7 @@ var user_role_id = userDetails.role_id
 
 function DownloadFillTemplate(id) {
     window.location.href = '/media/filled_user_template/' + id + '.pdf'
-    GetPermissions()
 }
-function DownloadPanCard(id) {
-    window.location.href = id
-    GetPermissions()
-}
-function DownloadAdharCard(id) {
-    window.location.href = id
-    GetPermissions()
-}
-
-function readURL(input) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            $('#view_image').attr('src', e.target.result);
-            $('#view_image').show();
-        }
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-$("#profile_picture_edit").change(function () {
-    readURL(this);
-});
-
-
 
 function DeleteFillTemplate(id) {
     url = '/dashboard/fill_template_detail/' + id
@@ -139,79 +105,29 @@ function DeleteFillTemplate(id) {
         success: function (jsonData) {
             var token = localStorage.getItem("Token");
             parsed_jsondata = JSON.parse(jsonData)
-            M.toast({html: parsed_jsondata.message, classes: 'green rounded'})
-            setTimeout(function() {
-
-                window.location.href = "/dashboard/"
-              }, 2000);
+            M.toast({ html: parsed_jsondata.message, classes: 'green rounded' })
+            window.location.reload();
         },
         error: function (xhr, status, error) {
-            console.log(xhr)
-            console.log(status)
-            console.log(error)
-            console.log(xhr.status)
             if (xhr.status == 401) {
-
-                getaccessTokenDeleteUser();
+                getaccessTokenUserDashboard(DeleteFillTemplate);
             }
             parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_jsondata.message, classes: 'red rounded' })
             return false
         }
-
     })
-    GetPermissions()
 }
 
 function getDeleteFillTemplate(id) {
     var confirmation = confirm("Are you sure?\nDo you want to delete this filled template?");
     if (confirmation == true) {
+        window.localStorage.setItem('editedUserId', id)
         DeleteFillTemplate(id)
     }
     else {
         return false
     }
-    GetPermissions();
-}
-
-function GetAccessTokenForBackButton() {
-    $.ajax({
-        type: 'POST',
-        url: '/refresh_token/',
-        data: {
-            'refresh': localStorage.getItem("Refresh"),
-        },
-        success: function (result) {
-           localStorage.setItem("Token", result.access);
-           token = localStorage.getItem("Token")
-
-            setTimeout(function() {
-                window.location.href = "/dashboard/";
-            }, 500);
-
-        },
-        error: function (data) {
-            obj = JSON.parse(data.responseText)
-            M.toast({ html: obj.detail })
-        }
-    })
-
-}
-
-function getDashboardDatatable() {
-    var token = localStorage.getItem("Token");
-    $.ajax({
-        method : 'GET',
-        url : "/dashboard/",
-        success: function(data){
-            window.location.href = "/dashboard/"
-        },
-        error: function (xhr) {
-            if (xhr.status == 401) {
-                GetAccessTokenForBackButton()
-            }
-        }
-    })
 }
 
 function getViewFilledTemplate(id) {
@@ -227,11 +143,7 @@ function getViewFilledTemplate(id) {
         dataType: 'text',
         async: false,
         success: function (jsonData) {
-            console.log('####################################')
-            console.log(jsonData)
             parsed_json = JSON.parse(jsonData)
-            console.log(parsed_json)
-            console.log(typeof (parsed_json))
             $.each(parsed_json['message'][0], function (key, value) {
                 input = '<input class="validate" id=' + key + ' required="" aria-required="true" value=' + value + '>'
                 label = '<label>' + key + '</label>'
@@ -244,15 +156,13 @@ function getViewFilledTemplate(id) {
         },
         error: function (xhr, status, error) {
             if (xhr.status == 401) {
-
-                getaccessTokenViewUser();
+                getaccessTokenUserDashboard(getViewFilledTemplate);
             }
             parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_jsondata.message, classes: 'red rounded' })
             return false
         }
     })
-    GetPermissions();
 }
 
 function getEditFillTemplate(id) {
@@ -267,12 +177,7 @@ function getEditFillTemplate(id) {
         dataType: 'text',
         async: false,
         success: function (jsonData) {
-            console.log('***********************************')
-            console.log(jsonData)
             parsed_json = JSON.parse(jsonData)
-            console.log('***********************************')
-            console.log(parsed_json)
-            console.log(typeof (parsed_json))
             window.localStorage.setItem('editedTemplateName', parsed_json['message'][2]['templatename'])
             window.localStorage.setItem('editedFileName', parsed_json['message'][1]['filename'])
             var EditTemplateId = []
@@ -283,292 +188,20 @@ function getEditFillTemplate(id) {
                 $('#editFillTemplate').append(label)
                 $("#" + key).val(value);
                 EditTemplateId.push(key)
-                console.log(EditTemplateId)
                 localStorage.setItem("EditTemplateId", JSON.stringify(EditTemplateId));
             });
-
         },
         error: function (xhr, status, error) {
-            console.log(xhr)
-            console.log(status)
-            console.log(error)
-            console.log(xhr.status)
             if (xhr.status == 401) {
-
-                getaccessTokenEditUser();
+                getaccessTokenUserDashboard(getEditFillTemplate);
             }
             parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_jsondata.message, classes: 'red rounded' })
             return false
         }
     })
-    GetPermissions()
 }
 
-
-function EditUserSave(user_name, first_name, last_name,
-    middle_name, password, dob, email,
-    telephone, address, gender, indian,
-    option, role) {
-    var edituserid = window.localStorage.getItem('editedUserId')
-    option = $("#dropdownid option:selected").val();
-    role = $("#role_drop_down option:selected").val();
-    var formData = new FormData();
-    if ($('#profile_picture_edit').get(0).files.length === 0) {
-    }
-    else {
-        formData.append('profile_picture', $('#profile_picture_edit')[0].files[0]);
-    }
-
-    if ($('#resume_edit').get(0).files.length === 0) {
-    }
-    else {
-        formData.append('resume', $('#resume_edit')[0].files[0]);
-    }
-
-    if ($('#adhar_card_edit').get(0).files.length === 0) {
-    }
-    else {
-        formData.append('adhar_card', $('#adhar_card_edit')[0].files[0]);
-    }
-
-    if ($('#pan_card_edit').get(0).files.length === 0) {
-    }
-    else {
-        formData.append('pan_card', $('#pan_card_edit')[0].files[0]);
-    }
-
-    formData.append('user_name', user_name);
-    formData.append('first_name', first_name);
-    formData.append('middle_name', middle_name);
-    formData.append('last_name', last_name);
-    formData.append('password', password);
-    formData.append('dob', dob);
-    formData.append('email', email);
-    formData.append('telephone', telephone);
-    formData.append('address', address);
-    formData.append('gender', gender);
-    formData.append('indian', indian);
-    formData.append('option', option);
-    formData.append('role', role);
-
-    url = '/usermanagement/edituserform/' + edituserid
-    $.ajax({
-        url: url,
-        method: "PUT",
-        headers: { Authorization: 'Bearer ' + localStorage.getItem("Token") },
-        enctype: 'multipart/form-data',
-        data: formData,
-        contentType: false,
-        processData: false,
-        async: false,
-        success: function (jsonData) {
-            window.location.reload();
-            M.toast({ html: jsonData.message, classes: 'green rounded' })
-        },
-        error: function (xhr, status, error) {
-            if (xhr.status == 401) {
-
-                getaccessTokenDatatable();
-            }
-            parsed_jsondata = JSON.parse(xhr.responseText)
-            M.toast({ html: parsed_jsondata.message, classes: 'red rounded' })
-            return false
-        }
-    })
-    GetPermissions();
-}
-
-
-function EditUserValidation() {
-    user_name = $('#user_name_edit').val()
-    first_name = $('#first_name_edit').val();
-    last_name = $('#last_name_edit').val();
-    middle_name = $('#middle_name_edit').val();
-    password = $('#password_edit').val();
-    dob = $('#dob_edit').val();
-    email = $('#email_edit').val();
-    telephone = $('#telephone_edit').val();
-    address = $('#textarea1_edit').val();
-    gender = $("input[name='gender']:checked", '#registration_form').val();
-    indian = $("input[name='indian']:checked", '#registration_form').val();
-    option = $("#dropdownid option:selected").val();
-    role = $("#role_drop_down option:selected").val();
-
-    if (indian) {
-        indian = true
-    }
-    else {
-        indian = false
-    }
-    $('input:radio[name=sex]:nth(1)').attr('checked', true);
-
-    if (user_name == "") {
-        M.toast({ html: 'Username must be filled out!', classes: 'red rounded' })
-        return false;
-    }
-    else if (first_name == "") {
-        M.toast({ html: 'First name must be filled out!', classes: 'red rounded' })
-        return false;
-    }
-    else if (middle_name == "") {
-        M.toast({ html: 'Middle name must be filled out!', classes: 'red rounded' })
-        return false;
-    }
-    else if (last_name == "") {
-        M.toast({ html: 'Last name must be filled out!', classes: 'red rounded' })
-        return false;
-    }
-    else if (password == "") {
-        M.toast({ html: 'Password must be filled out!', classes: 'red rounded' })
-        return false;
-    }
-    else if (dob == "") {
-        M.toast({ html: 'Date of Birth must be filled out!', classes: 'red rounded' })
-        return false;
-    }
-    else if (email == "") {
-        M.toast({ html: 'Email address must be filled out!', classes: 'red rounded' })
-        return false;
-    }
-    else if (telephone == "") {
-        M.toast({ html: 'telephone must be filled out and should be valid number!', classes: 'red rounded' })
-        return false;
-    }
-    else if (isNaN(telephone)) {
-        M.toast({ html: 'Telephone should be number!', classes: 'red rounded' })
-        return false;
-    }
-    else if (address == "") {
-        M.toast({ html: 'Address must be filled out!', classes: 'red rounded' })
-        return false;
-    }
-    else if (gender == "") {
-        M.toast({ html: 'Gender must be filled out!', classes: 'red rounded' })
-        return false;
-    }
-    else if (option == "") {
-        M.toast({ html: 'Please select your qualification from the dropdown!', classes: 'red rounded' })
-        return false;
-    }
-    else if (role == "") {
-        M.toast({ html: 'Please assign an to the user!', classes: 'red rounded' })
-        return false;
-    }
-    else {
-        EditUserSave(user_name, first_name, last_name,
-            middle_name, password, dob, email,
-            telephone, address, gender,
-            indian, option, role)
-    }
-}
-
-
-
-function getaccessTokenDashboard() {
-    $.ajax({
-        type: 'POST',
-        url: '/refresh_token/',
-        data: {
-            'refresh': localStorage.getItem("Refresh"),
-        },
-        success: function (result) {
-            localStorage.setItem("Token", result.access);
-            var token = localStorage.getItem("Token");
-            window.location.href = "/dashboard/";
-
-        },
-        error: function (data) {
-            obj = JSON.parse(data.responseText)
-            M.toast({ html: obj.detail })
-        }
-    })
-}
-
-
-
-function getaccessTokenViewUser() {
-    $.ajax({
-        type: 'POST',
-        url: '/refresh_token/',
-        data: {
-            'refresh': localStorage.getItem("Refresh"),
-        },
-        success: function (result) {
-            localStorage.setItem("Token", result.access);
-            var token = localStorage.getItem("Token");
-            id = window.localStorage.getItem("editedUserId")
-            getViewFilledTemplate(id)
-        },
-        error: function (data) {
-            obj = JSON.parse(data.responseText)
-            M.toast({ html: obj.detail })
-        }
-    })
-}
-
-
-
-
-function getaccessTokenEditUser() {
-    $.ajax({
-        type: 'POST',
-        url: '/refresh_token/',
-        data: {
-            'refresh': localStorage.getItem("Refresh"),
-        },
-        success: function (result) {
-            localStorage.setItem("Token", result.access);
-            var token = localStorage.getItem("Token");
-            id = window.localStorage.getItem("editedUserId")
-            getEditFillTemplate(id)
-        },
-        error: function (data) {
-            obj = JSON.parse(data.responseText)
-            M.toast({ html: obj.detail })
-        }
-    })
-}
-
-function getaccessTokenDeleteUser() {
-    $.ajax({
-        type: 'POST',
-        url: '/refresh_token/',
-        data: {
-            'refresh': localStorage.getItem("Refresh"),
-        },
-        success: function (result) {
-            localStorage.setItem("Token", result.access);
-            var token = localStorage.getItem("Token");
-            id = window.localStorage.getItem("editedUserId")
-            DeleteFillTemplate(id)
-        },
-        error: function (data) {
-            obj = JSON.parse(data.responseText)
-            M.toast({ html: obj.detail })
-        }
-    })
-}
-
-function getaccessTokenDatatable() {
-    $.ajax({
-        type: 'POST',
-        url: '/refresh_token/',
-        data: {
-            'refresh': localStorage.getItem("Refresh"),
-        },
-        success: function (result) {
-            localStorage.setItem("Token", result.access);
-            var token = localStorage.getItem("Token");
-
-            EditUserValidation()
-        },
-        error: function (data) {
-            obj = JSON.parse(data.responseText)
-            M.toast({ html: obj.detail })
-        }
-    })
-}
 
 function GetTemplateDropdown() {
     $('#Template-dropdown').show();
@@ -582,7 +215,6 @@ function GetTemplateDropdown() {
     $('.save-cancel-button').hide();
 }
 
-
 function CancelPdfPreview() {
     $('#HideDivForView').show();
     $('#pdf_fill').hide();
@@ -594,20 +226,19 @@ function GetSelectedTemplateId() {
     var templateName = $("#Template-dropdown-select option:selected").text();
     window.localStorage.setItem('selected_template_name', templateName)
     $("#templateDropdownForm").empty();
-
     var templateId = $("#Template-dropdown-select option:selected").val();
+<<<<<<< HEAD
+=======
+
+>>>>>>> f113a222e478e7ff3202297f51abb2c34c9e07b1
     $.ajax({
         type: 'GET',
         url: "/dashboard/select_template/" + templateId,
         headers: { Authorization: 'Bearer ' + userDetails.access },
         success: function (result) {
-            console.log('result')
-            console.log(result)
-            console.log(result[0])
             localStorage.setItem('fill_filename', result[1].filename)
             var FillId = []
             for (i = 0; i < result[0].placeholder_list.length; i++) {
-
                 if (result[0].placeholder_list[i].includes('image')) {
                     input_type = 'file'
                 }
@@ -628,40 +259,42 @@ function GetSelectedTemplateId() {
                 $('.save-cancel-button').show();
 
             }
-            console.log(FillId)
+
             localStorage.setItem("FillId", JSON.stringify(FillId));
         },
         error: function (data) {
+            if (xhr.status == 401) {
+                getaccessToken(GetSelectedTemplateId);
+            }
             obj = JSON.parse(data.responseText)
             M.toast({ html: obj.detail })
         }
     })
-
 }
 
 function GotoDashboard() {
     window.location.reload();
 }
 
-
 function SaveFilledForm(event) {
+<<<<<<< HEAD
+=======
+    window.localStorage.setItem('fill_form_event', event)
+>>>>>>> f113a222e478e7ff3202297f51abb2c34c9e07b1
     var filename = localStorage.getItem('fill_filename')
     var fd = new FormData();
     var retrievedData = localStorage.getItem("FillId");
     var id = JSON.parse(retrievedData);
     var selected_template_name_retrieve = window.localStorage.getItem('selected_template_name')
     $.each(id, function (i, l) {
-        console.log(l)
         var id_name = $($.trim('#') + $.trim(l)).val()
         fd.append(l, id_name)
-
     })
 
     fd.append('filename', filename)
     fd.append('templatename', selected_template_name_retrieve)
     fd.append('save', event)
 
-    console.log(fd)
     $.ajax({
         url: '/dashboard/fill_dropdown_template/',
         headers: { Authorization: 'Bearer ' + userDetails.access },
@@ -674,7 +307,22 @@ function SaveFilledForm(event) {
         success: function (response) {
             $('#pdf_save_cancel').empty();
             if (response.status == 201) {
+<<<<<<< HEAD
                 window.location.reload();
+=======
+                M.toast({ html: 'Template is saved successfully', classes: 'green rounded' })
+                $('#HideDivForView').show();
+                $('#pdf_fill').hide();
+                $('#pdf_save_cancel').hide()
+                $('#Template-dropdown').show();
+                $('#RenderTemplateDropdown').hide();
+                $('#Document-Dashboard-header').hide();
+                $('#Template-Dropdown-Header').show();
+                $('#Dashboard-Datatable-Div').hide();
+                $('#templateDropdownForm').hide();
+                $('.dropdown-back-button').show();
+                $('.save-cancel-button').hide();
+>>>>>>> f113a222e478e7ff3202297f51abb2c34c9e07b1
             }
             else {
                 M.toast({ html: 'Template is successfully filled', classes: 'green rounded' })
@@ -708,48 +356,34 @@ function SaveFilledForm(event) {
                 $('#pdf_save_cancel').append(submit_button);
                 $('#pdf_save_cancel').show();
                 return false
-
             }
         },
         error: function (xhr) {
             if (xhr.status == 401) {
-
-                getaccessToken(SaveFields)
+                getaccessTokenFormEvent(SaveFilledForm)
             }
-
             parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
             setTimeout(function () {
                 $('#field_save_btn').prop('disabled', true)
             }, 2000);
-
             return false
         }
-
     });
-
 }
 
 function SaveFillTemplate() {
     var retrievedData = localStorage.getItem("FillId");
     var FillId = JSON.parse(retrievedData);
     $('#HideDivForView').hide();
-    console.log('******************')
-    console.log(retrievedData)
-    values = []
     var all_validated = true
 
     $.each(FillId, function (i, l) {
-        console.log(l)
         var id_name = $($.trim('#') + $.trim(l)).val()
-        console.log(id_name)
         if (id_name == "") {
             M.toast({ html: "Please fill the " + l + "field", classes: 'red rounded' })
             all_validated = false
         }
-
-
-
     });
     if (all_validated == true) {
         SaveFilledForm(false);
@@ -758,7 +392,6 @@ function SaveFillTemplate() {
         $('#HideDivForView').show();
         return false
     }
-
 }
 
 function GotoDashboard() {
@@ -772,6 +405,7 @@ function CancelPdfPreviewEdit() {
 }
 
 function SaveEditedTemplateValidate(event) {
+    window.localStorage.setItem('fill_form_event', event)
     var fd = new FormData();
     edittemplateid = window.localStorage.getItem('editedUserId')
     retrievedEditTemplateId = window.localStorage.getItem('EditTemplateId')
@@ -785,7 +419,7 @@ function SaveEditedTemplateValidate(event) {
     fd.append('filename', retrievedEditFilename)
     fd.append('templatename', retrievedEditTemplateName)
     fd.append('save', event)
-    console.log(fd)
+
     $.ajax({
         url: '/dashboard/fill_template_detail/' + edittemplateid,
         headers: { Authorization: 'Bearer ' + userDetails.access },
@@ -798,14 +432,15 @@ function SaveEditedTemplateValidate(event) {
         success: function (response) {
             $("#pdf_save_cancel_edit").empty();
             if (response.status == 201) {
-                window.location.reload();
+                M.toast({ html: 'Template Edited successfully', classes: 'green rounded' })
+                setTimeout(function () {
+                    window.location.reload();
+                }, 3000);
             }
             else {
                 M.toast({ html: 'Template is successfully filled', classes: 'green rounded' })
-
                 $('#templateForm *').attr("disabled", true);
                 $('#templateForm *').fadeTo('slow', .8);
-
                 setTimeout(function () {
                     var object = document.getElementById('pdf_preview_edit');
                     object.setAttribute('data', response['success']);
@@ -830,26 +465,20 @@ function SaveEditedTemplateValidate(event) {
                 $('#pdf_save_cancel_edit').append(submit_button);
                 $('#pdf_save_cancel_edit').show();
                 return false
-
             }
         },
         error: function (xhr) {
             if (xhr.status == 401) {
-
-                getaccessToken(SaveFields)
+                getaccessTokenFormEvent(SaveEditedTemplateValidate)
             }
-
             parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
             setTimeout(function () {
                 $('#field_save_btn').prop('disabled', true)
             }, 2000);
-
             return false
         }
-
     });
-
 }
 
 function SaveEditedTemplate() {

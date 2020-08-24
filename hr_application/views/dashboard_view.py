@@ -363,6 +363,7 @@ class FillDropdownTemplate(APIView):
         """
         Filling the document and convert it into PDF.
         """
+
         try:
             template_dict = request.POST
             print('T'*80)
@@ -370,7 +371,9 @@ class FillDropdownTemplate(APIView):
             print('T'*80)
             raw_file_name = request.POST['filename']
             new_raw_file_name = uuid.uuid4().hex
-
+            print('R'*80)
+            print(new_raw_file_name)
+            print('R'*80)
             if type(template_dict) != dict:
                 templatejson = dict(template_dict)
 
@@ -381,7 +384,7 @@ class FillDropdownTemplate(APIView):
             print(save_fill_template)
             new_docx_file_name = new_raw_file_name
             templatejsonnew = {'fill_values': templatejson, 'template_name': templatejson[
-                'templatename'], 'employee_name': templatejson['Name'], 'docx_name': new_docx_file_name}
+                'templatename'], 'employee_name': templatejson['Name'], 'docx_name': new_docx_file_name, 'created_by' : request.user.id}
             fill_form_serializer = FilledTemplateDataSerializer(
                 data=templatejsonnew)
 
@@ -389,9 +392,28 @@ class FillDropdownTemplate(APIView):
                 fill_form_serializer.validated_data['fill_values'] = templatejson
                 fill_form_serializer.validated_data['template_name'] = templatejson['templatename']
                 fill_form_serializer.validated_data['employee_name'] = templatejson['Name']
+                fill_form_serializer.validated_data['docx_name'] = new_docx_file_name
+                fill_form_serializer.validated_data['created_by'] = request.user.id
                 fill_form_serializer.save()
-                return JsonResponse({"success": "saved successfully","status": 201})
+                file_name = BASE_DIR + '/media/' + raw_file_name
 
+                document = generateNew.from_template(file_name, templatejson)
+                document.seek(0)
+
+                file_name_split = file_name.split('/')[-1].split('.')[0]
+
+                bytesio_object = document
+                dir_path_ft = BASE_DIR + '/media/filled_user_template/'
+
+                with open(dir_path_ft + "{}.docx".format(new_raw_file_name), 'wb') as f:
+                    f.write(bytesio_object.getbuffer())
+
+                output = subprocess.check_output(
+                    ['libreoffice', '--convert-to', 'pdf', '{}.docx'.format(new_raw_file_name)], cwd=dir_path_ft)
+
+                pdf_file = '/media/filled_user_template/' + \
+                    '{}.pdf'.format(new_raw_file_name)
+                return JsonResponse({"success": "saved successfully","status": 201})
 
             file_name = BASE_DIR + '/media/' + raw_file_name
 
@@ -458,14 +480,14 @@ class GetFillTemplateDetails(APIView):
                 template_detail = template[0]['fill_values']
                 file_name = template_detail['filename']
                 template_name = template_detail['templatename']
-                remove_template_name = template_detail.pop('templatename', None)
-                remove_file_name = template_detail.pop('filename', None)
+                template_detail.pop('templatename', None)
+                template_detail.pop('filename', None)
 
-                new_template_detal = []
-                new_template_detal.append(template_detail)
-                new_template_detal.append({'filename': file_name})
-                new_template_detal.append({'templatename' : template_name})
-                return JsonResponse({'message' : new_template_detal})
+                new_template_detail = []
+                new_template_detail.append(template_detail)
+                new_template_detail.append({'filename': file_name})
+                new_template_detail.append({'templatename' : template_name})
+                return JsonResponse({'message' : new_template_detail})
             except Exception as error:
                 print("get", error)
                 info_message = "Internal Server Error"
@@ -512,7 +534,6 @@ class GetFillTemplateDetails(APIView):
                 print(template_dict)
                 print('T'*80)
 
-
                 if type(template_dict) != dict:
                     templatejson = dict(template_dict)
 
@@ -556,7 +577,6 @@ class GetFillTemplateDetails(APIView):
                         pdf_file = '/media/filled_user_template/' + \
                             '{}.pdf'.format(new_docx_file_name)
                         return JsonResponse({'success': pdf_file})
-
                 except Exception as e:
                     print("exception in saving data rollback error", e)
                     info_message = "Please try again saving the data"
