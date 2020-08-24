@@ -228,11 +228,11 @@ def query_templates_by_args(request, **kwargs):
     order_column = ORDER_COLUMN_CHOICES[order_column]
     if order == 'desc':
         order_column = '-' + order_column
-
-    if UserRole.objects.filter(userregisterationmodel = request.user.id)[0] == 'Admin':
-        queryset = WordTemplateData.objects.all()
-    else:
-        queryset = WordTemplateData.objects.filter(created_by = request.user.id)
+    queryset = WordTemplateData.objects.all()
+    # if UserRole.objects.filter(userregisterationmodel = request.user.id)[0] == 'Admin':
+    #     queryset = WordTemplateData.objects.all()
+    # else:
+    #     queryset = WordTemplateData.objects.filter(created_by = request.user.id)
     total = queryset.count()
 
     if search_value:
