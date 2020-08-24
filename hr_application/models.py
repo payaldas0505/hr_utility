@@ -247,7 +247,7 @@ def query_templates_by_args(request, **kwargs):
     count = queryset.count()
 
     queryset = queryset[start:start + length]
-
+    print('8'*80)
     return {
         'items': queryset,
         'count': count,

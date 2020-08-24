@@ -148,8 +148,10 @@ class GetAllTemplatesView(APIView):
     def get(self, request):
         try:
             datatable_server_processing = query_templates_by_args(request, **request.query_params)
+            print('1'*80)
             serializer = WordTemplateDetailsSerializer(datatable_server_processing['items'], many=True)
             result = dict()
+            print('2'*80)
             result['data'] = serializer.data
             result['draw'] = datatable_server_processing['draw']
             result['recordsTotal'] = datatable_server_processing['total']
