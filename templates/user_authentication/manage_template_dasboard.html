@@ -61,7 +61,8 @@ function getData() {
     },
     error: function(xhr) {
         if (xhr.status == 401) {
-            getaccessTokenForMainDashboard();
+            getaccessTokenForTemplateDashboard();
+            window.location.href = "/dashboard/template_management/"
         }
         if (xhr.status == 403) {
             logout();
