@@ -398,14 +398,14 @@ class FillDropdownTemplate(APIView):
             print(save_fill_template)
             new_docx_file_name = new_raw_file_name
             templatejsonnew = {'fill_values': templatejson, 'template_name': templatejson[
-                'templatename'], 'employee_name': templatejson['Name'], 'docx_name': new_docx_file_name, 'created_by': request.user.id}
+                'templatename'], 'employee_name': templatejson['Document_Name'], 'docx_name': new_docx_file_name, 'created_by': request.user.id}
             fill_form_serializer = FilledTemplateDataSerializer(
                 data=templatejsonnew)
 
             if fill_form_serializer.is_valid() and save_fill_template == 'true':
                 fill_form_serializer.validated_data['fill_values'] = templatejson
                 fill_form_serializer.validated_data['template_name'] = templatejson['templatename']
-                fill_form_serializer.validated_data['employee_name'] = templatejson['Name']
+                fill_form_serializer.validated_data['employee_name'] = templatejson['Document_Name']
                 fill_form_serializer.validated_data['docx_name'] = new_docx_file_name
                 fill_form_serializer.validated_data['created_by'] = request.user.id
                 fill_form_serializer.save()
@@ -562,7 +562,7 @@ class GetFillTemplateDetails(APIView):
             new_docx_file_name = FilledTemplateData.objects.filter(
                 id=pk).values('docx_name')[0]['docx_name']
             templatejsonnew = {'fill_values': templatejson, 'template_name': request.POST[
-                'templatename'], 'employee_name': request.POST['Name'], 'docx_name': new_docx_file_name, 'created_by' : request.user.id}
+                'templatename'], 'employee_name': request.POST['Document_Name'], 'docx_name': new_docx_file_name, 'created_by' : request.user.id}
 
             edit_serializer = FilledTemplateDataSerializer(
                 edited_template, data=templatejsonnew)
