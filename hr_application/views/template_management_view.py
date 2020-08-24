@@ -194,3 +194,32 @@ class WordTemplateDataView(APIView):
             info_message = "Internal Server Error"
             print(info_message)
             return JsonResponse({'message' : str(info_message)},status = 422)
+
+
+class CheckWordname(APIView):
+    """Checks whether username is available."""
+    authentication_classes = [CustomJWTAuthentication]
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = [TemplateHTMLRenderer]
+
+    def post(self, request):
+
+        try:
+            jsondata = request.POST
+            print(jsondata['word_name'])
+
+            if WordTemplateNew.objects.filter(word_name=jsondata['word_name']).exists():
+                info_message = "Template name already taken!"
+                print(info_message)
+                return JsonResponse({'message': 'taken', 'toast_msg': str(info_message)})
+
+            else:
+                info_message = "Template name Available...!!!"
+                print(info_message)
+                return JsonResponse({'message': 'not_taken', 'toast_msg': str(info_message)})
+
+        except Exception as e:
+            print("exception in check Template name", e)
+            info_message = 'Internal server error'
+            print(info_message)
+            return JsonResponse({'error': str(info_message)}, status=500)

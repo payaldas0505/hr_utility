@@ -7,6 +7,47 @@ $(document).ready(function () {
 
     $('#pdf').hide();
     $('#save').hide();
+    // getUserRoleDropDown();
+
+    // Check username avaliable in database
+    $('#word_name').on('blur', function () {
+        var word_name = $('#word_name').val();
+        var get_url = '/dashboard/template_management/add_template/';
+        if (word_name == '') {
+            var word_name_state = false;
+            return;
+        }
+        $.ajax({
+            url: 'check_word_name/',
+            headers: { Authorization: 'Bearer ' + access },
+            type: 'post',
+            data: {
+                'word_name_check': 1,
+                'word_name': word_name,
+            },
+            success: function (response) {
+
+                if (response.message == 'taken') {
+                    word_name_state = false;
+                    $('#word_name').addClass("invalid");
+                    M.toast({ html: response.toast_msg, classes: 'red rounded' })
+                }
+                else if (response.message == 'not_taken') {
+                    word_name_state = true;
+                    $('#word_name').addClass("valid");
+                    M.toast({ html: response.toast_msg, classes: 'green darken-1 rounded' })
+                }
+            },
+            error: function (xhr) {
+                if (xhr.status == 401) {
+                    getaccessTokenForUrl(get_url);
+                }
+                let parsed_jsondata = JSON.parse(xhr.responseText)
+                // alert(parsed_jsondata.error)
+                M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
+            }
+        });
+    });
 })
 var userDetails = getValues('UserDetails')
 var access = userDetails.access

@@ -12,7 +12,7 @@ from .views import (LoginView, CustomTokenObtainPairView,
                     AddUserFormView, GetRoleDropDown,
                     CheckUsername, CheckEmail, AddTemplatePageView,
                     GetAllUsersView, UserDatatableView,
-                    NewGenDocxView, GetPermissions,
+                    NewGenDocxView, GetPermissions, CheckWordname,
                     FillDocument, GetAllTemplatesView, WordTemplateDataView,
                     DocumentTeamplateDropdown, SelectTemplate, FillDropdownTemplate,
                     GetAllFillTemplate, GetFillTemplateDetails, GetLabels, GetLangauges)
@@ -111,5 +111,8 @@ urlpatterns = [
          GetAllFillTemplate.as_view(), name='get_all_fill_template'),
 
     path('dashboard/fill_template_detail/<int:pk>',
-         GetFillTemplateDetails.as_view(), name='fill_template_detail')
+         GetFillTemplateDetails.as_view(), name='fill_template_detail'),
+
+    path('dashboard/template_management/add_template/check_word_name/',
+         CheckWordname.as_view(), name="check_word_name"),
 ]
