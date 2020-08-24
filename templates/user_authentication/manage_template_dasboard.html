@@ -14,24 +14,25 @@
 <header>
     <nav>
         <div class="nav-wrapper">
-            <a id="back_button" onclick="getdashboard()" data-activates="slide-out" class="brand-logo" style="margin-left: 10px; margin-top: 1px;"><i class="material-icons prefix">arrow_back</i><span class="Menu_label">Back</span></a>
+            <a id="back_button" onclick="getdashboard()" data-activates="slide-out" class="brand-logo" style="margin-left: 10px; margin-top: 1px;"><i class="material-icons prefix">arrow_back</i><span class="back_label">Back</span></a>
         </div>
     </nav>
 </header>
 <div class="container">
 	<div class="card-content">
 	<div id="Dashboard_main">
-	<h3 class="dashboard_label header">Template Management</h2>
+	<h3 class="template_dashboard_label header">Template Management</h2>
     <a onclick="GetAddTemplatePage()" class="add_template waves-effect waves-light btn"
         style="margin-bottom: -124px;"><i class="material-icons left">add_circle</i><span class="add_template_button">Add Template</span></a>
 
     <table id="template_datatable" class="display" style="width:100%;">
+        <caption></caption>
         <thead>
             <tr>
-                <th class="dt_sr_no_label">Sr No.</th>
-                <th class="dt_template_name_label">Template Name</th>
-                <th class="dt_preview_label">Preview</th>
-                <th class="action_btn_label">Action</th>
+                <th class="dt_sr_no_label" scope="row">Sr No.</th>
+                <th class="dt_template_name_label" scope="row">Template Name</th>
+                <th class="dt_preview_label" scope="row">Preview</th>
+                <th class="action_btn_label" scope="row">Action</th>
             </tr>
         </thead>
     </table>

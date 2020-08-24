@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    get_labels('template_management_page')
     $(".add_template").hide();
     SetPermissionsTemplateDashboard();
 })

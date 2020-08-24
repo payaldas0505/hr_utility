@@ -22,7 +22,7 @@
     <nav>
         <div class="nav-wrapper">
             <a id="back_button" onclick="getTemplateDashboard()" data-activates="slide-out" class="brand-logo" style="margin-left: 10px; margin-top: 1px;"><i class="material-icons prefix">arrow_back</i><span
-                    class="Menu_label">Back</span></a>
+                    class="back_label">Back</span></a>
         </div>
     </nav>
 </header>
@@ -36,7 +36,7 @@
                     <form id="uploadtemplateform" onSubmit="return false;">
                         {% csrf_token %}
                         <center>
-                            <h4>Upload Word Template</h4>
+                            <h4 class='upload_template_txt_label'>Upload Word Template</h4>
                         </center>
                         <div class="row">
                             <div class="input-field col s12">
@@ -55,7 +55,7 @@
                                     <input class="file-path validate" type="text">
                                 </div>
                                 <span class="helper-text"><b class="note_label">Note: </b><span
-                                        class="word_template_note">Only .doc or .docx file extension is
+                                        class="word_template_note_label">Only .doc or .docx file extension is
                                         allowed.</span></span>
                             </div>
                         </div>
@@ -71,7 +71,7 @@
                 </div>
 
                 <div id="pdf">
-                    <span id="pdf_label"><i class="material-icons left">visibility</i>PDF Preview</span>
+                    <span id="pdf_label"><i class="material-icons left">visibility</i><span class='pdf_preview_label'></span>PDF Preview</span>
                     <object id="pdf_preview" data='' type='application/pdf' width='100%' height='700px' aria-label="pdf_label">
                         <p style="display: none;">This object has no text.</p>
                     </object>
@@ -85,6 +85,7 @@
     <!--Import jQuery before materialize.js-->
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="{% static '/js/materialize.min.js' %}"></script>
+    <script type="text/javascript" src="{% static '/js/get_labels.js' %}"></script>
     <script type="text/javascript" src="{% static '/js/get_refresh_token.js' %}"></script>
     <script type="text/javascript" src="{% static '/template_management/add_template.js' %}"></script>
     <script type="text/javascript" src="{% static '/js/logout.js' %}"></script>

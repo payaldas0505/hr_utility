@@ -1,6 +1,6 @@
-$(document).ready(function() {
+$(document).ready(function () {
     $('#word_name').focus()
-
+    get_labels('add_template_page')
     let keysToRemove = ["Id", "filename"];
 
     localStorageRemoveKey(keysToRemove);
@@ -26,7 +26,7 @@ function SubmitUploadWordTemplate() {
         data: fd,
         contentType: false,
         processData: false,
-        success: function(response) {
+        success: function (response) {
             $('#uploadTemplateDiv *').attr("disabled", true);
             $('#uploadTemplateDiv *').fadeTo('slow', .8);
             localStorage.setItem('filename', response[1].filename)
@@ -54,7 +54,7 @@ function SubmitUploadWordTemplate() {
             $('#templateForm').show();
             localStorage.setItem("Id", JSON.stringify(id));
         },
-        error: function(xhr) {
+        error: function (xhr) {
             if (xhr.status == 401) {
 
                 getaccessToken(SubmitUploadWordTemplate);
@@ -64,7 +64,7 @@ function SubmitUploadWordTemplate() {
             }
             parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
-            setTimeout(function() {
+            setTimeout(function () {
                 $("#UploadTemplate").attr("disabled", false);
             }, 2000);
             return false
@@ -75,7 +75,7 @@ function SubmitUploadWordTemplate() {
 
 // Validation of fields
 
-$('#word_template').change(function() {
+$('#word_template').change(function () {
     let keysToRemove = ["Id", "filename"];
     localStorageRemoveKey(keysToRemove);
     $("#templateFormAppend").empty();
@@ -103,12 +103,12 @@ function getTemplateDashboard() {
     var token = access;
     var get_url = "/dashboard/template_management/"
     $.ajax({
-        method : 'GET',
-        url : get_url,
-        success: function(data){
+        method: 'GET',
+        url: get_url,
+        success: function (data) {
             window.location.href = get_url
         },
-        error: function(xhr) {
+        error: function (xhr) {
             if (xhr.status == 401) {
                 getaccessTokenForUrl(get_url)
             }
@@ -133,7 +133,7 @@ function SaveFields(save = false) {
     var doc_name = $('#word_name').val()
 
 
-    $.each(id, function(i, l) {
+    $.each(id, function (i, l) {
         console.log(l)
         var id_name = $($.trim('#') + $.trim(l)).val()
         fd.append(l, id_name)
@@ -154,7 +154,7 @@ function SaveFields(save = false) {
         contentType: false,
         processData: false,
         async: false,
-        success: function(response) {
+        success: function (response) {
             if (response.status == 201) {
                 getTemplateDashboard();
             } else {
@@ -163,7 +163,7 @@ function SaveFields(save = false) {
                 $('#templateForm *').attr("disabled", true);
                 $('#templateForm *').fadeTo('slow', .8);
 
-                setTimeout(function() {
+                setTimeout(function () {
                     var object = document.getElementById('pdf_preview');
                     object.setAttribute('data', response['success']);
 
@@ -180,7 +180,7 @@ function SaveFields(save = false) {
             }
 
         },
-        error: function(xhr) {
+        error: function (xhr) {
             if (xhr.status == 401) {
 
                 getaccessToken(SaveFields)
@@ -191,7 +191,7 @@ function SaveFields(save = false) {
 
             parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
-            setTimeout(function() {
+            setTimeout(function () {
                 $('#field_save_btn').prop('disabled', true)
             }, 2000);
 
@@ -212,7 +212,7 @@ function FieldUploadWordTemplate(event) {
     var all_validated = true
 
     values = []
-    $.each(id, function(i, l) {
+    $.each(id, function (i, l) {
 
         var id_name = $($.trim('#') + $.trim(l)).val()
         console.log(id_name)
