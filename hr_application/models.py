@@ -194,7 +194,11 @@ def query_fill_templates_by_args(request, **kwargs):
     if order == 'desc':
         order_column = '-' + order_column
 
-    queryset = FilledTemplateData.objects.all()
+    if UserRole.objects.filter(userregisterationmodel = request.user.id)[0] == 'Admin':
+        queryset = FilledTemplateData.objects.all()
+    else:
+        queryset = FilledTemplateData.objects.filter(created_by = request.user.id)
+
     total = queryset.count()
 
     if search_value:
@@ -228,13 +232,12 @@ def query_templates_by_args(request, **kwargs):
     order_column = ORDER_COLUMN_CHOICES[order_column]
     if order == 'desc':
         order_column = '-' + order_column
-
-    if check_user_is_superuser[0]['is_superuser'] == True:
-        queryset = FilledTemplateData.objects.all()
+    print('#'*80)
+    print('#'*80)
+    if UserRole.objects.filter(userregisterationmodel = request.user.id)[0] == 'Admin':
+        queryset = WordTemplateNew.objects.all()
     else:
-        queryset = FilledTemplateData.objects.filter(created_by = request.user.id)
-
-    # queryset = FilledTemplateData.objects.all()
+        queryset = WordTemplateNew.objects.filter(created_by = request.user.id)
     total = queryset.count()
 
     if search_value:
