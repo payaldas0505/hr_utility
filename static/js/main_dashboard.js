@@ -111,7 +111,9 @@ function DeleteFillTemplate(id) {
             var token = localStorage.getItem("Token");
             parsed_jsondata = JSON.parse(jsonData)
             M.toast({ html: parsed_jsondata.message, classes: 'green rounded' })
-            window.location.reload();
+            setTimeout(function () {
+                window.location.reload();
+            }, 2000);
         },
         error: function (xhr, status, error) {
             if (xhr.status == 401) {
