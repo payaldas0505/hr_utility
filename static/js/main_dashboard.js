@@ -307,17 +307,10 @@ function SaveFilledForm(event) {
             $('#pdf_save_cancel').empty();
             if (response.status == 201) {
                 M.toast({ html: 'Template is saved successfully', classes: 'green rounded' })
-                $('#HideDivForView').show();
-                $('#pdf_fill').hide();
-                $('#pdf_save_cancel').hide()
-                $('#Template-dropdown').show();
-                $('#RenderTemplateDropdown').hide();
-                $('#Document-Dashboard-header').hide();
-                $('#Template-Dropdown-Header').show();
-                $('#Dashboard-Datatable-Div').hide();
-                $('#templateDropdownForm').hide();
-                $('.dropdown-back-button').show();
-                $('.save-cancel-button').hide();
+
+                setTimeout(function () {
+                    window.location.reload();
+                }, 3000);
             }
             else {
                 M.toast({ html: 'Template is successfully filled', classes: 'green rounded' })
