@@ -12,7 +12,7 @@ $(document).ready(function () {
     $('#pdf_edit').hide();
     $('#pdf_save_cancel').hide();
     $('select').formSelect();
-
+    get_labels('main_dashboard_page')
     if (localStorage.getItem("UserPermissions") === null) {
         GetPermissions()
     }
