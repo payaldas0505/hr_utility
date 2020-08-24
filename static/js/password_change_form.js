@@ -27,7 +27,6 @@ function save_password() {
     var old_password = $('#old_password').val()
     var new_password = $('#new_password').val()
     var new_password_confirm = $('#new_password_confirm').val()
-    // localStorage.setItem("User", username)
     $.ajax({
         type: 'POST',
         url: '/dashboard/save_password/',
@@ -69,35 +68,26 @@ function changepassword(){
 
     $('#password_change_btn').attr("disabled", true);
     if (!old_password || !new_password || !new_password_confirm) {
-
-        // get_toast('username_password_toast');
         $('#password_change_btn').attr("disabled", false);
         M.toast({ html: 'Please enter all the fields', classes: 'red rounded' })
         return false;
     }
     else if (!old_password) {
-
-        // get_toast('user_name_toast');
         $('#password_change_btn').attr("disabled", false);
         M.toast({ html: 'Please enter old password', classes: 'red rounded' })
         return false;
     }
     else if (!new_password) {
-
-        // get_toast('password_toast');
         $('#password_change_btn').attr("disabled", false);
         M.toast({ html: 'Please enter new password', classes: 'red rounded' })
         return false;
     }
     else if (!new_password_confirm) {
-
-        // get_toast('password_toast');
         $('#password_change_btn').attr("disabled", false);
         M.toast({ html: 'Please enter new password confirmation', classes: 'red rounded' })
         return false;
     }
     else if (new_password != new_password_confirm){
-        // alert("check match condition")
         $('#password_change_btn').attr("disabled", false);
         M.toast({ html: 'New password and confirm password fields do not match', classes: 'red rounded' })
 

@@ -1,12 +1,10 @@
 var tableLoad = $(document).ready(function() {
-    // GetPermissions()
     $('#dashboardRegisterForm').hide();
     $('#dropdownid').not('.disabled').formSelect();
 
     if (localStorage.getItem("Supseruser") === "true") {
         localStorage.removeItem("Superuser");
     }
-    // alert('1')
     $('#Dashboard-Datatable').removeAttr('width').DataTable({
         dom: 'frtlip',
         "autoWidth": false,
@@ -17,7 +15,6 @@ var tableLoad = $(document).ready(function() {
             "type": "GET",
             "headers": { Authorization: 'Bearer ' + userDetails.access },
             "error" : function(data){
-                // alert(data.status)
                 if (data.status == 401) {
                     getaccessTokenDatatable();
                 }
@@ -41,22 +38,6 @@ var tableLoad = $(document).ready(function() {
                         {"data" : "id",
                         "render" : function(data){
                             var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditFillTemplate(id)><i class="material-icons prefix">mode_edit</i></button> <button class="delete_btn" id='+data+' onclick=getDeleteFillTemplate(id)><i class="material-icons prefix">delete</i></button> <button class="view_btn" id='+data+' onclick=getViewFilledTemplate(id)><i class="material-icons prefix">visibility</i></button>'
-                            // var edit_view = '<button class="edit_btn" id='+data+' onclick=getEditReport(id)><i class="material-icons prefix">mode_edit</i></button> <button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button>'
-                            // var only_view = '<button class="view_btn" id='+data+' onclick=getViewReport(id)><i class="material-icons prefix">visibility</i></button>'
-                            // // alert(window.localStorage.getItem('delete_user'))
-                            // delete_user_flag = window.localStorage.getItem('delete_user')
-                            // edit_user_flag = window.localStorage.getItem('edit_user')
-                            // view_user_flag = window.localStorage.getItem('view_user')
-                            
-                            // if(delete_user_flag == 'true' && edit_user_flag == 'true' && view_user_flag == 'true'){
-                            //     return all_perms
-                            // }
-                            // else if(delete_user_flag == 'false' && edit_user_flag == 'true' && view_user_flag == 'true'){
-                            //     return edit_view
-                            // }
-                            // else if(delete_user_flag == 'false' && edit_user_flag == 'false' && view_user_flag == 'true' ){
-                            //     return only_view
-                            // }
                             return all_perms
                         }},
 
@@ -68,11 +49,9 @@ var tableLoad = $(document).ready(function() {
                 }
             ]
     });
-        //lengthmenu -> add a margin to the right and reset clear
     $(".dataTables_length").css('clear', 'none');
     $(".dataTables_length").css('margin-right', '20px');
 
-    //info -> reset clear and padding
     $(".dataTables_info").css('clear', 'none');
     $(".dataTables_info").css('padding', '0');
     // Call datatables, and return the API to the variable for use in our code
@@ -106,7 +85,6 @@ $.fn.dataTable.ext.errMode = function ( settings, helpPage, message ) {
 
 
 function getaccessTokenDatatable(){
-    // alert('unauthorize')
     $.ajax({
          type: 'POST',
          url: '/v2s/refresh_token/',
@@ -115,12 +93,10 @@ function getaccessTokenDatatable(){
          },
          success: function (result) {
             localStorage.setItem("Token", result.access);
-            // location.reload();
             var token = localStorage.getItem("Token");
             setTimeout(function() {
                 window.location.href = "/v2s/dashboard/";
             }, 200);
-            // tableLoad()
          },
          error: function(data){
             obj = JSON.parse(data.responseText)

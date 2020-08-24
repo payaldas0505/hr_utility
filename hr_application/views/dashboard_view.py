@@ -5,7 +5,6 @@ import datetime
 import uuid
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
 from django.http.response import HttpResponse, JsonResponse
 from ..serializer import DatatableSerializer, AuthUserSerializer, UserRegisterationModelSerializer, FilledTemplateDataSerializer
 from ..models import query_users_by_args, UserRegisterationModel, WordTemplateNew, query_fill_templates_by_args, FilledTemplateData
@@ -23,7 +22,6 @@ class DashboardPageView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
 
     def get(self, request):
-
         return Response(template_name="user_authentication/main_dashboard.html")
 
 class Dashboard(APIView):
@@ -78,7 +76,6 @@ class UserManagementDashboard(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    # @has_permission(perms['user_management_page_get'])
     def get(self, request):
         """ active and inactive users count """
 
@@ -96,7 +93,6 @@ class UserManagementDashboard(APIView):
             total = User.objects.filter(is_superuser=False).count()
             inactive_users = total - active_users
             return Response({'active': active_users, 'inactive': inactive_users}, template_name="user_authentication/user_dashboard.html")
-            # return render(request, "user_authentication/user_dashboard.html", {'active': active_users, 'inactive': inactive_users})
 
         except Exception as e:
             print("exception in user management dashboard", e)
@@ -124,13 +120,11 @@ class TemplateManagementDashboard(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    # @has_permission(perms['template_management_page_get'])
     def get(self, request):
         """ active and inactive users count """
 
         try:
             return Response({"success": True}, template_name="user_authentication/manage_template_dasboard.html")
-            # return render(request, "user_authentication/manage_template_dasboard.html")
 
         except Exception as e:
             print("exception in template management dashboard", e)
@@ -161,7 +155,6 @@ class GetAllUsersView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
-    # @has_permission()
     def get(self, request):
 
         try:
@@ -174,8 +167,6 @@ class GetAllUsersView(APIView):
             result['draw'] = datatable_server_processing['draw']
             result['recordsTotal'] = datatable_server_processing['total']
             result['recordsFiltered'] = datatable_server_processing['count']
-            # print("#"*20)
-            # print(result)
             return Response(result)
         except Exception as e:
             print("Exception in getting  all user", e)
@@ -189,7 +180,6 @@ class UserDatatableView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
-    # @has_permission()
     def get(self, request, pk):
         """Get User details using User Id"""
 
@@ -215,7 +205,7 @@ class UserDatatableView(APIView):
             print(info_message)
             return JsonResponse({'message': str(info_message)}, status=422)
 
-    # @has_permission()
+
     def delete(self, request, pk):
         """Delete user using User Id"""
 
@@ -251,7 +241,7 @@ class UserDatatableView(APIView):
             print(info_message)
             return JsonResponse({'message': str(info_message)}, status=422)
 
-    # @has_permission()
+
     def put(self, request, pk):
         """Update user details using User Id"""
 
@@ -486,7 +476,7 @@ class GetFillTemplateDetails(APIView):
             try:
 
                 template = FilledTemplateData.objects.filter(id=pk).values('fill_values')
-                
+
                 template_detail = template[0]['fill_values']
                 file_name = template_detail['filename']
                 template_name = template_detail['templatename']
@@ -503,7 +493,7 @@ class GetFillTemplateDetails(APIView):
                 info_message = "Internal Server Error"
                 print(info_message)
                 return JsonResponse({'message' : str(info_message)},status = 422)
-            
+
 
         def delete(self, request, pk):
             """Delete template using Template Id"""
@@ -536,7 +526,7 @@ class GetFillTemplateDetails(APIView):
 
         def put(self, request, pk):
             '''update template using template id'''
-            
+
             try:
                 print('x'*80)
                 template_dict = request.POST
@@ -554,7 +544,7 @@ class GetFillTemplateDetails(APIView):
                 print(save_fill_template)
                 print(templatejson)
                 edited_template = FilledTemplateData.objects.get(id=pk)
-                
+
                 new_docx_file_name = FilledTemplateData.objects.filter(id=pk).values('docx_name')[0]['docx_name']
                 templatejsonnew = {'fill_values': templatejson, 'template_name': request.POST['templatename'], 'employee_name': request.POST['Name'], 'docx_name': new_docx_file_name}
                 edit_serializer = FilledTemplateDataSerializer(edited_template, data=templatejsonnew)

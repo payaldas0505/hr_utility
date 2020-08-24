@@ -39,21 +39,6 @@ class AddUserFormView(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
-    # # @has_permission()
-    # def get(self, request):
-    #     """Renders Registration form."""
-
-    #     try:
-
-    #         return render(request, 'user_registration/registration_form.html')
-
-    #     except Exception as e:
-    #         print("Error in getting registeration page:", e)
-    #         info_message = 'Cannot get the registeration page.'
-    #         print(info_message)
-    #         return JsonResponse({"error": str(info_message)}, status=500)
-
-    # @has_permission()
     def post(self, request):
         """Submits and saves user data into the database."""
 
@@ -149,12 +134,9 @@ class GetRoleDropDown(APIView):
         try:
             get_role = UserRole.objects.filter(
                 role_status=True).all().values('id', 'role_name')
-            # print('qualification', get_role[0])
             role_list = []
             for role in get_role:
                 role_list.append(role)
-            # print(role_list)
-
             return JsonResponse(role_list, safe=False)
         except Exception as e:
             print("exception in getting label", e)

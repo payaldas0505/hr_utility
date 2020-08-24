@@ -22,7 +22,6 @@
 	<div class="card-content">
 	<div id="Dashboard_main">
 	<h3 class="dashboard_label header">Template Management</h2>
-    <!-- <br> -->
     <a onclick="GetAddTemplatePage()" class="add_template waves-effect waves-light btn"
         style="margin-bottom: -124px;"><i class="material-icons left">add_circle</i><span class="add_template_button">Add Template</span></a>
 
@@ -46,7 +45,6 @@
 <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="{% static '/js/materialize.min.js' %}"></script>
 <script type="text/javascript" src="{% static '/template_management/add_template.js' %}"></script>
-<!-- <script src="{% static '/js/header.js' %}"></script> -->
 <script src="/static/js/manage_template_dashboard.js"></script>
 <script src="/static/js/template_datatable.js"></script>
 <script src="/static/js/logout.js"></script>
@@ -86,13 +84,6 @@ function getData() {
       }
 
 
-
-
-
-
-
-
-
         $('select').formSelect();
             // Check username avaliable in database
     $('#user_name_edit').on('blur', function(){
@@ -123,7 +114,6 @@ function getData() {
           },
           error: function(xhr) {
             parsed_jsondata = JSON.parse(xhr.responseText)
-            // alert(parsed_jsondata.error)
             M.toast({html: parsed_jsondata.error, classes: 'red rounded'})
         }
         });
@@ -157,7 +147,6 @@ function getData() {
         },
         error: function(xhr) {
             parsed_jsondata = JSON.parse(xhr.responseText)
-            // alert(parsed_jsondata.error)
             M.toast({html: parsed_jsondata.error, classes: 'red rounded'})
         }
         });
