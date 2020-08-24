@@ -22,19 +22,19 @@ $(document).ready(function () {
         SetPermissionsUserDashboard()
     }
 
-    DocumentTemplateDropdown()
+    
 
 })
 
-window.onload = function() {
+// window.onload = function() {
 
-    if(!window.location.hash) {
-        //setting window location
-        window.location = window.location + '#loaded';
-        //using reload() method to reload web page
-        window.location.reload();
-    }
-}
+//     if(!window.location.hash) {
+//         //setting window location
+//         window.location = window.location + '#loaded';
+//         //using reload() method to reload web page
+//         window.location.reload();
+//     }
+// }
 
 function DocumentTemplateDropdown() {
     $.ajax({
@@ -211,6 +211,7 @@ function getEditFillTemplate(id) {
 
 
 function GetTemplateDropdown() {
+    DocumentTemplateDropdown()
     $('#Template-dropdown').show();
     $('#templateDropdownForm').show();
     $('#RenderTemplateDropdown').hide();
