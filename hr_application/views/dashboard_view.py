@@ -519,6 +519,8 @@ class GetFillTemplateDetails(APIView):
 
         try:
             template = FilledTemplateData.objects.filter(id=pk)
+            message = 'No Template Found'
+            status = 404
             if template:
                 try:
                     with transaction.atomic():
@@ -531,9 +533,6 @@ class GetFillTemplateDetails(APIView):
                     print(info_message)
                     print("exception in saving data rollback error", e)
                     return JsonResponse({'error': str(info_message)}, status=422)
-            else:
-                message = 'No Template Found'
-                status = 404
             return JsonResponse({'message': message}, status=status)
 
         except Exception as error:
