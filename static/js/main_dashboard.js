@@ -26,15 +26,6 @@ $(document).ready(function () {
 
 })
 
-// window.onload = function() {
-
-//     if(!window.location.hash) {
-//         //setting window location
-//         window.location = window.location + '#loaded';
-//         //using reload() method to reload web page
-//         window.location.reload();
-//     }
-// }
 
 function DocumentTemplateDropdown() {
     $.ajax({
@@ -43,8 +34,8 @@ function DocumentTemplateDropdown() {
         type: 'GET',
 
         success: function (response) {
-            for (i = 0; i < response.message.length; i++) {
-                temp = '<option value=' + response.message[i].id + '>' + response.message[i].word_name + '</option>'
+            for (let i = 0; i < response.message.length; i++) {
+                let temp = '<option value=' + response.message[i].id + '>' + response.message[i].word_name + '</option>'
                 $('#Template-dropdown-select').append(temp)
                 $('select').formSelect();
             }
@@ -53,7 +44,7 @@ function DocumentTemplateDropdown() {
             if (xhr.status == 401) {
                 getaccessToken(DocumentTemplateDropdown);
             }
-            parsed_json = JSON.parse(xhr.responseText)
+            let parsed_json = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_json.message, classes: 'red rounded' })
         }
     });
@@ -69,7 +60,7 @@ function GetPermissions() {
             SetPermissionsUserDashboard();
         },
         error: function (xhr) {
-            parsed_json = JSON.parse(xhr.responseText)
+            let parsed_json = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_json.message, classes: 'red rounded' })
         }
     });
@@ -95,11 +86,12 @@ var userDetails = getValues('UserDetails')
 var user_role_id = userDetails.role_id
 
 function DownloadFillTemplate(id) {
-    window.location.href = '/media/filled_user_template/' + id + '.pdf'
+    window.open('/media/filled_user_template/' + id + '.pdf', '_blank')
+    // window.location.href = '/media/filled_user_template/' + id + '.pdf'
 }
 
 function DeleteFillTemplate(id) {
-    url = '/dashboard/fill_template_detail/' + id
+    let url = '/dashboard/fill_template_detail/' + id
 
     $.ajax({
         url: url,
@@ -108,8 +100,8 @@ function DeleteFillTemplate(id) {
         dataType: 'text',
         async: false,
         success: function (jsonData) {
-            var token = localStorage.getItem("Token");
-            parsed_jsondata = JSON.parse(jsonData)
+            // let token = localStorage.getItem("Token");
+            let parsed_jsondata = JSON.parse(jsonData)
             M.toast({ html: parsed_jsondata.message, classes: 'green rounded' })
             setTimeout(function () {
                 window.location.reload();
@@ -119,7 +111,7 @@ function DeleteFillTemplate(id) {
             if (xhr.status == 401) {
                 getaccessTokenUserDashboard(DeleteFillTemplate);
             }
-            parsed_jsondata = JSON.parse(xhr.responseText)
+            let parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_jsondata.message, classes: 'red rounded' })
             return false
         }
@@ -141,7 +133,7 @@ function getViewFilledTemplate(id) {
     $('#HideDivForView').hide();
     $('#ViewDivTemplate').show();
 
-    url = '/dashboard/fill_template_detail/' + id
+    let url = '/dashboard/fill_template_detail/' + id
     window.localStorage.setItem('editedUserId', id)
     $.ajax({
         url: url,
@@ -150,10 +142,10 @@ function getViewFilledTemplate(id) {
         dataType: 'text',
         async: false,
         success: function (jsonData) {
-            parsed_json = JSON.parse(jsonData)
+            let parsed_json = JSON.parse(jsonData)
             $.each(parsed_json['message'][0], function (key, value) {
-                input = '<input class="validate" id=' + key + ' required="" aria-required="true" value=' + value + '>'
-                label = '<label>' + key + '</label>'
+                let input = '<input class="validate" id=' + key + ' required="" aria-required="true" value=' + value + '>'
+                let label = '<label>' + key + '</label>'
                 $('#viewFillTemplate').append(input)
                 $('#viewFillTemplate').append(label)
                 $("#" + key).val(value);
@@ -165,7 +157,7 @@ function getViewFilledTemplate(id) {
             if (xhr.status == 401) {
                 getaccessTokenUserDashboard(getViewFilledTemplate);
             }
-            parsed_jsondata = JSON.parse(xhr.responseText)
+            let parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_jsondata.message, classes: 'red rounded' })
             return false
         }
@@ -175,7 +167,7 @@ function getViewFilledTemplate(id) {
 function getEditFillTemplate(id) {
     $('#HideDivForView').hide();
     $('#EditDivTemplate').show();
-    url = '/dashboard/fill_template_detail/' + id
+    let url = '/dashboard/fill_template_detail/' + id
     window.localStorage.setItem('editedUserId', id)
     $.ajax({
         url: url,
@@ -184,13 +176,13 @@ function getEditFillTemplate(id) {
         dataType: 'text',
         async: false,
         success: function (jsonData) {
-            parsed_json = JSON.parse(jsonData)
+            let parsed_json = JSON.parse(jsonData)
             window.localStorage.setItem('editedTemplateName', parsed_json['message'][2]['templatename'])
             window.localStorage.setItem('editedFileName', parsed_json['message'][1]['filename'])
             var EditTemplateId = []
             $.each(parsed_json['message'][0], function (key, value) {
-                input = '<input class="validate" id=' + key + ' required="" aria-required="true" value=' + value + '>'
-                label = '<label>' + key + '</label>'
+                let input = '<input class="validate" id=' + key + ' required="" aria-required="true" value=' + value + '>'
+                let label = '<label>' + key + '</label>'
                 $('#editFillTemplate').append(input)
                 $('#editFillTemplate').append(label)
                 $("#" + key).val(value);
@@ -202,7 +194,7 @@ function getEditFillTemplate(id) {
             if (xhr.status == 401) {
                 getaccessTokenUserDashboard(getEditFillTemplate);
             }
-            parsed_jsondata = JSON.parse(xhr.responseText)
+            let parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_jsondata.message, classes: 'red rounded' })
             return false
         }
@@ -244,19 +236,19 @@ function GetSelectedTemplateId() {
             localStorage.setItem('fill_filename', result[1].filename)
             var FillId = []
             FillId.push('Document_Name')
-            div_class_start = '<div class="row"><div class="input-field col s12"><i class="material-icons prefix">edit</i>'
-            input = '<input id="Document_Name" type=text class="validate" required="" aria-required="true">'
-            label = '<label for="Document_Name">Document Name</label>'
-            div_class_end = '</div></div>'
+            let div_class_start = '<div class="row"><div class="input-field col s12"><i class="material-icons prefix">edit</i>'
+            let input = '<input id="Document_Name" type=text class="validate" required="" aria-required="true">'
+            let label = '<label for="Document_Name">Document Name</label>'
+            let div_class_end = '</div></div>'
             $('#templateDropdownForm').append(div_class_start)
             $('#templateDropdownForm').append(input)
             $('#templateDropdownForm').append(label)
             $('#templateDropdownForm').append(div_class_end)
 
 
-            for (i = 0; i < result[0].placeholder_list.length; i++) {
+            for (let i = 0; i < result[0].placeholder_list.length; i++) {
                 if (result[0].placeholder_list[i].includes('image')) {
-                    input_type = 'file'
+                    var input_type = 'file'
                 }
                 else {
                     input_type = 'text'
@@ -284,7 +276,7 @@ function GetSelectedTemplateId() {
             if (xhr.status == 401) {
                 getaccessToken(GetSelectedTemplateId);
             }
-            obj = JSON.parse(data.responseText)
+            let obj = JSON.parse(data.responseText)
             M.toast({ html: obj.detail })
         }
     })
@@ -349,7 +341,7 @@ function SaveFilledForm(event) {
                 $('#pdf_save_cancel').show();
                 $('.preview_pdf_div').hide();
                 $('.save-cancel-button').hide();
-                submit_button = `<div class="row">\
+                let submit_button = `<div class="row">\
                             <div class="col push-s3">\
                                 <button id="file_cancel_btn" class="btn btn-primary" type="reset" onclick="CancelPdfPreview()">Cancel<i class="material-icons right">cancel</i>\
                                 </button>\
@@ -411,12 +403,12 @@ function CancelPdfPreviewEdit() {
 function SaveEditedTemplateValidate(event) {
     window.localStorage.setItem('fill_form_event', event)
     var fd = new FormData();
-    edittemplateid = window.localStorage.getItem('editedUserId')
-    retrievedEditTemplateId = window.localStorage.getItem('EditTemplateId')
-    retrievedEditTemplateName = window.localStorage.getItem('editedTemplateName')
-    retrievedEditFilename = window.localStorage.getItem('editedFileName')
-    parsedEditTemplateId = JSON.parse(retrievedEditTemplateId)
-    for (i = 0; i < parsedEditTemplateId.length; i++) {
+    let edittemplateid = window.localStorage.getItem('editedUserId')
+    let retrievedEditTemplateId = window.localStorage.getItem('EditTemplateId')
+    let retrievedEditTemplateName = window.localStorage.getItem('editedTemplateName')
+    let retrievedEditFilename = window.localStorage.getItem('editedFileName')
+    let parsedEditTemplateId = JSON.parse(retrievedEditTemplateId)
+    for (let i = 0; i < parsedEditTemplateId.length; i++) {
         var str = $('#' + parsedEditTemplateId[i]).val();
         fd.append(parsedEditTemplateId[i], str)
     }
@@ -458,7 +450,7 @@ function SaveEditedTemplateValidate(event) {
 
                 $('#pdf_edit').show();
                 $('#EditDivTemplate').hide();
-                submit_button = `<div class="row">\
+                let submit_button = `<div class="row">\
                             <div class="col push-s3">\
                                 <button id="file_cancel_btn" class="btn btn-primary" type="reset" onclick="CancelPdfPreviewEdit()">Cancel<i class="material-icons right">cancel</i>\
                                 </button>\
@@ -486,10 +478,10 @@ function SaveEditedTemplateValidate(event) {
 }
 
 function SaveEditedTemplate() {
-    retrievedEditTemplateId = window.localStorage.getItem('EditTemplateId')
-    parsedEditTemplateId = JSON.parse(retrievedEditTemplateId)
-    var all_validated = true
-    for (i = 0; i < parsedEditTemplateId.length; i++) {
+    let retrievedEditTemplateId = window.localStorage.getItem('EditTemplateId')
+    let parsedEditTemplateId = JSON.parse(retrievedEditTemplateId)
+    let all_validated = true
+    for (let i = 0; i < parsedEditTemplateId.length; i++) {
         var str = $('#' + parsedEditTemplateId[i]).val();
         if (str == '') {
             M.toast({ html: "Please fill the " + parsedEditTemplateId[i] + "field", classes: 'red rounded' })

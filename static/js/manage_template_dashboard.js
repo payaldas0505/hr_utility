@@ -106,5 +106,6 @@ function deleteTemplate(id) {
 }
 
 function DownloadPdf(id) {
-    window.location.href = id
+    window.open(id, "_blank")
+    // window.location.href = id
 }
