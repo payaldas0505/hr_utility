@@ -36,6 +36,12 @@ urlpatterns = [
 
     path('forgot_password/', NewPasswordView.as_view(), name="forgot_password"),
 
+    path('reset/done/',
+         auth_views.PasswordResetCompleteView.as_view(
+             template_name='user_authentication/password_reset_complete.html'
+         ),
+         name='rest_done'),
+
     path('dashboard/get_change_password_data/', GetChangePasswordView.as_view(),
          name='get_change_password_data'),
 
