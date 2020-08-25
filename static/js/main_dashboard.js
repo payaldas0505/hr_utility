@@ -86,7 +86,8 @@ var userDetails = getValues('UserDetails')
 var user_role_id = userDetails.role_id
 
 function DownloadFillTemplate(id) {
-    window.location.href = '/media/filled_user_template/' + id + '.pdf'
+    window.open('/media/filled_user_template/' + id + '.pdf', '_blank')
+    // window.location.href = '/media/filled_user_template/' + id + '.pdf'
 }
 
 function DeleteFillTemplate(id) {
