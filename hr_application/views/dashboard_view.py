@@ -135,22 +135,6 @@ class TemplateManagementDashboard(APIView):
             return Response({"success": False, "error": str(info_message)}, template_name="user_authentication/manage_template_dasboard.html")
 
 
-class NewPasswordView(APIView):
-    """ Get forgot passworrd page """
-    permission_classes = (IsAuthenticated,)
-    renderer_classes = [TemplateHTMLRenderer]
-
-    def get(self, request):
-        try:
-            return render(request, 'user_authentication/forgot_password.html')
-        except Exception as e:
-
-            info_message = "Cannot get reset password page"
-            print("exception while getting page", e)
-            print(info_message)
-            return Response({"success": False, "error": str(info_message)})
-
-
 class GetAllUsersView(APIView):
     """Return filtered Users details from database to display in datatable """
     authentication_classes = [CustomJWTAuthentication]

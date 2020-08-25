@@ -201,6 +201,21 @@ class LogoutView(APIView):
             return Response({"success": False, "error": str(info_message)})
 
 
+class NewPasswordView(APIView):
+    """ Get forgot passworrd page """
+    permission_classes = (AllowAny,)
+    renderer_classes = [TemplateHTMLRenderer]
+
+    def get(self, request):
+        try:
+            return render(request, 'user_authentication/forgot_password.html')
+        except Exception as e:
+
+            info_message = "Cannot get reset password page"
+            print("exception while getting page", e)
+            print(info_message)
+            return Response({"success": False, "error": str(info_message)})
+
 
 class GetChangePasswordPageView(APIView):
     """
