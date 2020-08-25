@@ -6,6 +6,8 @@ import re
 
 
 def format_path(raw_path, pk):
+    """Format all kind of urls and send the finale path"""
+    
     print('pk', pk)
     media_pdf = ['media', '.pdf']
     path = raw_path.split("?")[0]
@@ -19,6 +21,8 @@ def format_path(raw_path, pk):
 
 
 def check_url_pass(path, view_function):
+    """Check for urls pass without check for permissions"""
+
     if path in perms_config.pass_urls or 'django.contrib.admin' in view_function.__module__ or re.search(r"^/static/.*\.(css|js|svg|jpeg|jpg|png|woff)$", path) or re.search(r"^/reset/.*", path):
         print("^"*20)
         print("passing the url without permission check", path)
