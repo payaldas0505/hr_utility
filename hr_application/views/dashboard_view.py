@@ -15,12 +15,13 @@ import docx2txt
 from ..import generate, generateNew
 from hr_utility.settings import BASE_DIR
 import subprocess
-
+from ..views.user_authentication_view import GetPermissions
 
 class DashboardPageView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
 
     def get(self, request):
+        # print(request.session.user_id)
         return Response(template_name="user_authentication/main_dashboard.html")
 
 
@@ -36,19 +37,7 @@ class Dashboard(APIView):
         """ active and inactive users count """
 
         try:
-
-            today = datetime.date.today() + datetime.timedelta(days=1)
-            last_week = datetime.date.today() - datetime.timedelta(days=7)
-            new_users = User.objects.filter(
-                last_login__isnull=True).filter(is_superuser=False).count()
-            recently_looged_users = User.objects.filter(last_login__range=(
-                last_week, today)).filter(is_superuser=False).count()
-            active_users = new_users + recently_looged_users
-
-            total = User.objects.filter(is_superuser=False).count()
-            inactive_users = total - active_users
-
-            return Response({'active': active_users, 'inactive': inactive_users}, template_name="user_authentication/main_dashboard.html")
+            return Response(template_name="user_authentication/main_dashboard.html")
         except Exception as e:
             print("exception in main dashboard", e)
 

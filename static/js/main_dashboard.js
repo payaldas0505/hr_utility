@@ -4,6 +4,7 @@ $(document).ready(function () {
     $('#Template-dropdown').hide();
     $('#templateDropdownForm').hide();
     $('#Template-Dropdown-Header').hide();
+    $('#template_container').hide();
     $('.dropdown-back-button').hide();
     $('.save-cancel-button').hide();
     $('#ViewDivTemplate').hide();
@@ -13,7 +14,7 @@ $(document).ready(function () {
     $('#pdf_save_cancel').hide();
     $('select').formSelect();
     $('#RenderTemplateDropdown').hide();
-    get_labels('main_dashboard_page')
+   
 
     if (localStorage.getItem("UserPermissions") === null) {
         GetPermissions()
@@ -21,9 +22,7 @@ $(document).ready(function () {
     else {
         SetPermissionsUserDashboard()
     }
-
-    
-
+    get_labels('main_dashboard_page')
 })
 
 
@@ -209,6 +208,7 @@ function GetTemplateDropdown() {
     $('#RenderTemplateDropdown').hide();
     $('#Document-Dashboard-header').hide();
     $('#Template-Dropdown-Header').show();
+    $('#template_container').show();
     $('#Dashboard-Datatable-Div').hide();
     $('#templateDropdownForm').hide();
     $('.dropdown-back-button').show();
@@ -236,8 +236,9 @@ function GetSelectedTemplateId() {
             localStorage.setItem('fill_filename', result[1].filename)
             var FillId = []
             FillId.push('Document_Name')
-            let div_class_start = '<div class="row"><div class="input-field col s12"><i class="material-icons prefix">edit</i>'
-            let input = '<input id="Document_Name" type=text class="validate" required="" aria-required="true">'
+            $('#templateDropdownForm').append('<h6><strong>Give document a name of your choice.</strong></h6>')
+            let div_class_start = '<div class="row"><div class="input-field col s6 offset-s3">'
+            let input = '<i class="material-icons left">edit</i><input id="Document_Name" type=text class="validate" required="" aria-required="true">'
             let label = '<label for="Document_Name">Document Name</label>'
             let div_class_end = '</div></div>'
             $('#templateDropdownForm').append(div_class_start)
@@ -245,7 +246,7 @@ function GetSelectedTemplateId() {
             $('#templateDropdownForm').append(label)
             $('#templateDropdownForm').append(div_class_end)
 
-
+            $('#templateDropdownForm').append('<h6 style="margin-top=10px"><strong>Replace the dummy values with the values you want.</strong></h6>')
             for (let i = 0; i < result[0].placeholder_list.length; i++) {
                 if (result[0].placeholder_list[i].includes('image')) {
                     var input_type = 'file'
@@ -253,17 +254,16 @@ function GetSelectedTemplateId() {
                 else {
                     input_type = 'text'
                 }
-                div_class_start = '<div class="row"><div class="input-field col s12"><i class="material-icons prefix">edit</i>'
-                input = '<input id=' + result[0].placeholder_list[i] + ' type=' + input_type + ' class="validate" required="" aria-required="true" value='+result[2].dummy_values[i]+'>'
-                label = '<label for=' + result[0].placeholder_list[i] + '>' + result[0].placeholder_list[i] + '</label>'
+                div_class_start = '<div class="row"><div class="input-field col s6 offset-s3">'
+                input = '<i class="material-icons left">edit</i><input id=' + result[0].placeholder_list[i] + ' type=' + input_type + ' class="validate" required="" aria-required="true" value='+result[2].dummy_values[i]+'><label for=' + result[0].placeholder_list[i] + '>' + result[0].placeholder_list[i] + '</label>'
                 div_class_end = '</div></div>'
                 $('#templateDropdownForm').append(div_class_start)
                 $('#templateDropdownForm').append(input)
-                $('#templateDropdownForm').append(label)
+                // $('#templateDropdownForm').append(label)
                 $('#templateDropdownForm').append(div_class_end)
                 FillId.push(result[0].placeholder_list[i])
                 $('#templateDropdownForm').show();
-                $('.dropdown-back-button').hide();
+                $('.dropdown-back-button').show();
                 $('.save-cancel-button').show();
                 $("#" + result[0].placeholder_list[i]).val(result[2].dummy_values[i]);
 
@@ -358,7 +358,7 @@ function SaveFilledForm(event) {
             if (xhr.status == 401) {
                 getaccessTokenFormEvent(SaveFilledForm)
             }
-            parsed_jsondata = JSON.parse(xhr.responseText)
+            let parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
             setTimeout(function () {
                 $('#field_save_btn').prop('disabled', true)
@@ -467,7 +467,7 @@ function SaveEditedTemplateValidate(event) {
             if (xhr.status == 401) {
                 getaccessTokenFormEvent(SaveEditedTemplateValidate)
             }
-            parsed_jsondata = JSON.parse(xhr.responseText)
+            let parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
             setTimeout(function () {
                 $('#field_save_btn').prop('disabled', true)

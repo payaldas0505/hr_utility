@@ -2,41 +2,49 @@
 {% load static %}
 
 {% block content %}
+
 <div id="Dashboard_main">
     <div id="HideDivForView">
         <div id="Document-Dashboard-header">
             <h3 class="main_dashboard_label header">Document Dashboard</h3>
         </div>
-        <div id="Template-Dropdown-Header">
-            <h3 class="header template_dropdown_label">Template Dropdown</h3>
+        <div class="dropdown-back-button" style="margin-top: 20px; ">
+            <button class="btn waves-light back_label" onclick="GotoDashboard()">Back</button>
+        </div>
+        <div class="container" id="template_container" style="border: 2px solid #ee6e73; text-align:center; margin-top: 20px; margin-bottom: 20px;">
+            <div id="Template-Dropdown-Header">
+                <h5 class="header template_dropdown_label">Choose the template from the dropdown</h5>
+            </div>
+            
+            <div class="row">
+                <div class="input-field col s6 offset-s3" id="Template-dropdown">
+                    <select id="Template-dropdown-select" onchange="GetSelectedTemplateId()">
+                        <option value="" disabled selected><span class="option_template_label">Choose your option</span>
+                        </option>
+                    </select>
+                    <label class="select_template_label">Select Template</label>
+                </div>
+            </div>
+
+            <div class="row" id="templateDropdownForm" style="border: 2px solid #ee6e73; text-align:center; margin:10px;  padding: 0px 108px 40px 108px;">
+                
+            </div>
+
+
+            <div class="row save-cancel-button">
+                <button class="btn  waves-light" onclick="SaveFillTemplate()"><span class="pdf_preview_label">PDF
+                        Preview</span></button>
+                <button class="btn  waves-light" onclick="GetTemplateDropdown()"><span
+                        class="cancel_label">Cancel</span></button>
+            </div>
+
         </div>
         <div id="RenderTemplateDropdown">
 
             <button class="waves-light btn" onclick="GetTemplateDropdown()"><i
-                    class="material-icons left">add_circle</i><span class="add_document_button">Add Document</span></button>
+                    class="material-icons left">add_circle</i><span class="add_document_button">Add
+                    Document</span></button>
         </div>
-
-        <div class="input-field col s12" id="Template-dropdown">
-            <select id="Template-dropdown-select" onchange="GetSelectedTemplateId()">
-                <option value="" disabled selected><span class="option_template_label">Choose your option</span></option>
-            </select>
-            <label class="select_template_label">Select Template</label>
-        </div>
-
-        <div class="dropdown-back-button">
-            <button class="btn waves-light back_label" onclick="GotoDashboard()">Back</button>
-        </div>
-
-        <div id="templateDropdownForm">
-        </div>
-
-
-        <div class="row save-cancel-button">
-            <button class="btn  waves-light" onclick="SaveFillTemplate()"><span class="pdf_preview_label">PDF Preview</span></button>
-            <button class="btn  waves-light" onclick="GetTemplateDropdown()"><span class="cancel_label">Cancel</span></button>
-        </div>
-
-
         <div id="Dashboard-Datatable-Div">
             <table id="Dashboard-Datatable" class="display" style="width:100%;">
                 <caption></caption>
@@ -57,7 +65,8 @@
 
         </div>
         <div>
-            <button class="btn waves-light" onclick="GotoDashboard()"><i class="material-icons left">arrow_back</i><span class='back_label'>Back</span></button>
+            <button class="btn waves-light" onclick="GotoDashboard()"><i class="material-icons left">arrow_back</i><span
+                    class='back_label'>Back</span></button>
         </div>
     </div>
     <div id="EditDivTemplate">
@@ -65,12 +74,15 @@
 
         </div>
         <div class="row">
-            <button class="btn waves-light" onclick="GotoDashboard()"><i class="material-icons left">arrow_back</i><span class='back_label'>Back</span></button>
-            <button class="btn waves-light" onclick="SaveEditedTemplate()"><span class="pdf_preview_label">PDF Preview</span></button>
+            <button class="btn waves-light" onclick="GotoDashboard()"><i class="material-icons left">arrow_back</i><span
+                    class='back_label'>Back</span></button>
+            <button class="btn waves-light" onclick="SaveEditedTemplate()"><span class="pdf_preview_label">PDF
+                    Preview</span></button>
         </div>
     </div>
     <div id="pdf_fill">
-        <span id="pdf_label_fill" ><i class="material-icons left">visibility</i><span class="pdf_preview_label">PDF Preview</span></span>
+        <span id="pdf_label_fill"><i class="material-icons left">visibility</i><span class="pdf_preview_label">PDF
+                Preview</span></span>
         <object id="pdf_preview_fill" data='' type='application/pdf' width='100%' height='700px' aria-label="pdf_label">
             <p style="display: none;">This object has no text.</p>
         </object>
@@ -79,7 +91,8 @@
 
     </div>
     <div id="pdf_edit">
-        <span id="pdf_label_edit"><i class="material-icons left">visibility</i><span class="pdf_preview_label">PDF Preview</span></span>
+        <span id="pdf_label_edit"><i class="material-icons left">visibility</i><span class="pdf_preview_label">PDF
+                Preview</span></span>
         <object id="pdf_preview_edit" data='' type='application/pdf' width='100%' height='700px' aria-label="pdf_label">
             <p style="display: none;">This object has no text.</p>
         </object>
@@ -87,7 +100,12 @@
     <div id="pdf_save_cancel_edit">
 
     </div>
+
 </div>
+<script>
+
+
+</script>
 <script type="text/javascript" src="{% static '/js/get_labels.js' %}"></script>
 <script src="/static/js/main_dashboard.js"></script>
 <script src="/static/js/main_datatable.js"></script>

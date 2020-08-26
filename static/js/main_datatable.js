@@ -44,10 +44,10 @@ var tableLoad = $(document).ready(function() {
                                 var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditFillTemplate(id)><i class="material-icons prefix">mode_edit</i></button> <button class="delete_btn" id='+data+' onclick=getDeleteFillTemplate(id)><i class="material-icons prefix">delete</i></button> <button class="view_btn" id='+data+' onclick=getViewFilledTemplate(id)><i class="material-icons prefix">visibility</i></button>'
                             }
                             else if (userPermissions.includes('fill_template_detail_get') && userPermissions.includes('fill_template_detail_put')) {
-                                var all_perms = '<button class="edit_btn" id='+data+' onclick=getEditFillTemplate(id)><i class="material-icons prefix">mode_edit</i></button> <button class="view_btn" id='+data+' onclick=getViewFilledTemplate(id)><i class="material-icons prefix">visibility</i></button>'
+                                all_perms = '<button class="edit_btn" id='+data+' onclick=getEditFillTemplate(id)><i class="material-icons prefix">mode_edit</i></button> <button class="view_btn" id='+data+' onclick=getViewFilledTemplate(id)><i class="material-icons prefix">visibility</i></button>'
                             }
                             else if (userPermissions.includes('fill_template_detail_get')) {
-                                var all_perms = '<button class="view_btn" id='+data+' onclick=getViewFilledTemplate(id)><i class="material-icons prefix">visibility</i></button>'
+                                all_perms = '<button class="view_btn" id='+data+' onclick=getViewFilledTemplate(id)><i class="material-icons prefix">visibility</i></button>'
                             }
                             
                             return all_perms
@@ -105,13 +105,13 @@ function getaccessTokenDatatable(){
          },
          success: function (result) {
             localStorage.setItem("Token", result.access);
-            var token = localStorage.getItem("Token");
+            // var token = localStorage.getItem("Token");
             setTimeout(function() {
                 window.location.href = "/v2s/dashboard/";
             }, 200);
          },
          error: function(data){
-            obj = JSON.parse(data.responseText)
+            let obj = JSON.parse(data.responseText)
             M.toast({html: obj.detail})
          }
    })

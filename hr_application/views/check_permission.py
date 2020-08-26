@@ -7,7 +7,7 @@ import re
 
 def format_path(raw_path, pk):
     """Format all kind of urls and send the finale path"""
-    
+
     print('pk', pk)
     media_pdf = ['media', '.pdf']
     path = raw_path.split("?")[0]
@@ -83,11 +83,12 @@ def has_permission():
                     return HttpResponse(status=403)
                 else:
                     request.session.flush()
-                    print("403 if session key")
+                    print("403 if permission key not in session ")
                     return HttpResponse(status=403)
 
             except Exception as e:
                 print(e)
+                request.session.flush()
                 return HttpResponse(status=403)
         return wrap
     return inner
