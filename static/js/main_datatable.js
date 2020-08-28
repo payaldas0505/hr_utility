@@ -1,10 +1,7 @@
 var tableLoad = $(document).ready(function() {
     $('#dashboardRegisterForm').hide();
     $('#dropdownid').not('.disabled').formSelect();
-
-    if (localStorage.getItem("Supseruser") === "true") {
-        localStorage.removeItem("Superuser");
-    }
+    
     $('#Dashboard-Datatable').removeAttr('width').DataTable({
         dom: 'frtlip',
         "autoWidth": false,
@@ -25,12 +22,15 @@ var tableLoad = $(document).ready(function() {
         },
 
         "columns" : [
-                        {"data" : null,
-                        render: function (data, type, row, meta) {
-                            return meta.row + meta.settings._iDisplayStart + 1;
-                        }},
+                        // {"data" : null,
+                        // render: function (data, type, row, meta) {
+                        //     return meta.row + meta.settings._iDisplayStart + 1;
+                        // }},
                         {"data" : "employee_name"},
                         {"data" : "template_name"},
+                        {"data" : "created_by"},
+                        {"data" : "created_at"},
+                        // {"data" : "updated_at"},
                         {"data" : 'docx_name',
                         "render" : function (data, type, row, meta) {
                             return '<button id='+data+' onclick=DownloadFillTemplate(id)><i class="material-icons prefix">file_download</i></button>'
@@ -99,7 +99,7 @@ $.fn.dataTable.ext.errMode = function ( settings, helpPage, message ) {
 function getaccessTokenDatatable(){
     $.ajax({
          type: 'POST',
-         url: '/v2s/refresh_token/',
+         url: '/refresh_token/',
          data : {
            'refresh' : localStorage.getItem("Refresh"),
          },

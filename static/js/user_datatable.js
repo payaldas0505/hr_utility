@@ -4,9 +4,9 @@ var tableLoad = $(document).ready(function() {
     $('#dashboardRegisterForm').hide();
     $('#dropdownid').not('.disabled').formSelect();
 
-    if (localStorage.getItem("Supseruser") === "true") {
-        localStorage.removeItem("Superuser");
-    }
+    // if (localStorage.getItem("Supseruser") === "true") {
+    //     localStorage.removeItem("Superuser");
+    // }
     $('#user_datatable').removeAttr('width').DataTable({
         dom: 'frtlip',
         "processing": true,

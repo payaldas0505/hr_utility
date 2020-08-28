@@ -9,7 +9,7 @@ $(document).ready(function () {
     $('#save').hide();
     // getUserRoleDropDown();
 
-    // Check username avaliable in database
+    // Word name avaliable in database
     $('#word_name').on('blur', function () {
         var word_name = $('#word_name').val();
         var get_url = '/dashboard/template_management/add_template/';
@@ -72,25 +72,25 @@ function SubmitUploadWordTemplate() {
             $('#uploadTemplateDiv *').fadeTo('slow', .8);
             localStorage.setItem('filename', response[1].filename)
             var id = []
-            for (i = 0; i < response[0].placeholder_list.length; i++) {
+            for (let i = 0; i < response[0].placeholder_list.length; i++) {
                 console.log(response[0].placeholder_list[i])
                 console.log(response[0].placeholder_list[i].length)
                 if (response[0].placeholder_list[i].includes('image')) {
-                    input_type = 'file'
+                    var input_type = 'file'
                 } else {
                     input_type = 'text'
                 }
-                div_class_start = '<div class="row"><div class="input-field col s12"><i class="material-icons prefix">edit</i>'
-                input = '<input id=' + response[0].placeholder_list[i] + ' type=' + input_type + ' class="validate" required="" aria-required="true">'
-                label = '<label for=' + response[0].placeholder_list[i] + '>' + response[0].placeholder_list[i] + '</label>'
-                div_class_end = '</div></div>'
+                let div_class_start = '<div class="row"><div class="input-field col s12"><i class="material-icons prefix">edit</i>'
+                let input = '<input id=' + response[0].placeholder_list[i] + ' type=' + input_type + ' class="validate" required="" aria-required="true">'
+                let label = '<label for=' + response[0].placeholder_list[i] + '>' + response[0].placeholder_list[i] + '</label>'
+                let div_class_end = '</div></div>'
                 $('#templateFormAppend').append(div_class_start)
                 $('#templateFormAppend').append(input)
                 $('#templateFormAppend').append(label)
                 $('#templateFormAppend').append(div_class_end)
                 id.push(response[0].placeholder_list[i])
             }
-            submit_button = '<div class="row"><div class="col push-s3"><button id="field_save_btn" class="btn btn-primary" type="submit" onclick="FieldUploadWordTemplate(event)">Upload<i class="material-icons right">send</i></button></div></div>'
+            let submit_button = '<div class="row"><div class="col push-s3"><button id="field_save_btn" class="btn btn-primary" type="submit" onclick="FieldUploadWordTemplate(event)">Upload<i class="material-icons right">send</i></button></div></div>'
             $('#templateFormAppend').append(submit_button)
             $('#templateForm').show();
             localStorage.setItem("Id", JSON.stringify(id));
@@ -103,10 +103,10 @@ function SubmitUploadWordTemplate() {
             if (xhr.status == 403) {
                 logout()
             }
-            parsed_jsondata = JSON.parse(xhr.responseText)
+            let parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
             setTimeout(function () {
-                $("#UploadTemplate").attr("disabled", false);
+                $("#submit_form").attr("disabled", false);
             }, 2000);
             return false
         }
@@ -114,34 +114,50 @@ function SubmitUploadWordTemplate() {
     });
 }
 
-// Validation of fields
-
-$('#word_template').change(function () {
-    let keysToRemove = ["Id", "filename"];
-    localStorageRemoveKey(keysToRemove);
-    $("#templateFormAppend").empty();
-
-    $("#UploadTemplate").attr("disabled", true);
-
+function Submit_word_template(){
+    $("#submit_form").attr("disabled", true);
     var word_name = $('#word_name').val();
 
     if (word_name == "") {
 
-        $("#UploadTemplate").attr("disabled", false);
+        $("#submit_form").attr("disabled", false);
         M.toast({ html: 'Please enter the name for the document!', classes: 'red rounded' })
         return false;
     } else if ($('#word_template').get(0).files.length === 0) {
-        $("#UploadTemplate").attr("disabled", false);
+        $("#submit_form").attr("disabled", false);
         M.toast({ html: 'Please upload file!', classes: 'red rounded' })
         return false;
     } else {
         SubmitUploadWordTemplate()
     }
-})
+}
+// Validation of fields
+
+// $('#word_template').change(function () {
+//     let keysToRemove = ["Id", "filename"];
+//     localStorageRemoveKey(keysToRemove);
+//     $("#templateFormAppend").empty();
+
+//     $("#UploadTemplate").attr("disabled", true);
+
+//     var word_name = $('#word_name').val();
+
+//     if (word_name == "") {
+
+//         $("#UploadTemplate").attr("disabled", false);
+//         M.toast({ html: 'Please enter the name for the document!', classes: 'red rounded' })
+//         return false;
+//     } else if ($('#word_template').get(0).files.length === 0) {
+//         $("#UploadTemplate").attr("disabled", false);
+//         M.toast({ html: 'Please upload file!', classes: 'red rounded' })
+//         return false;
+//     } else {
+//         SubmitUploadWordTemplate()
+//     }
+// })
 
 
 function getTemplateDashboard() {
-    var token = access;
     var get_url = "/dashboard/template_management/"
     $.ajax({
         method: 'GET',
@@ -230,7 +246,7 @@ function SaveFields(save = false) {
                 logout()
             }
 
-            parsed_jsondata = JSON.parse(xhr.responseText)
+            let parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
             setTimeout(function () {
                 $('#field_save_btn').prop('disabled', true)
@@ -252,7 +268,7 @@ function FieldUploadWordTemplate(event) {
     var id = JSON.parse(retrievedData);
     var all_validated = true
 
-    values = []
+    // values = []
     $.each(id, function (i, l) {
 
         var id_name = $($.trim('#') + $.trim(l)).val()
@@ -268,7 +284,7 @@ function FieldUploadWordTemplate(event) {
 
     if (all_validated == true) {
         SaveFields();
-        submit_button = `<div class="row">\
+        let submit_button = `<div class="row">\
                             <div class="col push-s3">\
                                 <button id="file_cancel_btn" class="btn btn-primary" type="reset" onclick="Cancel(event)">Cancel<i class="material-icons right">cancel</i>\
                                 </button>\
@@ -286,6 +302,7 @@ function FieldUploadWordTemplate(event) {
 
 function SavePdfFile(event) {
     event.preventDefault();
+    let save
     SaveFields(save = true);
 }
 
@@ -295,7 +312,7 @@ function Cancel(event) {
 
 
 function localStorageRemoveKey(keysToRemove) {
-    for (key of keysToRemove) {
+    for (let key of keysToRemove) {
         if (localStorage.getItem(key)) {
             localStorage.removeItem(key);
         }

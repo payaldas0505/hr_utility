@@ -11,7 +11,7 @@ from .views import (LoginView, CustomTokenObtainPairView,
                     TemplateManagementDashboardPageView, AddUserPageView,
                     AddUserFormView, GetRoleDropDown,
                     CheckUsername, CheckEmail, AddTemplatePageView,
-                    GetAllUsersView, UserDatatableView,
+                    GetAllUsersView, UserDatatableView, CheckDocumentName,
                     NewGenDocxView, GetPermissions, CheckWordname,
                     FillDocument, GetAllTemplatesView, WordTemplateDataView,
                     DocumentTeamplateDropdown, SelectTemplate, FillDropdownTemplate,
@@ -109,6 +109,9 @@ urlpatterns = [
 
     path('dashboard/select_template/<int:pk>',
          SelectTemplate.as_view(), name='select_template'),
+
+    path('dashboard/check_document_name/',
+         CheckDocumentName.as_view(), name="check_document_name"),
 
     path('dashboard/fill_dropdown_template/',
          FillDropdownTemplate.as_view(), name='fill_dropdown_template'),

@@ -17,6 +17,7 @@ from hr_utility.settings import BASE_DIR
 import subprocess
 from ..views.user_authentication_view import GetPermissions
 
+
 class DashboardPageView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
 
@@ -285,12 +286,12 @@ class DocumentTeamplateDropdown(APIView):
         '''Get list of templates from database'''
 
         try:
-            get_all_template = WordTemplateNew.objects.all()
+            get_all_template = WordTemplateData.objects.all()
             all_template_list = []
             all_template_obj = {}
             for each in get_all_template:
                 all_template_obj['id'] = each.id
-                all_template_obj['word_name'] = each.word_name
+                all_template_obj['word_name'] = each.pdf_name
                 all_template_obj['word_template'] = each.word_template.file.name
                 all_template_list.append(all_template_obj.copy())
             return JsonResponse({'message': all_template_list})
@@ -307,8 +308,8 @@ class SelectTemplate(APIView):
     def get(self, request, pk):
         '''Get placeholders list using template id'''
         try:
-            template_form = WordTemplateNew.objects.filter(id=pk)
-            template_name = template_form[0].word_name
+            template_form = WordTemplateData.objects.filter(id=pk)
+            template_name = template_form[0].pdf_name
             print('-'*80)
             print(template_name)
             print('-'*80)
@@ -367,6 +368,11 @@ class FillDropdownTemplate(APIView):
             for k in templatejson:
                 if len(templatejson[k]) == 1:
                     templatejson[k] = templatejson[k][0]
+            print(templatejson['Document_Name'])
+            if FilledTemplateData.objects.filter(employee_name=templatejson['Document_Name']).exists():
+                info_message = "Document name already taken!"
+                print(info_message)
+                return JsonResponse({'error': str(info_message)}, status=500)
             save_fill_template = templatejson.pop('save', None)
             print(save_fill_template)
             new_docx_file_name = new_raw_file_name
@@ -380,7 +386,7 @@ class FillDropdownTemplate(APIView):
                 fill_form_serializer.validated_data['template_name'] = templatejson['templatename']
                 fill_form_serializer.validated_data['employee_name'] = templatejson['Document_Name']
                 fill_form_serializer.validated_data['docx_name'] = new_docx_file_name
-                fill_form_serializer.validated_data['created_by'] = request.user.id
+                fill_form_serializer.validated_data['created_by'] = request.session['user_name']
                 fill_form_serializer.save()
                 file_name = BASE_DIR + '/media/' + raw_file_name
 
@@ -535,7 +541,7 @@ class GetFillTemplateDetails(APIView):
             new_docx_file_name = FilledTemplateData.objects.filter(
                 id=pk).values('docx_name')[0]['docx_name']
             templatejsonnew = {'fill_values': templatejson, 'template_name': request.POST[
-                'templatename'], 'employee_name': request.POST['Document_Name'], 'docx_name': new_docx_file_name, 'created_by' : request.user.id}
+                'templatename'], 'employee_name': request.POST['Document_Name'], 'docx_name': new_docx_file_name, 'created_by': request.session['user_name']}
 
             edit_serializer = FilledTemplateDataSerializer(
                 edited_template, data=templatejsonnew)
@@ -546,7 +552,7 @@ class GetFillTemplateDetails(APIView):
                         edit_serializer.save()
                         print('1'*80)
                         return JsonResponse({"success": "saved successfully", "status": 201})
-                    
+
                     file_name = BASE_DIR + '/media/' + request.POST['filename']
                     template_dict = request.POST
                     if type(template_dict) != dict:
@@ -582,3 +588,32 @@ class GetFillTemplateDetails(APIView):
             info_message = "Internal Server Error"
             print(info_message)
             return JsonResponse({'message': str(info_message)}, status=422)
+
+
+class CheckDocumentName(APIView):
+    """Checks whether username is available."""
+    authentication_classes = [CustomJWTAuthentication]
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = [TemplateHTMLRenderer]
+
+    def post(self, request):
+
+        try:
+            jsondata = request.POST
+            print(jsondata['document_name'])
+
+            if FilledTemplateData.objects.filter(employee_name=jsondata['document_name']).exists():
+                info_message = "Document name already taken!"
+                print(info_message)
+                return JsonResponse({'message': 'taken', 'toast_msg': str(info_message)})
+
+            else:
+                info_message = "Document name Available...!!!"
+                print(info_message)
+                return JsonResponse({'message': 'not_taken', 'toast_msg': str(info_message)})
+
+        except Exception as e:
+            print("exception in check Template name", e)
+            info_message = 'Internal server error'
+            print(info_message)
+            return JsonResponse({'error': str(info_message)}, status=500)

@@ -11,11 +11,12 @@
         <div class="dropdown-back-button" style="margin-top: 20px; ">
             <button class="btn waves-light back_label" onclick="GotoDashboard()">Back</button>
         </div>
-        <div class="container" id="template_container" style="border: 2px solid #ee6e73; text-align:center; margin-top: 20px; margin-bottom: 20px;">
+        <div class="container" id="template_container"
+            style="border: 2px solid #ee6e73; text-align:center; margin-top: 20px; margin-bottom: 20px;">
             <div id="Template-Dropdown-Header">
                 <h5 class="header template_dropdown_label">Choose the template from the dropdown</h5>
             </div>
-            
+
             <div class="row">
                 <div class="input-field col s6 offset-s3" id="Template-dropdown">
                     <select id="Template-dropdown-select" onchange="GetSelectedTemplateId()">
@@ -26,8 +27,9 @@
                 </div>
             </div>
 
-            <div class="row" id="templateDropdownForm" style="border: 2px solid #ee6e73; text-align:center; margin:10px;  padding: 0px 108px 40px 108px;">
-                
+            <div class="row" id="templateDropdownForm"
+                style="border: 2px solid #ee6e73; text-align:center; margin:10px;  padding: 0px 108px 40px 108px;">
+
             </div>
 
 
@@ -50,30 +52,34 @@
                 <caption></caption>
                 <thead>
                     <tr>
-                        <th class="dt_sr_no_label" scope="row">Sr No.</th>
                         <th class="dt_document_name_label" scope="row">Document Name</th>
                         <th class="dt_template_name_label" scope="row">Template Name</th>
+                        <th class="created_by_label" style="width: 150px;" scope="row">Created by</th>
+                        <th class="created_by_label" style="width: 150px;" scope="row">Created On</th>
                         <th class="download_label" style="width: 150px;" scope="row">Download</th>
                         <th class="action_btn_label" style="width: 150px;" scope="row">Action</th>
+
                     </tr>
                 </thead>
             </table>
         </div>
     </div>
-    <div id="ViewDivTemplate">
+    <div id="ViewDivTemplate" style="border: 2px solid #ee6e73; text-align:center; margin:10px;  padding: 40px 108px 40px 108px;">
+        <h4 style="color: #26a69a;">Fields for Viewing Document</h4>
         <div id="viewFillTemplate">
 
         </div>
-        <div>
+        <div style="margin-top: 20px;">
             <button class="btn waves-light" onclick="GotoDashboard()"><i class="material-icons left">arrow_back</i><span
                     class='back_label'>Back</span></button>
         </div>
     </div>
-    <div id="EditDivTemplate">
+    <div id="EditDivTemplate" style="border: 2px solid #ee6e73; text-align:center; margin:10px;  padding: 40px 108px 40px 108px;">
+        <h4 style="color: #26a69a;">Fields for Editing Document</h4>
         <div id="editFillTemplate">
 
         </div>
-        <div class="row">
+        <div class="row" style="margin-top: 20px;">
             <button class="btn waves-light" onclick="GotoDashboard()"><i class="material-icons left">arrow_back</i><span
                     class='back_label'>Back</span></button>
             <button class="btn waves-light" onclick="SaveEditedTemplate()"><span class="pdf_preview_label">PDF
@@ -107,6 +113,48 @@
 
 </script>
 <script type="text/javascript" src="{% static '/js/get_labels.js' %}"></script>
+<script>
+    // Document name avaliable in database
+$('#Document_Name').on('blur', function () {
+    var document_name = $('#Document_Name').val();
+    alert(document_name)
+    var get_url = '/dashboard/';
+    if (document_name == '') {
+        var document_name_state = false;
+        return;
+    }
+    $.ajax({
+        url: 'check_document_name/',
+        headers: { Authorization: 'Bearer ' + access },
+        type: 'post',
+        data: {
+            'document_name_check': 1,
+            'document_name': document_name,
+        },
+        success: function (response) {
+
+            if (response.message == 'taken') {
+                document_name_state = false;
+                $('#Document_Name').addClass("invalid");
+                M.toast({ html: response.toast_msg, classes: 'red rounded' })
+            }
+            else if (response.message == 'not_taken') {
+                document_name_state = true;
+                $('#Document_Name').addClass("valid");
+                M.toast({ html: response.toast_msg, classes: 'green darken-1 rounded' })
+            }
+        },
+        error: function (xhr) {
+            if (xhr.status == 401) {
+                getaccessTokenForUrl(get_url);
+            }
+            let parsed_jsondata = JSON.parse(xhr.responseText)
+            // alert(parsed_jsondata.error)
+            M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
+        }
+    });
+});
+</script>
 <script src="/static/js/main_dashboard.js"></script>
 <script src="/static/js/main_datatable.js"></script>
 

@@ -41,6 +41,7 @@ class UserRegisterationModel(models.Model):
     email = models.EmailField(max_length=100, null=False)
     role = models.ManyToManyField(UserRole)
     user_status = models.BooleanField(null=False)
+    delete_status = models.BooleanField(null=False)
 
     class Meta:
         verbose_name_plural = "1. User Registration"
@@ -113,6 +114,7 @@ class WordTemplateNew(models.Model):
 class WordTemplateData(models.Model):
     pdf_name = models.CharField(max_length=100)
     dummy_values = jsonfield.JSONField()
+    word_template = models.FileField(upload_to='word_template', blank=False)
     pdf = models.FileField(upload_to='filled_template', blank=False)
 
     class Meta:
@@ -128,6 +130,8 @@ class FilledTemplateData(models.Model):
     employee_name = models.CharField(max_length=100, null=False)
     docx_name = models.CharField(max_length=100, null=False)
     created_by = models.CharField(max_length=20, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True) 
 
     class Meta:
         verbose_name_plural = "6. Fill Template Details"
@@ -139,7 +143,8 @@ ORDER_COLUMN_CHOICES = Choices(
     ('0', 'pdf_name'),
     ('1', 'dummy_values'),
     ('2', 'id'),
-    ('3', 'pdf')
+    ('3', 'pdf'),
+    ('4', 'word_template')
 )
 
 
@@ -176,7 +181,10 @@ ORDER_COLUMN_CHOICES_FILL = Choices(
     ('0', 'employee_name'),
     ('1', 'template_name'),
     ('2', 'docx_name'),
-    ('3', 'id')
+    ('3', 'id'),
+    ('4', 'created_by'),
+    ('5', 'created_at'),
+    ('6', 'updated_at'),
 )
 
 
@@ -191,11 +199,11 @@ def query_fill_templates_by_args(request, **kwargs):
     order_column = ORDER_COLUMN_CHOICES_FILL[order_column]
     if order == 'desc':
         order_column = '-' + order_column
-
-    if UserRole.objects.filter(userregisterationmodel = request.user.id)[0] == 'Admin':
-        queryset = FilledTemplateData.objects.all()
-    else:
-        queryset = FilledTemplateData.objects.filter(created_by = request.user.id)
+    queryset = FilledTemplateData.objects.all()
+    # if UserRole.objects.filter(userregisterationmodel = request.user.id)[0] == 'Admin':
+    #     queryset = FilledTemplateData.objects.all()
+    # else:
+    #     queryset = FilledTemplateData.objects.filter(created_by = request.user.id)
 
     total = queryset.count()
 

@@ -23,6 +23,7 @@ $(document).ready(function () {
         SetPermissionsUserDashboard()
     }
     get_labels('main_dashboard_page')
+
 })
 
 
@@ -361,7 +362,7 @@ function SaveFilledForm(event) {
             let parsed_jsondata = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
             setTimeout(function () {
-                $('#field_save_btn').prop('disabled', true)
+                $('#field_save_btn').prop('disabled', false)
             }, 2000);
             return false
         }

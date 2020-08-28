@@ -45,11 +45,16 @@ class WordTemplateDetailsSerializer(serializers.ModelSerializer):
             'id',
             'pdf_name',
             'dummy_values',
-            'pdf'
+            'pdf',
+            'word_template'
         )
 
 
 class FilledTemplateDataSerializer(serializers.ModelSerializer):
+
+    created_at = serializers.SerializerMethodField()
+    updated_at = serializers.SerializerMethodField()
+
     class Meta:
         model = FilledTemplateData
         fields = (
@@ -58,5 +63,13 @@ class FilledTemplateDataSerializer(serializers.ModelSerializer):
             'template_name',
             'employee_name',
             'docx_name',
-            'created_by'
+            'created_by',
+            'created_at',
+            'updated_at'
         )
+
+    def get_created_at(self, obj):
+        return obj.created_at.date()
+    
+    def get_updated_at(self, obj):
+        return obj.updated_at.date()

@@ -97,7 +97,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['id'] = self.user.id
         data['username'] = self.user.username
 
-        if UserRegisterationModel.objects.filter(user_id=data['id']).filter(user_status=True):
+        if UserRegisterationModel.objects.filter(user_id=data['id']).filter(user_status=True).filter(delete_status=False):
             print("active")
 
         else:
@@ -134,6 +134,7 @@ class CustomJWTAuthentication(JWTAuthentication):
             # get user object in the session
             for obj in user_obj:
                 for key, value in obj.items():
+                    print(key)
                     request.session[key] = value
 
             validated_token = self.get_validated_token(raw_token)
@@ -191,6 +192,8 @@ class LogoutView(APIView):
         try:
             info_message = 'You have successfully logged out'
             print(info_message)
+            if perms_config.session_perm_key in request.session:
+                del request.session[perms_config.session_perm_key]
             request.session.flush()
             return JsonResponse({'data': str(info_message), 'url': '/login/'})
 

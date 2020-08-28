@@ -109,3 +109,7 @@ function DownloadPdf(id) {
     window.open(id, "_blank")
     // window.location.href = id
 }
+
+function DownloadWordTemplateDocument(id){
+    window.open(id, "_blank")
+}

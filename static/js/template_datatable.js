@@ -23,19 +23,27 @@ var tableLoad = $(document).ready(function() {
                 }
             }
         },
-        "columns": [{
-                "data": null,
-                render: function(data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
+        "columns": [
+            // {
+            //     "data": null,
+            //     render: function(data, type, row, meta) {
+            //         return meta.row + meta.settings._iDisplayStart + 1;
+            //     }
+            // },
+            { "data": "pdf_name" },
+            {
+                'data': 'word_template',
+                "render": function(data, type, row, meta) {
+                    return '<button id=' + data + ' onclick=DownloadWordTemplateDocument(id)><i class="material-icons prefix">file_download</i></button>'
                 }
             },
-            { "data": "pdf_name" },
             {
                 'data': 'pdf',
                 "render": function(data, type, row, meta) {
                     return '<button id=' + data + ' onclick=DownloadPdf(id)><i class="material-icons prefix">file_download</i></button>'
                 }
             },
+            
             {
                 "data": "id",
                 "render": function(data) {

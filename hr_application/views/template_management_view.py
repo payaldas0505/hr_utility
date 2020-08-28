@@ -53,6 +53,10 @@ class NewGenDocxView(APIView):
             print('word template', request.data['word_template'])
             print('word template name', request.data['word_name'])
 
+            if WordTemplateData.objects.filter(pdf_name=request.data['word_name']).exists():
+                info_message = "Template name already taken!"
+                print(info_message)
+                return JsonResponse({'error': str(info_message) }, status=500)
             if word_serializer.is_valid():
                 new_file_name = 'word_template/'+uuid.uuid4().hex + ".docx"
                 word_serializer.validated_data['word_name'] = request.data['word_name']
@@ -88,7 +92,7 @@ class FillDocument(APIView):
         try:
             template_dict = request.POST
             raw_file_name = request.POST['filename']
-
+            
             if type(template_dict) != dict:
                 templatejson = dict(template_dict)
 
@@ -127,7 +131,8 @@ class FillDocument(APIView):
                 WordTemplateData.objects.create(
                     pdf_name=pdf_name,
                     dummy_values=templatejson,
-                    pdf=new_file_name
+                    pdf=new_file_name,
+                    word_template=raw_file_name
                 )
                 return JsonResponse({"success": "saved successfully","status": 201})
             print('pdf_file', pdf_file)
@@ -208,7 +213,7 @@ class CheckWordname(APIView):
             jsondata = request.POST
             print(jsondata['word_name'])
 
-            if WordTemplateNew.objects.filter(word_name=jsondata['word_name']).exists():
+            if WordTemplateData.objects.filter(pdf_name=jsondata['word_name']).exists():
                 info_message = "Template name already taken!"
                 print(info_message)
                 return JsonResponse({'message': 'taken', 'toast_msg': str(info_message)})
