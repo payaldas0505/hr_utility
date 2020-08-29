@@ -59,8 +59,8 @@ ORDER_COLUMN_CHOICES = Choices(
 
 
 def query_users_by_args(request, **kwargs):
-    check_user_is_superuser = User.objects.filter(
-        username=request.user.username).values('is_superuser')
+    # check_user_is_superuser = User.objects.filter(
+    #     username=request.user.username).values('is_superuser')
     draw = int(kwargs.get('draw', None)[0])
     length = int(kwargs.get('length', None)[0])
     start = int(kwargs.get('start', None)[0])
@@ -72,13 +72,13 @@ def query_users_by_args(request, **kwargs):
     if order == 'desc':
         order_column = '-' + order_column
 
-    if check_user_is_superuser[0]['is_superuser'] == True:
-        queryset = UserRegisterationModel.objects.all()
-    else:
-        getuserid = UserRegisterationModel.objects.filter(
-            user_name=request.user.username).values('role')
-        user_id = getuserid[0]['role']
-        queryset = UserRegisterationModel.objects.filter(role__gte=user_id)
+    # if check_user_is_superuser[0]['is_superuser'] == True:
+    #     queryset = UserRegisterationModel.objects.all()
+    # else:
+    getuserid = UserRegisterationModel.objects.filter(
+        user_name=request.user.username).values('role')
+    user_id = getuserid[0]['role']
+    queryset = UserRegisterationModel.objects.filter(role__gte=user_id).filter(delete_status=False)
 
     total = queryset.count()
 

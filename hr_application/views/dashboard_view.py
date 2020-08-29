@@ -75,13 +75,16 @@ class UserManagementDashboard(APIView):
             today = datetime.date.today() + datetime.timedelta(days=1)
             last_week = datetime.date.today() - datetime.timedelta(days=7)
             new_users = User.objects.filter(
-                last_login__isnull=True).filter(is_superuser=False).count()
-            recently_looged_users = User.objects.filter(last_login__range=(
-                last_week, today)).filter(is_superuser=False).count()
-            active_users = new_users + recently_looged_users
+                last_login__isnull=True).count()
+            recently_logged_users = User.objects.filter(last_login__range=(
+                last_week, today)).count()
+            active_users = new_users + recently_logged_users
 
-            total = User.objects.filter(is_superuser=False).count()
+            total = User.objects.all().count()
             inactive_users = total - active_users
+            print("@"*20)
+            print(active_users, inactive_users)
+            print("@"*20)
             return Response({'active': active_users, 'inactive': inactive_users}, template_name="user_authentication/user_dashboard.html")
 
         except Exception as e:
@@ -195,8 +198,9 @@ class UserDatatableView(APIView):
                 user_name=user.username)
             try:
                 with transaction.atomic():
-                    user.delete()
-                    register.delete()
+                    # user.delete()
+                    register.delete_status = True
+                    register.save()
 
                     success_msg = "User {} deleted successfully".format(
                         user.username)
