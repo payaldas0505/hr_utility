@@ -1,20 +1,37 @@
 jQuery(document).ready(function ($) {
-  var userDetails = localStorage.getItem("UserDetails")
+    var userDetails = localStorage.getItem("UserDetails")
 
-  if (userDetails == null){
-      window.location.href = "/login/"
-  }
-  else {
-      var userDetails = getValues('UserDetails')
-  }
+    if (userDetails == null) {
+        window.location.href = "/login/"
+    }
+    else {
+        userDetails = getValues('UserDetails')
+        var user_name = userDetails.username
+    }
 
     $(".brand-logo").sideNav();
-
-
-
-    $('#user').html('<i class="material-icons left">account_circle</i>' + userDetails.username);
+    $('#user').html('<i class="material-icons left">account_circle</i>' + user_name);
 
 });
+
+function helpVideos() {
+
+    var token = userDetails.access
+    var get_url = '/dashboard/help_video/'
+    $.ajax({
+        type: 'GET',
+        url: '/dashboard/help_video/',
+        headers: { Authorization: 'Bearer ' + token },
+        success: function (data) {
+            window.location.href = get_url
+        },
+        error: function (data) {
+            if (data.status == 401) {
+                getaccessTokenForUrl(get_url);
+            }
+        }
+    })
+}
 
 function changepassword() {
 
@@ -33,7 +50,7 @@ function changepassword() {
             }
         }
     })
-};
+}
 
 
 function getUserDashboard() {
@@ -89,6 +106,7 @@ function closeSideBar() {
     $.ajax({
         method: 'GET',
         url: "/dashboard/",
+        headers: { Authorization: 'Bearer ' + token },
         success: function (data) {
             window.location.href = get_url
         },

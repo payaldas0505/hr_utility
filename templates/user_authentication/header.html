@@ -1,20 +1,21 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title></title>
-    {% block head-meta %}
-    <meta charset="utf-8">
 
-    <meta name="keywords" content="REPLACE WITH YOUR OWN KEYWORDS HERE, AND HERE, AND HERE">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% endblock %}
+<head>
+  <title></title>
+  {% block head-meta %}
+  <meta charset="utf-8">
 
-    {% block head-css %}
+  <meta name="keywords" content="REPLACE WITH YOUR OWN KEYWORDS HERE, AND HERE, AND HERE">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% endblock %}
+
+  {% block head-css %}
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
-  <link type="text/css" rel="stylesheet" href="{% static '/css/materialize.min.css' %}"  media="screen,projection"/>
+  <link type="text/css" rel="stylesheet" href="{% static '/css/materialize.min.css' %}" media="screen,projection" />
   <link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
 
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
@@ -23,50 +24,59 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
   <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    a.sidenav-close > i.material-icons {
+    a.sidenav-close>i.material-icons {
       position: absolute;
-      right:20px;
+      right: 20px;
       top: 20px;
-      color:black
-  }
+      color: black
+    }
   </style>
-    {% endblock %}
+  {% endblock %}
 
-  </head>
+</head>
 <header>
 
   <nav>
     <div class="nav-wrapper">
-      <a href="#" data-activates="slide-out" class="brand-logo" style="margin-left: 10px"><i class="material-icons prefix">dehaze</i><span class="Menu_label">Menu</span></a>
+      <a href="#" data-activates="slide-out" class="brand-logo" style="margin-left: 10px"><i
+          class="material-icons prefix">dehaze</i><span class="Menu_label">Menu</span></a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
         <li style="margin-right: 50px;" id="user"></li>
 
       </ul>
     </div>
   </nav>
-   <ul id="slide-out" class="side-nav">
+  <ul id="slide-out" class="side-nav">
     <div>
       <a onclick="closeSideBar()" class="sidenav-close"><i class="material-icons">close</i></a>
     </div>
-      <li>
-        <a onclick="getUserDashboard()" class="user_management"><i class="material-icons left">people</i><span class="add_user_button">User Management</span></a>
-      </li>
-      <li>
-        <a onclick="getTemplateDashboard()" class="template_management"><i class="material-icons left">web</i><span class="add_template_button">Template Management</span></a>
-      </li>
-      <li>
-        <a onclick="changepassword()"><i class="material-icons prefix">vpn_key</i><span class="download_profile_label">Change Password</span></a>
-      </li>
-      <li>
-        <a onclick="logout()"><i class="material-icons prefix">lock_open</i><span class="logout_label">Logout</span></a>
-      </li>
-    </ul>
+    <li>
+      <a onclick="getUserDashboard()" class="user_management"><i class="material-icons left">people</i><span
+          class="add_user_button">User Management</span></a>
+    </li>
+    <li>
+      <a onclick="getTemplateDashboard()" class="template_management"><i class="material-icons left">web</i><span
+          class="add_template_button">Template Management</span></a>
+    </li>
+    <li>
+      <a onclick="helpVideos()" class="help_video_page"><i class="material-icons left">help_outline</i><span
+          class="add_template_button">Help</span></a>
+    </li>
+    <li>
+      <a onclick="changepassword()"><i class="material-icons prefix">vpn_key</i><span
+          class="download_profile_label">Change Password</span></a>
+    </li>
+    <li>
+      <a onclick="logout()"><i class="material-icons prefix">lock_open</i><span class="logout_label">Logout</span></a>
+    </li>
+  </ul>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-<script type="text/javascript" src="{% static '/js/get_refresh_token.js' %}"></script>
-<script type="text/javascript" src="{% static '/js/logout.js' %}"></script>
-<script type="text/javascript" src="{% static '/js/header.js' %}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script type="text/javascript" src="{% static '/js/get_refresh_token.js' %}"></script>
+  <script type="text/javascript" src="{% static '/js/logout.js' %}"></script>
+  <script type="text/javascript" src="{% static '/js/header.js' %}"></script>
 </header>
+
 </html>

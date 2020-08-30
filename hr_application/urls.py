@@ -12,7 +12,7 @@ from .views import (LoginView, CustomTokenObtainPairView,
                     AddUserFormView, GetRoleDropDown,
                     CheckUsername, CheckEmail, AddTemplatePageView,
                     GetAllUsersView, UserDatatableView, CheckDocumentName,
-                    NewGenDocxView, GetPermissions, CheckWordname,
+                    NewGenDocxView, GetPermissions, CheckWordname,GetHelpVideo,
                     FillDocument, GetAllTemplatesView, WordTemplateDataView,
                     DocumentTeamplateDropdown, SelectTemplate, FillDropdownTemplate,
                     GetAllFillTemplate, GetFillTemplateDetails, GetLabels, GetLangauges)
@@ -50,6 +50,9 @@ urlpatterns = [
 
     path('dashboard/save_password/', SaveChangePasswordView.as_view(),
          name='save_password'),
+
+    path('dashboard/help_video/',
+         GetHelpVideo.as_view(), name="get_change_password"),
 
     path('dashboard/user_management_data/',
          UserManagementDashboard.as_view(), name="user_management_data"),

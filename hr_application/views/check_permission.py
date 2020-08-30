@@ -9,7 +9,7 @@ def format_path(raw_path, pk):
     """Format all kind of urls and send the finale path"""
 
     print('pk', pk)
-    media_pdf = ['media', '.pdf','.docx']
+    media_pdf = ['media', '.pdf', '.docx', '.mkv']
     path = raw_path.split("?")[0]
     if pk or any(x in path for x in media_pdf):
         path = path.rsplit("/", 1)[0]
