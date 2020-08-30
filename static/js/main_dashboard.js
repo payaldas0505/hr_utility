@@ -44,6 +44,9 @@ function DocumentTemplateDropdown() {
             if (xhr.status == 401) {
                 getaccessToken(DocumentTemplateDropdown);
             }
+            if (xhr.status == 403) {
+                logout()
+            }
             let parsed_json = JSON.parse(xhr.responseText)
             M.toast({ html: parsed_json.message, classes: 'red rounded' })
         }
@@ -360,6 +363,8 @@ function SaveFilledForm(event) {
                 getaccessTokenFormEvent(SaveFilledForm)
             }
             let parsed_jsondata = JSON.parse(xhr.responseText)
+            $('#HideDivForView').show();
+            $('#Document_Name').addClass("invalid");
             M.toast({ html: parsed_jsondata.error, classes: 'red rounded' })
             setTimeout(function () {
                 $('#field_save_btn').prop('disabled', false)
