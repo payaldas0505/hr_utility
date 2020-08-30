@@ -1,0 +1,49 @@
+{% load static %}
+<head>
+    <title>User Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link type="text/css" rel="stylesheet" href="{% static '/css/materialize.min.css' %}" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="{% static '/user_registration/css/user_registration_form.css' %}"
+        media="screen,projection" />
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<header>
+    <nav>
+        <div class="nav-wrapper">
+            <a id="back_button" onclick="getdashboard()" data-activates="slide-out" class="brand-logo"
+                style="margin-right: 10px; margin-top: 1px;"><i class="material-icons prefix">arrow_back</i><span
+                    class="back_label">Back</span></a>
+        </div>
+    </nav>
+</header>
+{% block content %}
+<div class="container">
+    <div class="row upload_template_video">
+        <h3>How to upload template?</h3>
+    </div>
+    <div class="row upload_template_video">
+        <video class="responsive-video" controls>
+            <source src="/media/help_video/Complete_PSS_frontend_video1.mkv">
+            <!-- <track label="English" kind="captions" srclang="en" src="resources/myvideo-en.vtt" default> -->
+        </video>
+    </div>
+    <div class="row filled_document_video">
+        <h3>How to create filled document?</h3>
+    </div>
+    <div class="row filled_document_video">
+        <video class="responsive-video" controls>
+            <source src="/media/help_video/Complete_PSS_frontend_video1.mkv">
+            <!-- <track label="English" kind="captions" srclang="en" src="resources/myvideo-en.vtt" default> -->
+        </video>
+    </div>
+
+</div>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="{% static '/js/get_labels.js' %}"></script>
+<script type="text/javascript" src="{% static '/js/get_refresh_token.js' %}"></script>
+<script type="text/javascript" src="{% static '/js/help_video.js' %}"></script>
+
+{% endblock %}
