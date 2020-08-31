@@ -195,6 +195,9 @@ class LogoutView(APIView):
             if perms_config.session_perm_key in request.session:
                 del request.session[perms_config.session_perm_key]
             request.session.flush()
+            request.session.clear()
+            # Clear cache
+            cache.clear()
             return JsonResponse({'data': str(info_message), 'url': '/login/'})
 
         except Exception as e:
@@ -334,6 +337,7 @@ class GetPermissions(APIView):
 
             print()
             request.session[perms_config.session_perm_key] = permission_list_backend
+            
             print("&"*20+"  Start perms  "+"&"*20)
             pprint.pprint("storing permissions for users in session {}:{}".format(
                 perms_config.session_perm_key, permission_list_backend))

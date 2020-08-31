@@ -3,13 +3,13 @@ from django.http import HttpResponseRedirect
 from functools import partial, update_wrapper, wraps
 from ..config import perms_config
 import re
-
+from django.core.cache import cache
 
 def format_path(raw_path, pk):
     """Format all kind of urls and send the finale path"""
 
     print('pk', pk)
-    media_pdf = ['media', '.pdf', '.docx', '.mkv']
+    media_pdf = ['media', '.pdf', '.docx', '.mp4']
     path = raw_path.split("?")[0]
     if pk or any(x in path for x in media_pdf):
         path = path.rsplit("/", 1)[0]
@@ -80,11 +80,17 @@ def has_permission():
                             return func(self, request, view_function, view_args, view_kwargs)
                     del request.session[session_perm_key]
                     request.session.flush()
+                    request.session.clear()
+                    # Clear cache
+                    cache.clear()
                     print("403 for loop")
                     return HttpResponse(status=403)
                 else:
                     del request.session[session_perm_key]
                     request.session.flush()
+                    request.session.clear()
+                    # Clear cache
+                    cache.clear()
                     print("403 if permission key not in session ")
                     return HttpResponse(status=403)
 
