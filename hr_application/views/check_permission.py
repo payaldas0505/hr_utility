@@ -4,6 +4,7 @@ from functools import partial, update_wrapper, wraps
 from ..config import perms_config
 import re
 from django.core.cache import cache
+from ..views.user_authentication_view import LogoutView
 
 def format_path(raw_path, pk):
     """Format all kind of urls and send the finale path"""
@@ -28,7 +29,7 @@ def check_url_pass(path, view_function):
         print("passing the url without permission check", path)
         print("^"*20)
         return True
-    return None
+    return False
 
 
 def has_permission():
@@ -57,14 +58,27 @@ def has_permission():
                     return func(self, request, view_function, view_args, view_kwargs)
 
                 # Get the Global Permission key
-                session_perm_key = perms_config.session_perm_key
-                print("session perm key", session_perm_key)
+                get_session_perm_key = perms_config.session_perm_key
+                print("session perm key", get_session_perm_key)
+                i = 0
+                while True:
+                    i+=1
+                    if perms_config.session_perm_key in request.session:
 
+                        print(request.session[perms_config.session_perm_key])
+
+                        print("----break----"*20)
+                        break
+                    if i == 10:
+                        break
+
+                    print(i, "continue")
+                    continue
                 # Check if permission key is in session
-                if session_perm_key in request.session:
+                if get_session_perm_key in request.session:
 
                     # Get permissions list value from the session
-                    session_perms_list = request.session[session_perm_key]
+                    session_perms_list = request.session[get_session_perm_key]
                     print('session_perms_list', session_perms_list)
 
                     # Looping through the list of session perms
@@ -78,25 +92,17 @@ def has_permission():
                             print('+'*20)
                             print("#"*20)
                             return func(self, request, view_function, view_args, view_kwargs)
-                    del request.session[session_perm_key]
-                    request.session.flush()
-                    request.session.clear()
-                    # Clear cache
-                    cache.clear()
+                   
                     print("403 for loop")
                     return HttpResponse(status=403)
                 else:
-                    del request.session[session_perm_key]
-                    request.session.flush()
-                    request.session.clear()
-                    # Clear cache
-                    cache.clear()
+                    
                     print("403 if permission key not in session ")
                     return HttpResponse(status=403)
 
             except Exception as e:
                 print(e)
-                request.session.flush()
+                # request.session.flush()
                 return HttpResponse(status=403)
         return wrap
     return inner

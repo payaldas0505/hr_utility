@@ -195,9 +195,9 @@ class LogoutView(APIView):
             if perms_config.session_perm_key in request.session:
                 del request.session[perms_config.session_perm_key]
             request.session.flush()
-            request.session.clear()
-            # Clear cache
-            cache.clear()
+            # request.session.clear()
+            # # Clear cache
+            # cache.clear()
             return JsonResponse({'data': str(info_message), 'url': '/login/'})
 
         except Exception as e:
@@ -301,7 +301,10 @@ class GetPermissions(APIView):
     def get(self, request):
 
         try:
+            print("-"*20)
             user_id = request.session['user_id']
+            print('user_id', user_id)
+            print("-"*20)
             perms = UserRegisterationModel.objects.filter(
                 id=user_id
             ).filter(
@@ -339,9 +342,18 @@ class GetPermissions(APIView):
             request.session[perms_config.session_perm_key] = permission_list_backend
             
             print("&"*20+"  Start perms  "+"&"*20)
-            pprint.pprint("storing permissions for users in session {}:{}".format(
-                perms_config.session_perm_key, permission_list_backend))
+            # pprint.pprint("storing permissions for users in session {}:{}".format(
+            #     perms_config.session_perm_key, permission_list_backend))
             print("&"*20+"  End perms  "+"&"*20)
+            print("-"*20)
+            while True:
+                if  perms_config.session_perm_key in request.session:
+
+                    print(request.session[perms_config.session_perm_key])
+
+                    print("-"*20)
+                    break
+                continue
             return JsonResponse(perms_list_font_end, safe=False)
 
         except Exception as error:
