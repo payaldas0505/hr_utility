@@ -15,7 +15,8 @@ class UserRegisterationModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserRegisterationModel
         exclude = (
-            'user',)
+            'user',
+            'delete_status')
 
 
 class DatatableSerializer(serializers.ModelSerializer):

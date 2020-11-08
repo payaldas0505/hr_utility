@@ -44,10 +44,12 @@ INSTALLED_APPS = [
     'materializecssform',
     'nested_admin',
     'tabular_permissions',
+    'corsheaders'
 
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -57,6 +59,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'hr_application.middleware.RoleBasedPermissionMiddleware'
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'hr_utility.urls'
 
@@ -148,17 +153,17 @@ REST_FRAMEWORK = {
          ],
 }
 
-DEFAULT_FROM_EMAIL = 'pythonteamdemo@gmail.com'
-SERVER_EMAIL = 'pythonteamdemo@gmail.com'
+DEFAULT_FROM_EMAIL = 'v2stechtest6@gmail.com'
+SERVER_EMAIL = 'v2stechtest6@gmail.com'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = SERVER_EMAIL
-EMAIL_HOST_PASSWORD = 'teampython3.7'
+EMAIL_HOST_PASSWORD = 'payal@1997'
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=24),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -179,6 +184,6 @@ SIMPLE_JWT = {
     'JTI_CLAIM': 'jti',
 
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=30),
+    'SLIDING_TOKEN_LIFETIME': timedelta(days=1),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }

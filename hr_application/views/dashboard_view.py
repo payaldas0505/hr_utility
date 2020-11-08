@@ -224,6 +224,7 @@ class UserDatatableView(APIView):
         """Update user details using User Id"""
 
         try:
+            print(request.data['user_name'])
             is_user_found = User.objects.filter(id=pk).exists()
             if is_user_found == False:
 
@@ -236,10 +237,10 @@ class UserDatatableView(APIView):
                 user_name=user.username)
 
             edit_serializer = UserRegisterationModelSerializer(
-                edited_user, data=request.POST)
+                edited_user, data=request.data)
 
-            auth_user_serializer = AuthUserSerializer(user, data={"username": request.POST['user_name'],
-                                                                  "email": request.POST['email']})
+            auth_user_serializer = AuthUserSerializer(user, data={"username": request.data['user_name'],
+                                                                  "email": request.data['email']})
             try:
                 with transaction.atomic():
                     if(edit_serializer.is_valid()):
@@ -252,7 +253,7 @@ class UserDatatableView(APIView):
                             auth_user_instance.save()
 
                             success_msg = 'User {} updated successfully'\
-                                .format(request.POST['user_name'])
+                                .format(request.data['user_name'])
                             return JsonResponse({'message': success_msg})
                         else:
 

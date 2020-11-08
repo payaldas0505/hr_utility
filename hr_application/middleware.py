@@ -9,7 +9,7 @@ class RoleBasedPermissionMiddleware(object):
         response = self.get_response(request)
         return response
     
-    @has_permission()
+    # @has_permission()
     def process_view(self, request, view_function, view_args, view_kwargs):
         return None
 

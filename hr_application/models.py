@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from model_utils import Choices
 from django.db.models import Q
 import jsonfield
+import json
 
 
 class RolePermissions(models.Model):
@@ -65,12 +66,24 @@ def query_users_by_args(request, **kwargs):
     length = int(kwargs.get('length', None)[0])
     start = int(kwargs.get('start', None)[0])
     search_value = kwargs.get('search[value]', None)[0]
-    order_column = kwargs.get('order[0][column]', None)[0]
-    order = kwargs.get('order[0][dir]', None)[0]
+    column_name = False
+    if 'sortBy[]' in kwargs.keys():
+        order_column = kwargs.get('sortBy[]', None)[0]
+        sort_details = json.loads(order_column)
+        column_name = sort_details['id']
+        if column_name == "username":
+            column_name = 'user__' + column_name
+        if sort_details['desc']:
+            column_name = '-' + column_name
 
-    order_column = ORDER_COLUMN_CHOICES[order_column]
-    if order == 'desc':
-        order_column = '-' + order_column
+    # except Exception as e:
+    #     print(e, "sorting not present")
+    # order_column = kwargs.get('order[0][column]', None)[0]
+    # order = kwargs.get('order[0][dir]', None)[0]
+
+    # order_column = ORDER_COLUMN_CHOICES[order_column]
+    # if order == 'desc':
+    #     order_column = '-' + order_column
 
     # if check_user_is_superuser[0]['is_superuser'] == True:
     #     queryset = UserRegisterationModel.objects.all()
@@ -78,7 +91,12 @@ def query_users_by_args(request, **kwargs):
     getuserid = UserRegisterationModel.objects.filter(
         user_name=request.user.username).values('role')
     user_id = getuserid[0]['role']
-    queryset = UserRegisterationModel.objects.filter(role__gte=user_id).filter(delete_status=False)
+    if column_name:
+        queryset = UserRegisterationModel.objects.filter(
+            role__gte=user_id).filter(delete_status=False).order_by(column_name)
+    else:
+        queryset = UserRegisterationModel.objects.filter(
+            role__gte=user_id).filter(delete_status=False)
 
     total = queryset.count()
 
@@ -131,13 +149,14 @@ class FilledTemplateData(models.Model):
     docx_name = models.CharField(max_length=100, null=False)
     created_by = models.CharField(max_length=20, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True) 
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name_plural = "6. Fill Template Details"
 
     def __str__(self):
         return '{}'.format(self.employee_name)
+
 
 ORDER_COLUMN_CHOICES = Choices(
     ('0', 'pdf_name'),
@@ -193,12 +212,12 @@ def query_fill_templates_by_args(request, **kwargs):
     length = int(kwargs.get('length', None)[0])
     start = int(kwargs.get('start', None)[0])
     search_value = kwargs.get('search[value]', None)[0]
-    order_column = kwargs.get('order[0][column]', None)[0]
-    order = kwargs.get('order[0][dir]', None)[0]
+    # order_column = kwargs.get('order[0][column]', None)[0]
+    # order = kwargs.get('order[0][dir]', None)[0]
 
-    order_column = ORDER_COLUMN_CHOICES_FILL[order_column]
-    if order == 'desc':
-        order_column = '-' + order_column
+    # order_column = ORDER_COLUMN_CHOICES_FILL[order_column]
+    # if order == 'desc':
+    #     order_column = '-' + order_column
     queryset = FilledTemplateData.objects.all()
     # if UserRole.objects.filter(userregisterationmodel = request.user.id)[0] == 'Admin':
     #     queryset = FilledTemplateData.objects.all()
@@ -230,13 +249,24 @@ def query_templates_by_args(request, **kwargs):
     length = int(kwargs.get('length', None)[0])
     start = int(kwargs.get('start', None)[0])
     search_value = kwargs.get('search[value]', None)[0]
-    order_column = kwargs.get('order[0][column]', None)[0]
-    order = kwargs.get('order[0][dir]', None)[0]
+    column_name = False
+    if 'sortBy[]' in kwargs.keys():
+        order_column = kwargs.get('sortBy[]', None)[0]
+        sort_details = json.loads(order_column)
+        column_name = sort_details['id']
+        if sort_details['desc']:
+            column_name = '-' + column_name
+    # order_column = kwargs.get('order[0][column]', None)[0]
+    # order = kwargs.get('order[0][dir]', None)[0]
 
-    order_column = ORDER_COLUMN_CHOICES[order_column]
-    if order == 'desc':
-        order_column = '-' + order_column
-    queryset = WordTemplateData.objects.all()
+    # order_column = ORDER_COLUMN_CHOICES[order_column]
+    # if order == 'desc':
+    #     order_column = '-' + order_column
+    if column_name:
+        queryset = WordTemplateData.objects.all().order_by(column_name)
+    else:
+        queryset = WordTemplateData.objects.all()
+
     total = queryset.count()
 
     if search_value:

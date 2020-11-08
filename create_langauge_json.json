@@ -1,0 +1,274 @@
+{
+    "lang": [
+        {
+            "page_label_class_name": "company_label",
+            "page_label_text": "V2STECH",
+            "page_name__page_name": "login",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "user_name_label",
+            "page_label_text": "Enter Username",
+            "page_name__page_name": "login",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "password_label",
+            "page_label_text": "Enter Password",
+            "page_name__page_name": "login",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "forget_password_label",
+            "page_label_text": "Forgot Password?",
+            "page_name__page_name": "login",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "Login_button_label",
+            "page_label_text": "Login",
+            "page_name__page_name": "login",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "Menu_label",
+            "page_label_text": "Menu",
+            "page_name__page_name": "header",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "main_dashboard_label",
+            "page_label_text": "Document Dashboard",
+            "page_name__page_name": "main_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "back_label",
+            "page_label_text": "BACK",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "user_dashboard_label",
+            "page_label_text": "User Management",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "active_user_label",
+            "page_label_text": "Active Users",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "inactive_user_label",
+            "page_label_text": "Inactive Users",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "add_user_button",
+            "page_label_text": "Add user",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "dt_sr_no_label",
+            "page_label_text": "Sr No.",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "user_name_label",
+            "page_label_text": "Username",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "email_label",
+            "page_label_text": "Email",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "dt_user_status_label",
+            "page_label_text": "Status",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "action_btn_label",
+            "page_label_text": "Action",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "role_option_1",
+            "page_label_text": "Admin",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "role_option_2",
+            "page_label_text": "HR",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "user_name_label",
+            "page_label_text": "Username",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "first_name_label",
+            "page_label_text": "First Name",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "last_name_label",
+            "page_label_text": "Last Name",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "email_label",
+            "page_label_text": "Email",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "select_one_label",
+            "page_label_text": "Assign Role",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "user_status_label",
+            "page_label_text": "User Status ?",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "user_status_off_label",
+            "page_label_text": "Off",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "user_status_on_label",
+            "page_label_text": "On",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "submit_label",
+            "page_label_text": "Save Edited User",
+            "page_name__page_name": "user_dashboard",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "Back_label",
+            "page_label_text": "BACK",
+            "page_name__page_name": "user_registration",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "user_name_label",
+            "page_label_text": "Username",
+            "page_name__page_name": "user_registration",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "first_name_label",
+            "page_label_text": "First Name",
+            "page_name__page_name": "user_registration",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "last_name_label",
+            "page_label_text": "Last Name",
+            "page_name__page_name": "user_registration",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "email_label",
+            "page_label_text": "Email",
+            "page_name__page_name": "user_registration",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "select_one_label",
+            "page_label_text": "Assign Role",
+            "page_name__page_name": "user_registration",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "user_status_label",
+            "page_label_text": "User Status ?",
+            "page_name__page_name": "user_registration",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "user_status_on_label",
+            "page_label_text": "On",
+            "page_name__page_name": "user_registration",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "submit_label",
+            "page_label_text": "Submit",
+            "page_name__page_name": "user_registration",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "password_label",
+            "page_label_text": "Password",
+            "page_name__page_name": "user_registration",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "confirm_password_label",
+            "page_label_text": "Confirm Password",
+            "page_name__page_name": "user_registration",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "back_label",
+            "page_label_text": "Back",
+            "page_name__page_name": "change_password",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "old_password_label",
+            "page_label_text": "Old Password",
+            "page_name__page_name": "change_password",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "new_password_label",
+            "page_label_text": "New Password",
+            "page_name__page_name": "change_password",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "new_password_confirm_label",
+            "page_label_text": "New Password confirmation",
+            "page_name__page_name": "change_password",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "password_change_btn_label",
+            "page_label_text": "Change password",
+            "page_name__page_name": "change_password",
+            "page_name__language_name__language_name": "en"
+        },
+        {
+            "page_label_class_name": "company_label",
+            "page_label_text": "V2STECH",
+            "page_name__page_name": "login",
+            "page_name__language_name__language_name": "hindi"
+        }
+    ]
+}

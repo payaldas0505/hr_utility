@@ -44,7 +44,7 @@ class AddUserFormView(APIView):
 
         try:
 
-            user_data = request.POST
+            user_data = request.data
             print('#'*80)
             print(user_data)
             print('#'*80)
@@ -52,7 +52,12 @@ class AddUserFormView(APIView):
             if User.objects.filter(username=user_data['user_name']).exists():
                 info_message = "Username already taken!"
                 print(info_message)
-                return JsonResponse({'message': info_message})
+                return JsonResponse({'user_taken_error': info_message}, status=422)
+
+            if User.objects.filter(email=user_data['email']).exists():
+                info_message = "Email Id already taken!"
+                print(info_message)
+                return JsonResponse({'email_taken_error': info_message}, status=422)
 
             auth_data = {
                 "username": user_data['user_name'],
@@ -64,20 +69,20 @@ class AddUserFormView(APIView):
             print(auth_data)
             print('A'*80)
 
-            check_register_data = user_data
-            _mutable = check_register_data._mutable
+            # check_register_data = user_data
+            # _mutable = check_register_data._mutable
 
-            # set to mutable
-            check_register_data._mutable = True
+            # # set to mutable
+            # check_register_data._mutable = True
 
-            # сhange the values you want
-            check_register_data.pop('confirm_password', None)
-            check_register_data.pop('password', None)
-            check_register_data.pop('role', None)
+            # # сhange the values you want
+            # check_register_data.pop('confirm_password', None)
+            # check_register_data.pop('password', None)
+            # check_register_data.pop('role', None)
 
-            check_register_data._mutable = _mutable
-            print(check_register_data)
-            details = UserRegisterationForm(check_register_data)
+            # check_register_data._mutable = _mutable
+            # print(check_register_data)
+            details = UserRegisterationForm(user_data)
             one_user = UserForm(data=auth_data)
             print(details.is_valid)
             print(one_user.is_valid)
@@ -101,9 +106,9 @@ class AddUserFormView(APIView):
                         print("save_user_data", save_user_data)
                         print("form is validated")
 
-                        success_msg = 'User {}, have successfully registered.'.format(
-                            check_register_data['first_name'])
-                        return JsonResponse({'message': success_msg})
+                        success_msg = 'User {}, has successfully registered.'.format(
+                            user_data['first_name'])
+                        return JsonResponse({'success': success_msg}, status=200)
                     else:
                         print(details.errors)
                         print(one_user.errors)
