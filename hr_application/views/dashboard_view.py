@@ -358,11 +358,11 @@ class FillDropdownTemplate(APIView):
         """
 
         try:
-            template_dict = request.POST
+            template_dict = request.data
             print('T'*80)
             print(template_dict)
             print('T'*80)
-            raw_file_name = request.POST['filename']
+            raw_file_name = request.data['filename']
             new_raw_file_name = uuid.uuid4().hex
             print('R'*80)
             print(new_raw_file_name)
@@ -370,14 +370,16 @@ class FillDropdownTemplate(APIView):
             if type(template_dict) != dict:
                 templatejson = dict(template_dict)
 
-            for k in templatejson:
-                if len(templatejson[k]) == 1:
-                    templatejson[k] = templatejson[k][0]
+                for k in templatejson:
+                    if len(templatejson[k]) == 1:
+                        templatejson[k] = templatejson[k][0]
+            else:
+                templatejson = template_dict
             print(templatejson['Document_Name'])
             if FilledTemplateData.objects.filter(employee_name=templatejson['Document_Name']).exists():
                 info_message = "Document name already taken!"
                 print(info_message)
-                return JsonResponse({'error': str(info_message)}, status=500)
+                return JsonResponse({'error': str(info_message)}, status=422)
             save_fill_template = templatejson.pop('save', None)
             print(save_fill_template)
             new_docx_file_name = new_raw_file_name
@@ -386,7 +388,7 @@ class FillDropdownTemplate(APIView):
             fill_form_serializer = FilledTemplateDataSerializer(
                 data=templatejsonnew)
 
-            if fill_form_serializer.is_valid() and save_fill_template == 'true':
+            if fill_form_serializer.is_valid() and (save_fill_template == 'true' or save_fill_template == True):
                 fill_form_serializer.validated_data['fill_values'] = templatejson
                 fill_form_serializer.validated_data['template_name'] = templatejson['templatename']
                 fill_form_serializer.validated_data['employee_name'] = templatejson['Document_Name']
@@ -411,7 +413,7 @@ class FillDropdownTemplate(APIView):
 
                 pdf_file = '/media/filled_user_template/' + \
                     '{}.pdf'.format(new_raw_file_name)
-                return JsonResponse({"success": "saved successfully", "status": 201})
+                return JsonResponse({"success": "Document {} saved successfully".format(templatejson['Document_Name']), "status": 201})
 
             file_name = BASE_DIR + '/media/' + raw_file_name
 
@@ -530,14 +532,16 @@ class GetFillTemplateDetails(APIView):
         '''update template using template id'''
 
         try:
-            template_dict = request.POST
+            template_dict = request.data
 
             if type(template_dict) != dict:
                 templatejson = dict(template_dict)
 
-            for k in templatejson:
-                if len(templatejson[k]) == 1:
-                    templatejson[k] = templatejson[k][0]
+                for k in templatejson:
+                    if len(templatejson[k]) == 1:
+                        templatejson[k] = templatejson[k][0]
+            else:
+                templatejson = template_dict
             save_fill_template = templatejson.pop('save', None)
             print(save_fill_template)
             print(templatejson)
@@ -545,21 +549,21 @@ class GetFillTemplateDetails(APIView):
 
             new_docx_file_name = FilledTemplateData.objects.filter(
                 id=pk).values('docx_name')[0]['docx_name']
-            templatejsonnew = {'fill_values': templatejson, 'template_name': request.POST[
-                'templatename'], 'employee_name': request.POST['Document_Name'], 'docx_name': new_docx_file_name, 'created_by': request.session['user_name']}
+            templatejsonnew = {'fill_values': templatejson, 'template_name': request.data[
+                'templatename'], 'employee_name': request.data['Document_Name'], 'docx_name': new_docx_file_name, 'created_by': request.session['user_name']}
 
             edit_serializer = FilledTemplateDataSerializer(
                 edited_template, data=templatejsonnew)
             print(edit_serializer)
             try:
                 with transaction.atomic():
-                    if edit_serializer.is_valid() and save_fill_template == 'true':
+                    if edit_serializer.is_valid() and (save_fill_template == 'true' or save_fill_template == True):
                         edit_serializer.save()
                         print('1'*80)
-                        return JsonResponse({"success": "saved successfully", "status": 201})
+                        return JsonResponse({"success": "Document {} saved successfully".format(request.data['Document_Name']), "status": 201})
 
-                    file_name = BASE_DIR + '/media/' + request.POST['filename']
-                    template_dict = request.POST
+                    file_name = BASE_DIR + '/media/' + request.data['filename']
+                    template_dict = request.data
                     if type(template_dict) != dict:
                         templatejson = dict(template_dict)
 

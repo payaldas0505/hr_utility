@@ -212,13 +212,23 @@ def query_fill_templates_by_args(request, **kwargs):
     length = int(kwargs.get('length', None)[0])
     start = int(kwargs.get('start', None)[0])
     search_value = kwargs.get('search[value]', None)[0]
+    column_name = False
+    if 'sortBy[]' in kwargs.keys():
+        order_column = kwargs.get('sortBy[]', None)[0]
+        sort_details = json.loads(order_column)
+        column_name = sort_details['id']
+        if sort_details['desc']:
+            column_name = '-' + column_name
     # order_column = kwargs.get('order[0][column]', None)[0]
     # order = kwargs.get('order[0][dir]', None)[0]
 
     # order_column = ORDER_COLUMN_CHOICES_FILL[order_column]
     # if order == 'desc':
     #     order_column = '-' + order_column
-    queryset = FilledTemplateData.objects.all()
+    if column_name:
+        queryset = FilledTemplateData.objects.all().order_by(column_name)
+    else:
+        queryset = FilledTemplateData.objects.all()
     # if UserRole.objects.filter(userregisterationmodel = request.user.id)[0] == 'Admin':
     #     queryset = FilledTemplateData.objects.all()
     # else:
