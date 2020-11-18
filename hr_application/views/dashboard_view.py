@@ -16,7 +16,8 @@ from ..import generate, generateNew
 from hr_utility.settings import BASE_DIR
 import subprocess
 from ..views.user_authentication_view import GetPermissions
-
+from ..config import perms_config
+from ..views.check_permission import test_has_permission
 
 class DashboardPageView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
@@ -71,6 +72,7 @@ class UserManagementDashboard(APIView):
 
         try:
             print("get user management dashboard")
+            print(request.user)
 
             today = datetime.date.today() + datetime.timedelta(days=1)
             last_week = datetime.date.today() - datetime.timedelta(days=7)
@@ -133,9 +135,11 @@ class GetAllUsersView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
+    @test_has_permission()
     def get(self, request):
 
         try:
+            print(request.user)
             datatable_server_processing = query_users_by_args(
                 request, **request.query_params)
             serializer = DatatableSerializer(
@@ -235,7 +239,17 @@ class UserDatatableView(APIView):
             user = User.objects.get(pk=pk)
             edited_user = UserRegisterationModel.objects.get(
                 user_name=user.username)
-
+            if user.username != request.data['user_name'] or user.email != request.data['email']:
+                print("NOT equal exclude(pk=instance.pk)")
+                if User.objects.filter(username=request.data['user_name']).exclude(pk=pk).exists():
+                    info_message = "Username already taken!"
+                    print(info_message)
+                    return JsonResponse({'user_taken_error': info_message}, status=422)
+                if User.objects.filter(email=request.data['email']).exclude(pk=pk).exists():
+                    info_message = "This Email Id is already registered.!"
+                    print(info_message)
+                    return JsonResponse({'email_taken_error': info_message}, status=422)
+                # return
             edit_serializer = UserRegisterationModelSerializer(
                 edited_user, data=request.data)
 
@@ -499,7 +513,8 @@ class GetFillTemplateDetails(APIView):
             info_message = "Internal Server Error"
             print(info_message)
             return JsonResponse({'message': str(info_message)}, status=422)
-
+            
+    @test_has_permission()
     def delete(self, request, pk):
         """Delete template using Template Id"""
 
@@ -546,7 +561,12 @@ class GetFillTemplateDetails(APIView):
             print(save_fill_template)
             print(templatejson)
             edited_template = FilledTemplateData.objects.get(id=pk)
-
+            print(edited_template.employee_name, request.data['Document_Name'])
+            if edited_template.employee_name != request.data['Document_Name']:
+                if FilledTemplateData.objects.filter(employee_name=request.data['Document_Name']).exclude(pk=pk).exists():
+                    info_message = "Document name already taken!"
+                    print(info_message)
+                    return JsonResponse({'error': str(info_message)}, status=422)
             new_docx_file_name = FilledTemplateData.objects.filter(
                 id=pk).values('docx_name')[0]['docx_name']
             templatejsonnew = {'fill_values': templatejson, 'template_name': request.data[

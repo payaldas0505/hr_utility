@@ -134,7 +134,7 @@ class CustomJWTAuthentication(JWTAuthentication):
             # get user object in the session
             for obj in user_obj:
                 for key, value in obj.items():
-                    print(key)
+                    print(key, value)
                     request.session[key] = value
 
             validated_token = self.get_validated_token(raw_token)
@@ -340,20 +340,23 @@ class GetPermissions(APIView):
 
             print()
             request.session[perms_config.session_perm_key] = permission_list_backend
-            
+            # request.session.modified = True
             print("&"*20+"  Start perms  "+"&"*20)
             # pprint.pprint("storing permissions for users in session {}:{}".format(
             #     perms_config.session_perm_key, permission_list_backend))
+            print(request.session[perms_config.session_perm_key])
+
             print("&"*20+"  End perms  "+"&"*20)
             print("-"*20)
-            while True:
-                if  perms_config.session_perm_key in request.session:
 
-                    print(request.session[perms_config.session_perm_key])
+            # while True:
+            #     if  perms_config.session_perm_key in request.session:
 
-                    print("-"*20)
-                    break
-                continue
+            #         print(request.session[perms_config.session_perm_key])
+
+            #         print("-"*20)
+            #         break
+            #     continue
             return JsonResponse(perms_list_font_end, safe=False)
 
         except Exception as error:

@@ -5,6 +5,11 @@ from ..config import perms_config
 import re
 from django.core.cache import cache
 from ..views.user_authentication_view import LogoutView
+from ..models import RolePermissions
+from rest_framework.decorators import permission_classes, authentication_classes
+# from .user_authentication_view import CustomJWTAuthentication, IsAuthenticated
+from rest_framework_simplejwt import authentication
+
 
 def format_path(raw_path, pk):
     """Format all kind of urls and send the finale path"""
@@ -38,10 +43,11 @@ def has_permission():
     """
     def inner(func):
         def wrap(self, request, view_function, view_args, view_kwargs):
-
+            # request.user = authentication.JWTAuthentication().authenticate(request)[0]  # Manually authenticate the token
+            print(request.user)
             print("@"*20+"  START PATH  "+"@"*20)
             pk = view_kwargs.get('pk')
-
+            print("request.user", request.user)
             # Exact url from the function
             raw_path = request.path
             path = format_path(raw_path, pk)
@@ -62,7 +68,7 @@ def has_permission():
                 print("session perm key", get_session_perm_key)
                 i = 0
                 while True:
-                    i+=1
+                    i += 1
                     if perms_config.session_perm_key in request.session:
 
                         print(request.session[perms_config.session_perm_key])
@@ -92,13 +98,51 @@ def has_permission():
                             print('+'*20)
                             print("#"*20)
                             return func(self, request, view_function, view_args, view_kwargs)
-                   
+
                     print("403 for loop")
                     return HttpResponse(status=403)
                 else:
-                    
+
                     print("403 if permission key not in session ")
                     return HttpResponse(status=403)
+
+            except Exception as e:
+                print(e)
+                # request.session.flush()
+                return HttpResponse(status=403)
+        return wrap
+    return inner
+
+
+# @permission_classes([IsAuthenticated, ])
+# @authentication_classes([CustomJWTAuthentication])
+def test_has_permission():
+    """
+    Decorder checks permission for requested url and method with session.
+    """
+    def inner(func):
+        def wrap(self, request, *awargs, **kwargs):
+
+            print("@"*20+"  START PATH  "+"@"*20)
+            print("request.user", request.user, awargs, kwargs)
+            # pk = awargs.get('pk')
+            pk = kwargs.get('pk')
+            # Exact url from the function
+            raw_path = request.path
+            path = format_path(raw_path, pk)
+
+            # Exact method from the function
+            method = request.method.lower()
+            print("Get requested url path: ", path)
+            print("Get requested method: ", method)
+            print("@"*20+"  END PATH  "+"@"*20)
+
+            try:
+                # pass
+                # if check_url_pass(path):
+                return func(self, request, *awargs, **kwargs)
+
+                # if RolePermissions.objects.filter()
 
             except Exception as e:
                 print(e)

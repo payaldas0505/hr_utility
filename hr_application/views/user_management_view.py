@@ -55,7 +55,7 @@ class AddUserFormView(APIView):
                 return JsonResponse({'user_taken_error': info_message}, status=422)
 
             if User.objects.filter(email=user_data['email']).exists():
-                info_message = "Email Id already taken!"
+                info_message = "This Email Id is already registered.!"
                 print(info_message)
                 return JsonResponse({'email_taken_error': info_message}, status=422)
 
