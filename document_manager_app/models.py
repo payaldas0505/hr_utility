@@ -4,6 +4,7 @@ from model_utils import Choices
 from django.db.models import Q
 import jsonfield
 import json
+from django.db.models.functions import Lower
 
 
 class RolePermissions(models.Model):
@@ -76,24 +77,17 @@ def query_users_by_args(request, **kwargs):
         if sort_details['desc']:
             column_name = '-' + column_name
 
-    # except Exception as e:
-    #     print(e, "sorting not present")
-    # order_column = kwargs.get('order[0][column]', None)[0]
-    # order = kwargs.get('order[0][dir]', None)[0]
-
-    # order_column = ORDER_COLUMN_CHOICES[order_column]
-    # if order == 'desc':
-    #     order_column = '-' + order_column
-
-    # if check_user_is_superuser[0]['is_superuser'] == True:
-    #     queryset = UserRegisterationModel.objects.all()
-    # else:
     getuserid = UserRegisterationModel.objects.filter(
         user_name=request.user.username).values('role')
     user_id = getuserid[0]['role']
     if column_name:
-        queryset = UserRegisterationModel.objects.filter(
-            role__gte=user_id).filter(delete_status=False).order_by(column_name)
+        if column_name.startswith('-'):
+            queryset = UserRegisterationModel.objects.filter(
+            role__gte=user_id).filter(delete_status=False).order_by(Lower(column_name[1:])).reverse()
+        else:
+            queryset = UserRegisterationModel.objects.filter(
+            role__gte=user_id).filter(delete_status=False).order_by(Lower(column_name))
+
     else:
         queryset = UserRegisterationModel.objects.filter(
             role__gte=user_id).filter(delete_status=False)
@@ -226,7 +220,11 @@ def query_fill_templates_by_args(request, **kwargs):
     # if order == 'desc':
     #     order_column = '-' + order_column
     if column_name:
-        queryset = FilledTemplateData.objects.all().order_by(column_name)
+        if column_name.startswith('-'):
+            queryset = FilledTemplateData.objects.all().order_by(
+                Lower(column_name[1:])).reverse()
+        else:
+            queryset = FilledTemplateData.objects.all().order_by(Lower(column_name))
     else:
         queryset = FilledTemplateData.objects.all()
     # if UserRole.objects.filter(userregisterationmodel = request.user.id)[0] == 'Admin':
@@ -273,7 +271,11 @@ def query_templates_by_args(request, **kwargs):
     # if order == 'desc':
     #     order_column = '-' + order_column
     if column_name:
-        queryset = WordTemplateData.objects.all().order_by(column_name)
+        if column_name.startswith('-'):
+            queryset = WordTemplateData.objects.all().order_by(
+                Lower(column_name[1:])).reverse()
+        else:
+            queryset = WordTemplateData.objects.all().order_by(Lower(column_name))
     else:
         queryset = WordTemplateData.objects.all()
 
