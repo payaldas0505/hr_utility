@@ -53,12 +53,9 @@ class NewGenDocxView(APIView):
         """Save the upload document and returns the placeholder and filename"""
         try:
             word_serializer = WordTemplateUploadSerializer(data=request.data)
-            # print('word template', request.data['word_template'])
-            # print('word template name', request.data['word_name'])
-            # print("type of file", type(request.data['word_name']))
+
             if WordTemplateData.objects.filter(pdf_name=request.data['word_name']).exists():
                 info_message = "Template name already taken!"
-                # print(info_message)
                 return JsonResponse({'error': str(info_message)}, status=422)
             if word_serializer.is_valid():
                 new_file_name = 'word_template/'+uuid.uuid4().hex + ".docx"
@@ -70,11 +67,9 @@ class NewGenDocxView(APIView):
             text_list = []
             regex = "(?<={{)[^}}]*(?=}})"
             text = docx2txt.process(request.data['word_template'])
-            # print("text", text)
             used = set()
             text_list = [x.strip() for x in re.findall(
                 regex, text) if x not in used and (used.add(x) or True)]
-            # print('text_list', text_list)
             if len(text_list) <= 0:
                 return JsonResponse({"error": "There are no fields in this template. Please check the content of the file and upload it again."}, safe=False, status=400)
             test = [
@@ -92,7 +87,9 @@ class NewGenDocxView(APIView):
 
 
 class FillDocument(APIView):
-
+    authentication_classes = [CustomJWTAuthentication]
+    permission_classes = (IsAuthenticated,)
+    
     @check_role_permission()
     def post(self, request):
         """

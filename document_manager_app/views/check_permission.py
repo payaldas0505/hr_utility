@@ -116,46 +116,49 @@ def has_permission():
 
 
 def get_permission(request):
+    try:
+        print("-"*20)
+        user_id = request.user.id
+        print('user_id', user_id)
+        print("-"*20)
+        perms = UserRegisterationModel.objects.filter(
+            id=user_id
+        ).filter(
+            role__role_status=True
+        ).filter(
+            role__permissions__status=True
+        ).values(
+            'role__permissions__permission_name',
+            'role__permissions__api_method',
+            'role__permissions__url_identifier')
 
-    print("-"*20)
-    user_id = request.session['user_id']
-    print('user_id', user_id)
-    print("-"*20)
-    perms = UserRegisterationModel.objects.filter(
-        id=user_id
-    ).filter(
-        role__role_status=True
-    ).filter(
-        role__permissions__status=True
-    ).values(
-        'role__permissions__permission_name',
-        'role__permissions__api_method',
-        'role__permissions__url_identifier')
+        # Permissions setting in session
+        perms_list_font_end = []
+        permission_list_backend = []
 
-    # Permissions setting in session
-    perms_list_font_end = []
-    permission_list_backend = []
+        for perm in perms:
+            permission_dict = {}
+            for key, value in perm.items():
+                if key == 'role__permissions__permission_name':
+                    permission_dict['permission_name'] = value.lower()
 
-    for perm in perms:
-        permission_dict = {}
-        for key, value in perm.items():
-            if key == 'role__permissions__permission_name':
-                permission_dict['permission_name'] = value.lower()
+                elif key == 'role__permissions__api_method':
+                    permission_dict['api_method'] = value.lower()
 
-            elif key == 'role__permissions__api_method':
-                permission_dict['api_method'] = value.lower()
+                else:
+                    permission_dict['url_identifier'] = value
 
-            else:
-                permission_dict['url_identifier'] = value
+            perm_name_method = perm['role__permissions__permission_name'].lower(
+            ) + '_'+perm['role__permissions__api_method'].lower()
+            perms_list_font_end.append(perm_name_method)
 
-        perm_name_method = perm['role__permissions__permission_name'].lower(
-        ) + '_'+perm['role__permissions__api_method'].lower()
-        perms_list_font_end.append(perm_name_method)
+            permission_list_backend.append(permission_dict)
 
-        permission_list_backend.append(permission_dict)
-
-    request.session[perms_config.session_perm_key] = permission_list_backend
-    request.session.modified = True
+        request.session[perms_config.session_perm_key] = permission_list_backend
+        request.session.modified = True
+    except Exception as e:
+        print("exception in fetching permission", e)
+        return HttpResponse(403)
 
 
 def check_url_pass_view(path):
