@@ -21,7 +21,7 @@ import re
 from docxtpl import DocxTemplate
 import uuid
 from document_manager_project.settings import BASE_DIR
-
+from ..views.check_permission import check_role_permission
 
 class AddTemplatePageView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
@@ -35,6 +35,7 @@ class NewGenDocxView(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
+    @check_role_permission()
     def get(self, request):
         """Renders Upload document form."""
         try:
@@ -47,6 +48,7 @@ class NewGenDocxView(APIView):
             print(info_message)
             return JsonResponse({"error": str(info_message)}, status=500)
 
+    @check_role_permission()
     def post(self, request):
         """Save the upload document and returns the placeholder and filename"""
         try:
@@ -91,6 +93,7 @@ class NewGenDocxView(APIView):
 
 class FillDocument(APIView):
 
+    @check_role_permission()
     def post(self, request):
         """
         Filling the document and convert it into PDF.
@@ -162,6 +165,7 @@ class GetAllTemplatesView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
+    @check_role_permission()
     def get(self, request):
         try:
             datatable_server_processing = query_templates_by_args(
@@ -189,6 +193,7 @@ class WordTemplateDataView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
+    @check_role_permission()
     def delete(self, request, pk):
         """Delete template using Template Id"""
 
@@ -220,6 +225,7 @@ class CheckWordname(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
+    @check_role_permission()
     def post(self, request):
 
         try:

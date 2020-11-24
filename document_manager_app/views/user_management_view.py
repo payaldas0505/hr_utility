@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 
 from django.db import transaction
 from .check_permission import has_permission
+from ..views.check_permission import check_role_permission
 
 
 class AddUserPageView(APIView):
@@ -19,6 +20,7 @@ class AddUserPageView(APIView):
     Get Registration Form
     """
 
+    @check_role_permission()
     def get(self, request):
         """Renders Registration form."""
 
@@ -39,6 +41,7 @@ class AddUserFormView(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
+    @check_role_permission()
     def post(self, request):
         """Submits and saves user data into the database."""
 
@@ -134,6 +137,7 @@ class GetRoleDropDown(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     """Gets qualification dropdown from the database."""
 
+    @check_role_permission()
     def get(self, request):
 
         try:
@@ -156,6 +160,7 @@ class CheckUsername(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
+    @check_role_permission()
     def post(self, request):
 
         try:
@@ -185,6 +190,7 @@ class CheckEmail(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
+    @check_role_permission()
     def post(self, request):
 
         try:

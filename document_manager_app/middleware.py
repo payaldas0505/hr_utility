@@ -1,5 +1,5 @@
 from django.http.response import HttpResponse
-from .views.check_permission import has_permission, test_has_permission
+from .views.check_permission import has_permission, check_role_permission
 
 
 class RoleBasedPermissionMiddleware(object):
@@ -10,8 +10,9 @@ class RoleBasedPermissionMiddleware(object):
         response = self.get_response(request)
         return response
 
-    @has_permission()
-    def process_view(self, request, view_function, view_args, view_kwargs):
-        # print(view_function)
+
+    # def process_view(self, request, view_function, view_args, view_kwargs):
+    #     print(view_function)
         
-        return None
+    #     return None
+    

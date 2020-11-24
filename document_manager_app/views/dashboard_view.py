@@ -17,7 +17,7 @@ from document_manager_project.settings import BASE_DIR
 import subprocess
 from ..views.user_authentication_view import GetPermissions
 from ..config import perms_config
-from ..views.check_permission import test_has_permission
+from ..views.check_permission import check_role_permission
 
 class DashboardPageView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
@@ -35,6 +35,7 @@ class Dashboard(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
+    @check_role_permission()
     def get(self, request):
         """ active and inactive users count """
 
@@ -67,6 +68,7 @@ class UserManagementDashboard(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
+    @check_role_permission()
     def get(self, request):
         """ active and inactive users count """
 
@@ -116,6 +118,7 @@ class TemplateManagementDashboard(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
+    check_role_permission()
     def get(self, request):
         """ active and inactive users count """
 
@@ -135,7 +138,7 @@ class GetAllUsersView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
-    @test_has_permission()
+    @check_role_permission()
     def get(self, request):
 
         try:
@@ -162,6 +165,7 @@ class UserDatatableView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
+    @check_role_permission()
     def get(self, request, pk):
         """Get User details using User Id"""
 
@@ -187,6 +191,7 @@ class UserDatatableView(APIView):
             print(info_message)
             return JsonResponse({'message': str(info_message)}, status=422)
 
+    @check_role_permission()
     def delete(self, request, pk):
         """Delete user using User Id"""
 
@@ -224,6 +229,7 @@ class UserDatatableView(APIView):
             print(info_message)
             return JsonResponse({'message': str(info_message)}, status=422)
 
+    @check_role_permission()
     def put(self, request, pk):
         """Update user details using User Id"""
 
@@ -301,6 +307,7 @@ class DocumentTeamplateDropdown(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
+    @check_role_permission()
     def get(self, request):
         '''Get list of templates from database'''
 
@@ -324,6 +331,7 @@ class SelectTemplate(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
+    @check_role_permission()
     def get(self, request, pk):
         '''Get placeholders list using template id'''
         try:
@@ -366,6 +374,7 @@ class FillDropdownTemplate(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
+    @check_role_permission()
     def post(self, request):
         """
         Filling the document and convert it into PDF.
@@ -459,6 +468,7 @@ class GetAllFillTemplate(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
+    @check_role_permission()
     def get(self, request):
         '''Get list of filled template for datatable'''
         try:
@@ -486,6 +496,7 @@ class GetFillTemplateDetails(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = (IsAuthenticated,)
 
+    @check_role_permission()
     def get(self, request, pk):
         '''Get filled template detail using id'''
 
@@ -514,7 +525,7 @@ class GetFillTemplateDetails(APIView):
             print(info_message)
             return JsonResponse({'message': str(info_message)}, status=422)
             
-    @test_has_permission()
+    @check_role_permission()
     def delete(self, request, pk):
         """Delete template using Template Id"""
 
@@ -543,6 +554,7 @@ class GetFillTemplateDetails(APIView):
             print(info_message)
             return JsonResponse({'message': str(info_message)}, status=422)
 
+    @check_role_permission()
     def put(self, request, pk):
         '''update template using template id'''
 
@@ -625,6 +637,7 @@ class CheckDocumentName(APIView):
     permission_classes = (IsAuthenticated,)
     renderer_classes = [TemplateHTMLRenderer]
 
+    @check_role_permission()
     def post(self, request):
 
         try:
