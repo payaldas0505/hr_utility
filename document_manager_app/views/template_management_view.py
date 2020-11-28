@@ -123,9 +123,9 @@ class FillDocument(APIView):
 
             bytesio_object = document
             dir_path_ft = BASE_DIR + '/media/filled_template/'
-
+            document_path = dir_path_ft + "{}.docx".format(file_name_split)
             print('A'*20)
-            with open(dir_path_ft + "{}.docx".format(file_name_split), 'wb') as f:
+            with open(document_path, 'wb') as f:
                 f.write(bytesio_object.getbuffer())
 
             print("1"*20)
@@ -135,7 +135,7 @@ class FillDocument(APIView):
 
             pdf_file = '/media/filled_template/' + \
                 '{}.pdf'.format(file_name_split)
-
+            os.remove(document_path)
             if templatejson['save'] == "true" or templatejson['save'] == True:
                 pdf_name = templatejson['document']
                 keys = ['save', 'document']
@@ -204,6 +204,8 @@ class WordTemplateDataView(APIView):
                 template.delete()
                 if template_new:
                     template_new.delete()
+                    file_name = BASE_DIR + '/media/'+ template.pdf.name
+                    os.remove(file_name)
                 message = "Template deleted successfully"
                 status = 200
             return JsonResponse({'message': message}, status=status)

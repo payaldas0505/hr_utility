@@ -11,6 +11,7 @@ from ..models import query_users_by_args, UserRegisterationModel, WordTemplateNe
 from django.db import transaction
 from .check_permission import has_permission
 import re
+import os
 import docx2txt
 from ..import generate, generateNew
 from document_manager_project.settings import BASE_DIR
@@ -18,6 +19,7 @@ import subprocess
 from ..views.user_authentication_view import GetPermissions
 from ..config import perms_config
 from ..views.check_permission import check_role_permission
+
 
 class DashboardPageView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
@@ -119,6 +121,7 @@ class TemplateManagementDashboard(APIView):
     renderer_classes = [TemplateHTMLRenderer]
 
     check_role_permission()
+
     def get(self, request):
         """ active and inactive users count """
 
@@ -399,6 +402,7 @@ class FillDropdownTemplate(APIView):
             else:
                 templatejson = template_dict
             print(templatejson['Document_Name'])
+
             if FilledTemplateData.objects.filter(employee_name=templatejson['Document_Name']).exists():
                 info_message = "Document name already taken!"
                 print(info_message)
@@ -427,8 +431,9 @@ class FillDropdownTemplate(APIView):
 
                 bytesio_object = document
                 dir_path_ft = BASE_DIR + '/media/filled_user_template/'
-
-                with open(dir_path_ft + "{}.docx".format(new_raw_file_name), 'wb') as f:
+                document_pathname = dir_path_ft + \
+                    "{}.docx".format(new_raw_file_name)
+                with open(document_pathname, 'wb') as f:
                     f.write(bytesio_object.getbuffer())
 
                 output = subprocess.check_output(
@@ -436,6 +441,10 @@ class FillDropdownTemplate(APIView):
 
                 pdf_file = '/media/filled_user_template/' + \
                     '{}.pdf'.format(new_raw_file_name)
+                old_pdf_path = dir_path_ft + \
+                    templatejson['pdfFileName'].split('/')[-1]
+                os.remove(document_pathname)
+                os.remove(old_pdf_path)
                 return JsonResponse({"success": "Document {} saved successfully".format(templatejson['Document_Name']), "status": 201})
 
             file_name = BASE_DIR + '/media/' + raw_file_name
@@ -447,8 +456,9 @@ class FillDropdownTemplate(APIView):
 
             bytesio_object = document
             dir_path_ft = BASE_DIR + '/media/filled_user_template/'
-
-            with open(dir_path_ft + "{}.docx".format(new_raw_file_name), 'wb') as f:
+            document_pathname = dir_path_ft + \
+                "{}.docx".format(new_raw_file_name)
+            with open(document_pathname, 'wb') as f:
                 f.write(bytesio_object.getbuffer())
 
             output = subprocess.check_output(
@@ -456,6 +466,8 @@ class FillDropdownTemplate(APIView):
 
             pdf_file = '/media/filled_user_template/' + \
                 '{}.pdf'.format(new_raw_file_name)
+
+            os.remove(document_pathname)
             return JsonResponse({'success': pdf_file})
 
         except Exception as e:
@@ -510,6 +522,7 @@ class GetFillTemplateDetails(APIView):
             template_name = template_detail['templatename']
             template_detail.pop('templatename', None)
             template_detail.pop('filename', None)
+            template_detail.pop('pdfFileName', None)
 
             new_template_detail = []
             new_template_detail.append(template_detail)
@@ -524,18 +537,22 @@ class GetFillTemplateDetails(APIView):
             info_message = "Internal Server Error"
             print(info_message)
             return JsonResponse({'message': str(info_message)}, status=422)
-            
+
     @check_role_permission()
     def delete(self, request, pk):
         """Delete template using Template Id"""
 
         try:
             template = FilledTemplateData.objects.filter(id=pk)
+            print(template[0].docx_name)
             if template:
                 try:
                     with transaction.atomic():
+                        pdf_path = BASE_DIR + '/media/filled_user_template/'+template[0].docx_name+'.pdf'
+                        os.remove(pdf_path)
                         template.delete()
-                        success_msg = "Template deleted successfully"
+                        
+                        success_msg = "Document deleted successfully"
                         print(success_msg)
                         return JsonResponse({'message': success_msg})
                 except Exception as e:
@@ -569,6 +586,7 @@ class GetFillTemplateDetails(APIView):
                         templatejson[k] = templatejson[k][0]
             else:
                 templatejson = template_dict
+
             save_fill_template = templatejson.pop('save', None)
             print(save_fill_template)
             print(templatejson)
@@ -609,8 +627,9 @@ class GetFillTemplateDetails(APIView):
 
                     bytesio_object = document
                     dir_path_ft = BASE_DIR + '/media/filled_user_template/'
-
-                    with open(dir_path_ft + "{}.docx".format(new_docx_file_name), 'wb') as f:
+                    document_pathname = dir_path_ft + \
+                        "{}.docx".format(new_docx_file_name)
+                    with open(document_pathname, 'wb') as f:
                         f.write(bytesio_object.getbuffer())
 
                     output = subprocess.check_output(
@@ -618,6 +637,7 @@ class GetFillTemplateDetails(APIView):
 
                     pdf_file = '/media/filled_user_template/' + \
                         '{}.pdf'.format(new_docx_file_name)
+                    os.remove(document_pathname)
                     return JsonResponse({'success': pdf_file})
             except Exception as e:
                 print("exception in saving data rollback error", e)
