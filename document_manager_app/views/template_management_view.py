@@ -135,7 +135,8 @@ class FillDocument(APIView):
 
             pdf_file = '/media/filled_template/' + \
                 '{}.pdf'.format(file_name_split)
-            os.remove(document_path)
+           
+
             if templatejson['save'] == "true" or templatejson['save'] == True:
                 pdf_name = templatejson['document']
                 keys = ['save', 'document']
@@ -147,8 +148,11 @@ class FillDocument(APIView):
                     pdf=new_file_name,
                     word_template=raw_file_name
                 )
+                if os.path.exists(document_path):
+                    os.remove(document_path)
                 return JsonResponse({"success": "Saved successfully", "status": 201})
             print('pdf_file', pdf_file)
+            
             return JsonResponse({'success': pdf_file, 'message': "Template is filled successfully", 'status': 200})
 
         except Exception as e:
@@ -204,8 +208,9 @@ class WordTemplateDataView(APIView):
                 template.delete()
                 if template_new:
                     template_new.delete()
-                    file_name = BASE_DIR + '/media/'+ template.pdf.name
-                    os.remove(file_name)
+                    if os.path.exists(file_name):
+                        file_name = BASE_DIR + '/media/'+ template.pdf.name
+                        os.remove(file_name)
                 message = "Template deleted successfully"
                 status = 200
             return JsonResponse({'message': message}, status=status)

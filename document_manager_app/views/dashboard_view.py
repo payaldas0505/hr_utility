@@ -441,10 +441,12 @@ class FillDropdownTemplate(APIView):
 
                 pdf_file = '/media/filled_user_template/' + \
                     '{}.pdf'.format(new_raw_file_name)
-                old_pdf_path = dir_path_ft + \
-                    templatejson['pdfFileName'].split('/')[-1]
-                os.remove(document_pathname)
-                os.remove(old_pdf_path)
+                # old_pdf_path = dir_path_ft + \
+                #     templatejson['pdfFileName'].split('/')[-1]
+                # if os.path.exists(document_pathname):
+                #     os.remove(document_pathname)   
+                # if os.path.exists(old_pdf_path):
+                #     os.remove(old_pdf_path)
                 return JsonResponse({"success": "Document {} saved successfully".format(templatejson['Document_Name']), "status": 201})
 
             file_name = BASE_DIR + '/media/' + raw_file_name
@@ -467,7 +469,7 @@ class FillDropdownTemplate(APIView):
             pdf_file = '/media/filled_user_template/' + \
                 '{}.pdf'.format(new_raw_file_name)
 
-            os.remove(document_pathname)
+            
             return JsonResponse({'success': pdf_file})
 
         except Exception as e:
@@ -515,11 +517,12 @@ class GetFillTemplateDetails(APIView):
         try:
 
             template = FilledTemplateData.objects.filter(
-                id=pk).values('fill_values')
+                id=pk).values('fill_values', 'docx_name')
 
             template_detail = template[0]['fill_values']
             file_name = template_detail['filename']
             template_name = template_detail['templatename']
+            pdf_path = '/media/filled_user_template/'+template[0]['docx_name']+'.pdf'
             template_detail.pop('templatename', None)
             template_detail.pop('filename', None)
             template_detail.pop('pdfFileName', None)
@@ -528,6 +531,7 @@ class GetFillTemplateDetails(APIView):
             new_template_detail.append(template_detail)
             new_template_detail.append({'filename': file_name})
             new_template_detail.append({'templatename': template_name})
+            new_template_detail.append({'pdfFileName': pdf_path})
             print('*'*80)
             print(new_template_detail)
             print('*'*80)
@@ -549,7 +553,8 @@ class GetFillTemplateDetails(APIView):
                 try:
                     with transaction.atomic():
                         pdf_path = BASE_DIR + '/media/filled_user_template/'+template[0].docx_name+'.pdf'
-                        os.remove(pdf_path)
+                        if os.path.exists(pdf_path):
+                            os.remove(pdf_path)
                         template.delete()
                         
                         success_msg = "Document deleted successfully"
@@ -610,6 +615,7 @@ class GetFillTemplateDetails(APIView):
                     if edit_serializer.is_valid() and (save_fill_template == 'true' or save_fill_template == True):
                         edit_serializer.save()
                         print('1'*80)
+                        
                         return JsonResponse({"success": "Document {} saved successfully".format(request.data['Document_Name']), "status": 201})
 
                     file_name = BASE_DIR + '/media/' + request.data['filename']
