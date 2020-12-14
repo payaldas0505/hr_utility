@@ -643,7 +643,7 @@ class GetFillTemplateDetails(APIView):
 
                     pdf_file = '/media/filled_user_template/' + \
                         '{}.pdf'.format(new_docx_file_name)
-                    os.remove(document_pathname)
+                    # os.remove(document_pathname)
                     return JsonResponse({'success': pdf_file})
             except Exception as e:
                 print("exception in saving data rollback error", e)
