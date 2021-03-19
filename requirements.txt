@@ -15,7 +15,7 @@ django-redis==4.12.1
 django-redis-cache==2.1.1
 django-rest-auth==0.9.5
 django-tabular-permissions==2.6
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 djangorestframework-simplejwt==4.4.0
 docx==0.2.4
 docx2txt==0.8
